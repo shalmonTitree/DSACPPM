@@ -1,0 +1,91 @@
+Description
+
+Two strings are considered "almost equivalent" if they have the same length AND for each lowercase letter x, the number of occurrences of x in the two strings differs by no more than 3. Given string S and T, find if they are almost equivalent.
+
+Input Format
+
+The First line contains the first string and the second line contains the second string.
+
+Output Format
+
+Print “YES” if they are “almost equivalent”. Or else print “NO”.
+
+Constraints
+
+1 ≤ Length(S), Length(T) ≤ 10^5
+
+Sample Input 1
+
+aaa
+aab
+
+Sample Output 1
+
+YES
+
+Sample Input 2
+
+aaa
+aaaa
+
+Sample Output 2
+
+NO
+
+Note
+
+Only letters ‘a’ and ‘b’ are present in the two strings. The number of occurrences of 'a' differs by 1 and the number of occurrences of 'b' differs also by 1, so the return array is ['YES'].
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    string s,t;
+    cin>>s>>t;
+    if(s.size() != t.size())
+    {
+        cout<<"NO"<<endl;
+        return;
+    }
+    else
+    {
+        unordered_map<char,int>mp;
+        for(auto it: s)
+        {
+            mp[it]++;
+        }
+        for(auto it: t)
+        {
+            mp[it]--;
+        }
+
+        for(auto it : mp)
+        {
+            if(it.second > 3 || it.second < (-3))
+            {
+                cout<<"NO"<<endl;
+            return;
+            }
+
+        }
+    }
+    cout<<"YES"<<endl;
+        return;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
