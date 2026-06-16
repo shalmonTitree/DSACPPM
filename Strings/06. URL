@@ -1,0 +1,114 @@
+Time Limit: 1 sec
+Memory: 256 MB
+
+Description
+
+Given a string S that represents a URL request. Print five lines contains the following format: "X:Y" where X is the parameter and Y is the parameter's value.
+
+Note:
+The parameters of the URL are: username, pwd, profile, role and key.
+
+Input Format
+
+Only one line containing a string S. It consists of uppercase and lowercase English letters, digits, and special characters.
+
+The URL will be in the following format:
+
+[http://www.{word}.{word}/{word}/{word}?username={word}&pwd={word}&profile={word}&role={word}&key={word}](http://www.{word}.{word}/{word}/{word}?username={word}&pwd={word}&profile={word}&role={word}&key={word})
+
+It's guaranteed that all parameters will have a value. The value will always be a string of alphabets and digits.
+
+Output Format
+
+Print 5 lines that contain the answer required above.
+
+Constraints
+
+100 ≤ |S| ≤ 10^4
+
+where |S| is the length of the string.
+
+Sample Input 1
+
+[http://www.cleartrip.com/signin/service?username=test&pwd=test&profile=developer&role=ELITE&key=manager](http://www.cleartrip.com/signin/service?username=test&pwd=test&profile=developer&role=ELITE&key=manager)
+
+Sample Output 1
+
+username: test
+pwd: test
+profile: developer
+role: ELITE
+key: manager
+
+Sample Input 2
+
+[http://www.algozenith.com/signin/service?username=hackNasaUsingHtml&pwd=areYouSerious&profile=ownerOfTwitter&role=fakePromises&key=planToOwnNasa](http://www.algozenith.com/signin/service?username=hackNasaUsingHtml&pwd=areYouSerious&profile=ownerOfTwitter&role=fakePromises&key=planToOwnNasa)
+
+Sample Output 2
+
+username: hackNasaUsingHtml
+pwd: areYouSerious
+profile: ownerOfTwitter
+role: fakePromises
+key: planToOwnNasa
+
+Sample Input 3
+
+[http://www.codeforces.com/signin/service?username=Arijit&pwd=jackTheKing&profile=useless&role=newbie&key=wrongAnswerOnTestCase2](http://www.codeforces.com/signin/service?username=Arijit&pwd=jackTheKing&profile=useless&role=newbie&key=wrongAnswerOnTestCase2)
+
+Sample Output 3
+
+username: Arijit
+pwd: jackTheKing
+profile: useless
+role: newbie
+key: wrongAnswerOnTestCase2
+
+Note
+
+In each sample input, the provided URL contains the parameters after the '?' symbol in the format parameter=value separated by '&'. The program extracts each parameter and its corresponding value and prints them in the required format.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    string s;
+    cin>>s;
+
+    //step 1 : find where ? exists after that only url has parameters 
+    int idx = s.find('?');
+
+    //step 2 : in a new string store the part of url after ? marrk
+    string newstr = s.substr(idx+1);
+
+    //step 3 : create stringstream and new string called part which will store parts/blocks
+    stringstream ss(newstr);
+    string part;
+
+    //step 4 : loop on ss, and store in part till you get &
+    while(getline(ss,part,'&'))
+    {
+        //get the index where you get =
+         int eq = part.find('=');
+
+        //first append substring till = then add : then add substring after =
+        cout << part.substr(0, eq)<< ": "<< part.substr(eq + 1)<< endl;
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
