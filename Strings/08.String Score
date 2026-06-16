@@ -1,0 +1,204 @@
+Description
+
+Given a number N and a string S of size N consisting of 5 different uppercase characters only (V, W, X, Y, Z).
+
+V: Adds to the score 5 points.
+W: Adds to the score 2 points.
+X: Removes the next consecutive character from the string.
+Y: Moves the next consecutive character to the end of the string.
+Z: If the next consecutive character is V it divides the total score by 5, but if it is W it divides the total score by 2. Then it removes the next consecutive character from the string if and only if the next character is V or W.
+
+Note: In case the string ends with X, Y, or Z, ignore their operations. The score is calculated from left to right and starts with 0.
+
+Input Format
+
+The first line contains a number N, the length of the string.
+The second line contains a string S.
+
+It's guaranteed that S consists of only (V, W, X, Y, Z) letters.
+
+Output Format
+
+Print the total score of the string.
+
+Constraints
+
+1 ≤ N ≤ 10^6
+
+Sample Input 1
+
+5
+VYWZW
+
+Sample Output 1
+
+4
+
+Sample Input 2
+
+5
+VVVVW
+
+Sample Output 2
+
+22
+
+Sample Input 3
+
+6
+WZYVXW
+
+Sample Output 3
+
+7
+
+Note
+
+Sample Input 1 Explanation:
+
+String S = "VYWZW" and score initially = 0.
+
+First character is 'V', so add 5 to score, score becomes 5.
+
+Second character is 'Y', then move 'W' to end of string, it becomes "VYZWW", and score is still 5.
+
+Third character is 'Z', then divide total score by 2 because next character is 'W', and remove 'W' from string, so string becomes "VYZW" and score becomes 2.
+
+Fourth character is 'W', so add 2 to score, score becomes 4.
+
+So the final answer is 4.
+
+
+
+//my code
+Time Complexity
+O(n²)
+Space Complexity
+O(1)
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n;
+    cin>>n;
+    string s;
+    cin>>s;
+    int score = 0;
+
+    for(int i = 0; i < s.size(); i++)
+    {
+        if(s[i] == 'V')
+        {
+            score += 5;
+        }
+        else if(s[i] == 'W')
+        {
+            score += 2;
+        }
+        else if(s[i] == 'X')
+        {
+            if(i+1 < s.size())
+            {
+                s.erase(i,1);
+            }
+            
+        }
+        else if(s[i] == 'Y')
+        {
+            if(i+1 < s.size())
+            {
+                char ch = s[i+1];
+                s.erase(i,1);
+                s.push_back(ch);
+            }
+        }
+        else if(s[i] == 'Z')
+        {
+            if(i+1 < s.size())
+            {
+
+                char ch = s[i+1];
+                if(ch == 'V')
+                {
+                    score /= 5;
+                    s.erase(i,1);
+                }
+                else if(ch == 'W')
+                {
+                    score /= 2;
+                    s.erase(i,1);
+                }
+            }
+        }
+    }
+    cout<<score<<endl;
+    
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+
+//efficent code
+#include<bits/stdc++.h>
+using namespace std;
+
+void solution() {
+    int n; cin >> n;
+    string s; cin >> s;
+    int score = 0;
+    for (int i = 0; i < n; i++) {
+        char c = s[i];
+        switch (c) {
+        case 'V':
+            score += 5;
+            break;
+        case 'W':
+            score += 2;
+            break;
+        case 'Z':
+            if (i != n - 1) {
+                if (s[i + 1] == 'W') {
+                    score /= 2;
+                    s[i + 1] = '0';
+                } else if (s[i + 1] == 'V') {
+                    score /= 5;
+                    s[i + 1] = '0';
+                }
+            }
+            break;
+        case 'Y':
+            if (i != n - 1) {
+                s.push_back(s[i + 1]);
+                n++;
+                s[i + 1] = '0';
+            }
+            break;
+        case 'X':
+            if (i != n - 1) {
+                s[i + 1] = '0';
+            }
+        }
+    }
+    cout << score;
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    solution();
+    return 0;
+}
