@@ -1,0 +1,108 @@
+Description
+
+Max has N friends. He writes their names in a sheet of paper. He wishes to find how many of his friends have distinct names.
+
+Two names A and B are similar, if by swapping any ith and jth index of A any number of times, such that (i + j) % 2 == 0, A becomes B.
+
+Names are distinct if they are not similar.
+
+For example, abcd and cdab are not distinct, since we can swap indices 0 and 2, and then indices 1 and 3, to make abcd become cdab.
+
+Help Max find how many distinct names his friends have.
+
+Input Format
+
+The first line contains N denoting the number of friends Max has.
+
+Next N lines contain non-empty strings of lowercase Latin letters.
+
+Output Format
+
+Output the only integer — the number of distinct names.
+
+Constraints
+
+1 ≤ N ≤ 10^5
+
+1 ≤ |A| ≤ 10^6, where |A| is the length of any input string.
+
+The sum of lengths of all N strings does not exceed 10^6.
+
+Sample Input 1
+
+2
+abcd
+cdab
+
+Sample Output 1
+
+1
+
+Sample Input 2
+
+5
+eceald
+grauhe
+ealdec
+begwid
+gebdiw
+
+Sample Output 2
+
+3
+
+Note
+
+Eceald and Ealdec are similar. Begwid and Gebdiw are similar.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n;
+    cin>>n;
+    set<string>st;
+    for(int i = 0; i < n; i++)
+    {
+        string s;
+        cin>>s;
+        int idx = 0;
+        string odd = "";
+        string eve = "";
+        while(idx < s.size())
+        {
+            eve += s[idx];
+            idx += 2;
+        }
+        idx = 1;
+        while(idx < s.size())
+        {
+            odd += s[idx];
+            idx += 2;
+        }
+        sort(eve.begin(),eve.end());
+        sort(odd.begin(),odd.end());
+        string newstr = eve + '#' + odd;
+        st.insert(newstr);
+        
+    }
+    cout<<st.size();
+    
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
