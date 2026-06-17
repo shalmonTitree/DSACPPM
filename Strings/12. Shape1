@@ -1,0 +1,70 @@
+Plain text version:
+
+```text
+Time Limit: 0.5 sec
+Memory Limit: 256 MB
+
+Description
+Given a number N, print a face-down right-angled triangle that has N rows.
+
+Note:
+Do not print any extra spaces after the '*' symbol.
+
+Input Format
+A single line containing an integer N.
+
+Output Format
+Print the face-down right-angled triangle with N rows as described.
+
+Constraints
+1 ≤ N ≤ 99
+
+Sample Input
+4
+
+Sample Output
+****
+***
+**
+*
+
+Note
+For N = 4, the triangle has 4 rows:
+- The first row contains 4 '*' characters.
+- The second row contains 3 '*' characters.
+- The third row contains 2 '*' characters.
+- The last row contains 1 '*' character.
+```
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n;
+    cin>>n;
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n - i; j++)
+        {
+            cout<<"*";
+        }
+        cout<<endl;
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
