@@ -1,0 +1,115 @@
+Plain text version:
+
+```text
+Time Limit: 1 sec
+Memory Limit: 256 MB
+
+Description
+
+You are given two strings a and b consisting of lowercase Latin letters.
+
+Find the number of different pairs ((i, j), (k, l)) such that the substrings:
+
+a[i...j] and b[k...l]
+
+are equal and the value of:
+
+j - i + 1
+
+is minimum.
+
+Input Format
+
+The first line contains an integer T, denoting the number of test cases.
+
+For each test case:
+
+- The first line contains two integers N and M, denoting the lengths of strings a and b respectively.
+- The second line contains the string a of length N.
+- The third line contains the string b of length M.
+
+Output Format
+
+For each test case, print the answer in a single line.
+
+Constraints
+
+1 ≤ T ≤ 10^4
+1 ≤ N, M ≤ 10^5
+
+It is guaranteed that the sum of N and M over all test cases does not exceed 10^5.
+
+Sample Input
+
+1
+4 2
+adbc
+bd
+
+Sample Output
+
+2
+
+Note
+
+In the sample test case:
+
+a = adbc
+b = bd
+
+Consider substrings of length 1:
+
+- "b" appears in both strings.
+- "d" appears in both strings.
+
+So the count is 2.
+
+Consider substrings of length 2:
+
+- "bd" appears in both strings.
+
+So the count is 1.
+
+Since we need the matching substring length to be minimum, we choose length 1. Therefore, the answer is 2.
+```
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+void solve() {
+    int n, m;
+    cin >> n >> m;
+
+    string a, b;
+    cin >> a >> b;
+
+    long long cntA[26] = {0};
+    long long cntB[26] = {0};
+
+    for (char c : a) cntA[c - 'a']++;
+    for (char c : b) cntB[c - 'a']++;
+
+    long long ans = 0;
+
+    for (int i = 0; i < 26; i++) {
+        ans += cntA[i] * cntB[i];
+    }
+
+    cout << ans << '\n';
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
