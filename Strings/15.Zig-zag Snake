@@ -1,0 +1,135 @@
+Plain text version:
+
+```text id="snakepattern01"
+Time Limit: 1 sec
+Memory Limit: 256 MB
+
+Description
+
+Draw a snake pattern on an n × m table.
+
+The tail of the snake starts at (1,1) and moves right to (1,m).
+Then it moves 2 rows downward to (3,m).
+Next, it moves left to (3,1).
+From there it moves 2 more rows downward to (5,1), and the pattern continues.
+
+Empty cells are represented by '.' and snake cells by '#'.
+
+Input Format
+
+A single line containing two integers n and m.
+
+Output Format
+
+Print n lines, each containing m characters, representing the snake pattern.
+
+Constraints
+
+3 ≤ n, m ≤ 50
+n is an odd number.
+
+Sample Input 1
+5 6
+
+Sample Output 1
+######
+.....#
+######
+#.....
+######
+
+Sample Input 2
+3 4
+
+Sample Output 2
+####
+...#
+####
+
+Sample Input 3
+7 3
+
+Sample Output 3
+###
+..#
+###
+#..
+###
+..#
+###
+
+Note
+
+The snake pattern alternates between:
+
+- Rows completely filled with '#'.
+- Rows containing a single '#' at either the left or right end.
+
+Specifically:
+- Every odd-numbered row is filled entirely with '#'.
+- Among the even-numbered rows:
+  - The 2nd, 6th, 10th, ... rows have '#' in the last column.
+  - The 4th, 8th, 12th, ... rows have '#' in the first column.
+
+This creates the continuous snake path described in the statement.
+```
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n,m;
+    cin>>n>>m;
+
+    bool flag = false;
+    for(int i = 0; i < n; i++)
+{
+    if(i % 2 == 0)
+    {
+        for(int j = 0; j < m; j++)
+        {
+            cout << "#";
+        }
+    }
+    else
+    {
+        for(int j = 0; j < m; j++)
+        {
+            if(flag == false)
+            {
+                if(j == m - 1)
+                    cout << "#";
+                else
+                    cout << ".";
+            }
+            else
+            {
+                if(j == 0)
+                    cout << "#";
+                else
+                    cout << ".";
+            }
+        }
+
+        flag = !flag;   // move here
+    }
+
+    cout << endl;       // move here
+}
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
