@@ -1,0 +1,33 @@
+✅ Time Complexity: O(n + k log k)
+✅ Space Complexity: O(n)
+
+class Solution {
+public:
+    string frequencySort(string s) {
+        int n = s.size();
+        unordered_map<char,int>mp;
+        vector<pair<int,char>>v;
+        for(auto it : s)
+        {
+            mp[it]++;
+        }
+        for(auto it : mp)
+        {
+            v.push_back({it.second,it.first});
+        }
+
+        sort(v.rbegin(),v.rend());
+        string ans = "";
+        for(auto it : v)
+        {
+            int t = it.first;
+            while(t--)
+            {
+                ans += it.second;
+            }
+        }
+        return ans;
+
+    }
+
+};
