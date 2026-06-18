@@ -1,0 +1,75 @@
+//bruteforce
+Total: O(n²)
+Space: O(n) (for used array)
+
+class Solution {
+public:
+    char findTheDifference(string s, string t) {
+
+        vector<bool> used(s.size(), false);
+
+        for (int i = 0; i < t.size(); i++) {
+
+            bool found = false;
+
+            for (int j = 0; j < s.size(); j++) {
+
+                if (!used[j] && t[i] == s[j]) {
+                    used[j] = true;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                return t[i];
+            }
+        }
+
+        return ' ';
+    }
+};
+
+
+//better
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+class Solution {
+public:
+    char findTheDifference(string s, string t) {
+       vector<int>freq(26);
+       for(auto it : t)
+       {
+        freq[it - 'a']++;
+       }
+       for(auto it : s)
+       {
+            freq[it - 'a']--;
+       }
+       
+
+       for (int i = 0; i < 26; i++) {
+            if (freq[i] > 0) {
+                return i + 'a';
+            }
+        }
+       return ' ';
+    }
+};
+
+
+//optimal
+Time: O(n)
+Space: O(1)
+class Solution {
+public:
+    char findTheDifference(string s, string t) {
+        char ans = 0;
+
+        for(char c : s) ans ^= c;
+        for(char c : t) ans ^= c;
+
+        return ans;
+    }
+};
