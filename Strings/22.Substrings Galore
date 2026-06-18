@@ -1,0 +1,125 @@
+Description
+
+You are given a string s containing lower case alphabets and 3 integers minSize, maxSize and maxLetters.
+
+You need to find the maximum number of occurrences of any substring under the following rules:
+
+* The number of unique characters in the substring must be ≤ maxLetters.
+* The substring size must be between minSize and maxSize inclusive.
+
+Input Format
+
+The first line of the input contains one integer T — the number of test cases.
+
+Then T test cases follow.
+
+The first line of each test case contains a string s.
+
+The second line of each test case contains 3 space-separated integers minSize, maxSize and maxLetters.
+
+Output Format
+
+For each test case, print the answer on a new line.
+
+Constraints
+
+1 ≤ T ≤ 10³
+
+1 ≤ |s| ≤ 10⁵
+
+1 ≤ minSize ≤ maxSize ≤ min(26, s.length())
+
+1 ≤ maxLetters ≤ 26
+
+It is guaranteed that the sum of the lengths of s over all test cases does not exceed 10⁶.
+
+Sample Input 1
+
+1
+
+aababcaab
+
+3 4 2
+
+Sample Output 1
+
+2
+
+Sample Input 2
+
+1
+
+aaaa
+
+3 3 1
+
+Sample Output 2
+
+2
+
+Note
+
+In Sample Input 1:
+
+Substring "aab" occurs 2 times in the original string. It satisfies the conditions:
+
+* 2 unique letters
+* length = 3 (between minSize and maxSize)
+
+In Sample Input 2:
+
+Substring "aaa" occurs 2 times in the string. Note that substrings can overlap.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    string s;
+    cin>>s;
+    int n = s.size();
+    int mins,maxs,maxl;
+    cin>>mins>>maxs>>maxl;
+   
+    unordered_map<string,int>ans;
+
+    
+
+    for(int i = 0; i < n; i++)
+    {
+        string newstr = "";
+    unordered_map<char,int> mp;
+        for(int j = i; j < min(n, i + mins); j++)
+        {
+            newstr += s[j];
+            mp[s[j]]++;
+        }
+
+        if(newstr.size() == mins && mp.size() <= maxl)
+        {
+            ans[newstr]++;
+        }
+    }
+    int val = 0;
+    for(auto it : ans)
+    {
+        val = max(val,it.second);
+    }
+    cout<<val<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
