@@ -1,0 +1,48 @@
+Time Complexity: O(m + n)
+
+class Solution {
+public:
+    bool canConstruct(string ransomNote, string magazine) {
+        unordered_map<char,int>mp;
+        for(auto it : magazine)
+        {
+            mp[it]++;
+        }
+
+        for (char ch : ransomNote) {
+            if (mp.find(ch) == mp.end()) {
+                return false;
+            }
+
+            mp[ch]--;
+
+            if (mp[ch] == 0) {
+                mp.erase(ch);   // erase the character key
+            }
+        }
+        return true;
+    }
+};
+
+
+//optimal
+✅ Time Complexity: O(m + n)
+✅ Space Complexity: O(1)
+class Solution {
+public:
+    bool canConstruct(string ransomNote, string magazine) {
+        vector<int>freq(26);
+        for(auto it : magazine)
+        {
+            freq[it - 'a']++;
+        }
+
+        for (char ch : ransomNote) {
+            if(--freq[ch - 'a'] < 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+};
