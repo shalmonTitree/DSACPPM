@@ -1,0 +1,31 @@
+https://leetcode.com/problems/corporate-flight-bookings/?envType=problem-list-v2&envId=prefix-sum
+
+class Solution {
+public:
+    vector<int> corpFlightBookings(vector<vector<int>>& bookings, int n) {
+        vector<int>diff(n+1,0);
+        for(auto it : bookings)
+        {
+            int first = it[0];
+            int last = it[1];
+            int seats = it[2];
+            diff[first] += seats;
+            if(last < n)
+            {
+                diff[last + 1] -= seats;
+            }
+            
+        }
+
+        for(int i = 1; i <= n; i++)
+        {
+            diff[i] = diff[i-1] + diff[i];
+        }
+        vector<int>ans;
+        for(int i = 1; i <= n; i++)
+        {
+            ans.push_back(diff[i]);
+        }
+        return ans;
+    }
+};
