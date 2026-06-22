@@ -1,0 +1,162 @@
+Time Limit: 1 sec
+Memory: 256 MB
+
+Description
+
+In a warehouse, N storage cells are used to store products. Each storage cell stores a particular type of product. The storage cells and products are assigned the same IDs ranging from 1 to N. The delivery centres raise their requirements for stock deliveries from the warehouse. These new requirements are in the form [A, B, M] which represents that M products from all consecutive storage cells from ID A to ID B must be sent. If the requested cell has less than M products available, then only the available amount of products will be sent.
+
+In a day, the warehouse receives L requests from the delivery centres. At the end of the day, the warehouse manager has to enter the cell IDs of the depleted cells. Write an algorithm to find the cell IDs of the depleted cells.
+
+Input Format
+
+* The first line of the input consists of an integer N, representing the number of storage cells.
+* The second line consists of an integer L, representing the number of requests received in a day.
+* The third line consists of N space-separated integers:
+  cellProd1 cellProd2 ... cellProdN, representing the number of products in each storage cell at the start of the day.
+* The next L lines consist of three space-separated integers A, B and M, representing the cell IDs of the starting storage cell and ending storage cell, and the number of products to be transferred from consecutive cell IDs A to B (both inclusive), respectively.
+
+Output Format
+
+Print space-separated integers in ascending order representing the cell IDs of the cells from which all the products will be transferred after fulfilling all L requests. If no storage cell is depleted at the end, then print nothing.
+
+Note: There is a new line at the end of the output.
+
+Constraints
+
+* 0 ≤ N ≤ 10^5
+* 0 < L < 10^5
+* 0 < cellProdi < 10^5
+* 1 ≤ A ≤ B ≤ N
+* 0 < M < 10^5
+
+Sample Input 1
+
+```
+5
+5
+34 29 55 40 10
+1 3 11
+2 5 11
+1 1 11
+3 4 11
+2 4 11
+```
+
+Sample Output 1
+
+```
+2 5
+```
+
+
+
+//bruteforce
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n;
+    cin>>n;
+    int q;
+    cin>>q;
+    vector<int>v(n);
+    for(int i = 0; i < n; i++) cin>>v[i];
+    while(q--)
+    {
+        int a,b,c;
+        cin>>a>>b>>c;
+
+        for(int j = a - 1; j <= b - 1; j++)
+        {
+            v[j] = max(0, v[j] - c);
+        }
+            }
+    bool f = false;
+    for(int k = 0; k < n; k++)
+    {
+        if(v[k] == 0)
+        {
+            f = true;
+            cout<<(k+1)<<" ";
+        }
+    }
+    if(!f)
+    {
+        cout<<" ";
+    }
+}
+
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+   // cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+
+//optimal
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n;
+    cin>>n;
+    int q;
+    cin>>q;
+    vector<int>v(n);
+    vector<long long>demo(n+1,0);
+    for(int i = 0; i < n; i++) cin>>v[i];
+
+    while(q--)
+    {
+        int a,b,c;
+        cin>>a>>b>>c;
+
+        demo[a-1] += c;
+        if(b < n)
+        {
+            demo[b] -= c;
+        }
+    }
+
+    long long prefixsum = 0;
+    bool f = false;
+    for(int i = 0; i < n; i++)
+    {
+        prefixsum += demo[i];
+        if(v[i] - prefixsum <= 0)
+        {
+            f = true;
+            cout<<(i+1)<<" ";
+        }
+    }
+    if(!f)
+    {
+        cout<<" ";
+    }
+}
+
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+   // cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
