@@ -1,0 +1,126 @@
+### Plain Text Version
+
+Time Limit: 1 sec
+Memory: 256 MB
+
+Description
+
+Edward and Alphonse are alchemists who want to perform human transmutation to revive their mother, which requires philosopher stones. Father Inc operates a factory that produces philosopher stones daily. The factory runs for n days, and on the ith day, it produces Ai stones. However, these stones have an expiry limit. Stones produced on day i can only be used for Di days. For example, if Di = 1, the stones can only be used on the day they are produced, and if Di = 2, they can be used for two days (the day they are produced and the next day).
+
+Edward and Alphonse want to maximize their success chances in transmutation. Therefore, they seek the maximum number of stones that can be accumulated on any single day.
+
+Input Format
+
+* The first line of the input contains one integer T — the number of test cases.
+* Then T test cases follow.
+* The first line of each test case contains an integer N — the number of days.
+* The second line of each test case contains N space-separated integers:
+  A1, A2, ..., AN.
+* The third line of each test case contains N space-separated integers:
+  D1, D2, ..., DN.
+
+Output Format
+
+For each test case, output a single integer — the maximum number of stones that can be used on any one day.
+
+Constraints
+
+* 1 ≤ T ≤ 10^3
+* 1 ≤ N ≤ 10^5
+* 1 ≤ Ai ≤ 10^7
+* 1 ≤ Di ≤ 10^7
+* It is guaranteed that the sum of N over all test cases ≤ 10^7.
+
+Sample Input 1
+
+```text
+1
+5
+2 3 4 1 2
+2 1 1 3 2
+```
+
+Sample Output 1
+
+```text
+5
+```
+
+Sample Input 2
+
+```text
+1
+5
+2 3 4 1 2
+2 1 3 3 2
+```
+
+Sample Output 2
+
+```text
+7
+```
+
+Note
+
+In Sample Input 1:
+
+* Number of stones available on day 1 = 2
+* Number of stones available on day 2 = 5
+* Number of stones available on day 3 = 4
+* Number of stones available on day 4 = 1
+* Number of stones available on day 5 = 3
+* Number of stones available on day 6 = 3
+* Number of stones available on day 7 = 0
+
+Therefore, the maximum number of stones available on any day is 5, which occurs on day 2.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<long long> ps;
+vector<long long> stones;
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int t;
+    cin >> t;
+
+    while (t--)
+    {
+        int n, i;
+
+        cin >> n;
+        stones.resize(n + 1);
+        ps.assign(n + 1, 0);
+
+        for (i = 1; i <= n; i++)
+            cin >> stones[i];
+
+        for (i = 1; i <= n; i++)
+        {
+            long long days;
+            cin >> days;
+            ps[i] += stones[i];
+            if (i + days <= n)
+                ps[i + days] -= stones[i];
+        }
+
+        long long ans = ps[1];
+
+        for (i = 2; i <= n; i++)
+        {
+            ps[i] += ps[i - 1];
+            ans = max(ans, ps[i]);
+        }
+
+        cout << ans << "\n";
+    }
+
+    return 0;
+}
