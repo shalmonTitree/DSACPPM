@@ -1,0 +1,79 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n,k;
+    cin>>n>>k;
+    int arr[n];
+    for(int i = 0; i < n; i++)
+    {
+        cin>>arr[i];
+    }
+
+    //ds 
+    int freq[1000100] = {0};
+    int distcnt = 0;
+
+
+    int ans = 0;
+
+    int tail = 0;
+    int head = -1;
+
+    while(tail < n)
+    {
+      
+        while(head + 1 < n && (distcnt < k || freq[arr[head+1]] > 0))
+        {
+            head++;
+            if(freq[arr[head]] == 0)
+            {
+                distcnt++;
+               
+            }
+             freq[arr[head]]++;
+        }
+        
+        //here cnt == k so update answer
+        int len =   head - tail + 1;
+        ans += len * (len + 1)/2;
+
+
+
+
+        //now you have updated your anser and it has size of k so move tail from left
+        //so tail++
+
+        if(tail <= head)
+        {
+            freq[arr[tail]]--;
+            if(freq[arr[tail]] == 0)
+            {
+                distcnt--;
+            }
+            tail++;
+        }
+        else
+        {
+            tail++;
+            head = tail - 1;
+        }
+    }
+
+    cout<<ans<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
