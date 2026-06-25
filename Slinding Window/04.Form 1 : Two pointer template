@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void solve()
+{
+    int n;
+    cin >> n;
+    vector<int> arr(n);
+
+    for (int i = 0; i < n; i++)
+        cin >> arr[i];
+
+    // Data structure (map, set, deque, etc.)
+    int tail = 0;
+    int head = -1;
+
+    while (tail < n)
+    {
+        // Expand the window
+        while (head + 1 < n && /* condition to include arr[head + 1] */)
+        {
+            head++;
+
+            // Add arr[head] to the data structure
+        }
+
+        // Process/update answer using window [tail...head]
+
+        if (tail <= head)
+        {
+            // Remove arr[tail] from the data structure
+            tail++;
+        }
+        else
+        {
+            // Window is empty
+            tail++;
+            head = tail - 1;
+        }
+    }
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    solve();
+
+    return 0;
+}
