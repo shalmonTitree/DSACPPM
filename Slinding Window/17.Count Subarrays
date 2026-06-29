@@ -1,0 +1,91 @@
+//bruteforce
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n;
+    cin>>n;
+    vector<int>v(n);
+    for(int i = 0; i < n; i++)cin>>v[i];
+
+    int cnt = 0;
+    for(int i = 0; i < n; i++)
+    {
+        cnt++;
+        for(int j = i+1; j < n; j++)
+        {
+            if(v[j] >= v[j-1])
+            {
+                cnt++;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    cout<<cnt<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+
+//optimal
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n" // optional, better to avoid redefining endl
+
+void solve()
+{
+    int n;
+    cin >> n;
+    vector<int> v(n);
+    for (int i = 0; i < n; i++)
+        cin >> v[i];
+
+    ll cnt = 1;
+    int len = 1;
+    for(int i = 1; i < n; i++)
+    {
+        if(v[i] >= v[i-1])
+        {
+            len++;
+        }
+        else
+        {
+            len = 1;
+        }
+        cnt += len;
+    }
+    cout<<cnt<<endl;
+
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+
+    return 0;
+}
