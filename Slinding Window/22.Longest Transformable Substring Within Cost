@@ -1,0 +1,199 @@
+Time Limit: 1 sec
+Memory: 256 MB
+
+Description
+You are given two strings of equal length, originalUrl and targetUrl, each consisting of lowercase English letters. You are also given an integer cost — the maximum total amount you are allowed to spend to transform a contiguous substring of originalUrl into the corresponding substring of targetUrl.
+
+Changing a character at index i costs the absolute difference of their ASCII values:
+
+diff(i) = |ASCII(originalUrl[i]) − ASCII(targetUrl[i])|
+
+Find the maximum length of a substring of originalUrl that can be transformed into the corresponding substring of targetUrl with total cost ≤ cost. If no such substring exists, output 0.
+
+Input Format
+The input consists of T test cases. For each test case:
+An integer n — the length of the strings.
+A string originalUrl of length n.
+A string targetUrl of length n.
+An integer cost — the maximum allowed total cost.
+
+Output Format
+For each test case, output a single integer — the maximum length of a transformable substring with total cost ≤ cost.
+
+Constraints
+1 ≤ t ≤ 10
+1 ≤ n ≤ 10⁷
+originalUrl, targetUrl ∈ a, …, zⁿ
+0 ≤ cost ≤ 10⁹
+
+Sample Input 1
+
+```text
+1
+6
+adpgki
+cdmxki
+6
+```
+
+Sample Output 1
+
+```text
+3
+```
+
+Sample Input 2
+
+```text
+1
+4
+abcd
+bcdf
+3
+```
+
+Sample Output 2
+
+```text
+3
+```
+
+Note
+
+First sample:
+Per-index costs are [|a − c| = 2, |d − d| = 0, |p − m| = 3, |g − x| = 17, |k − k| = 0, |i − i| = 0] = [2, 0, 3, 17, 0, 0].
+
+The longest contiguous segment with total cost ≤ 6 is indices 0..2 (substring "adp") with total cost 2 + 0 + 3 = 5, so the answer is 3.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n;
+    cin>>n;
+    string org,tar;
+    cin>>org>>tar;
+    int cost = 0;
+    cin>>cost;
+
+    vector<int>diff(n);
+
+    for(int i = 0; i < n; i++)
+    {
+        if(org[i] != tar[i])
+        {
+            diff[i] = abs((org[i] - 'a') - (tar[i] - 'a'));
+        }
+        else
+        {
+            diff[i] = 0;
+        }
+    }
+
+    int ans = 0;
+
+    for(int i = 0; i < n; i++)
+    {
+        int sum = 0;
+        for(int j = i;j <n; j++)
+        {
+            sum += diff[j];
+            if(sum <= cost)
+            {
+                ans = max(ans, j - i + 1);
+            }
+        }
+    }
+    cout<<" "<<endl;
+    cout<<ans<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+
+//optimal
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n;
+    cin>>n;
+    string org,tar;
+    cin>>org>>tar;
+    int cost = 0;
+    cin>>cost;
+
+    vector<int>diff(n);
+
+    for(int i = 0; i < n; i++)
+    {
+        if(org[i] != tar[i])
+        {
+            diff[i] = abs((org[i] - 'a') - (tar[i] - 'a'));
+        }
+        else
+        {
+            diff[i] = 0;
+        }
+    }
+
+    int ans = 0;
+    int sum = 0;
+    int head = -1;
+    int tail = 0;
+
+    while(tail < n)
+    {
+        while(head+1 < n && sum + diff[head+1] <= cost)
+        {
+            head++;
+            sum += diff[head];
+        }
+
+        ans = max(ans,head - tail + 1);
+
+        if(tail <= head)
+        {
+               sum -= diff[tail];
+               tail++;
+             
+        }
+        else
+        {
+            tail++;
+            head = tail - 1;
+        }
+    }
+    // cout<<" "<<endl;
+    cout<<ans<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
