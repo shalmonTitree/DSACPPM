@@ -1,0 +1,115 @@
+//bruteforce
+Time Limit: 1 sec
+Memory: 256 MB
+
+Description
+Given an array consisting of integers ranging from -10⁹ to 10⁹, you have to separate the negative numbers, zeroes, and the positive numbers, but you cannot use extra space (i.e., in-place rearranging), and the rearranging should be stable.
+
+In the final array:
+
+* The negative elements should appear before the zeroes.
+* The zeroes should appear before the positive elements.
+* The relative order of the elements within each segment must remain the same.
+
+Try to do it in **O(N)** time and **O(1)** extra space.
+
+Input Format
+The first line contains a single integer **N**, the size of the array.
+The second line contains **N** integers, the elements of the array.
+
+Output Format
+Write the `rearrange` function such that it prints the properly rearranged array.
+
+Constraints
+1 ≤ N ≤ 10⁶
+-10⁹ ≤ A[i] ≤ 10⁹
+
+Sample Input 1
+
+```text
+10
+9 0 -2 -9 0 -1 4 2 0 -5
+```
+
+Sample Output 1
+
+```text
+-2 -9 -1 -5 0 0 0 9 4 2
+```
+
+Sample Input 2
+
+```text
+5
+30 40 50 -40 -30
+```
+
+Sample Output 2
+
+```text
+-40 -30 30 40 50
+```
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+void rearrange(vector<long long int> &A)
+{
+    // Write your code here
+    vector<long long>ans;
+    for(int i = 0; i < A.size(); i++)
+    {
+        if(A[i] < 0)
+        {
+            ans.push_back(A[i]);
+        }
+        
+    }
+    for(int i = 0; i < A.size(); i++)
+    {
+        if(A[i] == 0)
+        {
+            ans.push_back(A[i]);
+        }
+        
+    }
+    for(int i = 0; i < A.size(); i++)
+    {
+        if(A[i] > 0)
+        {
+            ans.push_back(A[i]);
+        }
+        
+    }
+
+    A = ans;
+}
+
+
+signed main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+
+    int n;
+    cin >> n;
+    vector<long long int> A(n);
+    for (int i = 0; i < n; i++)
+        cin >> A[i];
+
+    rearrange(A);
+
+    for (int i = 0; i < n; i++)
+        cout << A[i] << " ";
+    cout << "\n";
+}
+
+//optimal
+
+
+
+
