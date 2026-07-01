@@ -1,0 +1,110 @@
+Time Limit: 1 sec
+Memory: 256 MB
+
+Description
+Alice and Bob have a keyboard that can type lowercase English alphabets. The keyboard also has a backspace key. When the backspace key is pressed, the last character from the string is removed, and if the string is empty, nothing happens.
+
+Alice and Bob have both typed a string on their respective computers with this keyboard. When they pressed the backspace key, `#` was inserted into the string.
+
+They want to know whether their strings are equal when typed into a text editor.
+
+For example, when the string `aab#a` is typed into a text editor, we obtain `aaa`.
+
+Input Format
+Implement the `StringCompare` function that takes in the two strings `s` and `t`.
+
+Output Format
+Return `true` if the two strings are equal and `false` otherwise. For the provided template, output **Yes** if equal and **No** otherwise.
+
+Constraints
+1 ≤ |s| ≤ 100000
+1 ≤ |t| ≤ 100000
+
+Sample Input 1
+
+```text
+a##b
+#a#b
+```
+
+Sample Output 1
+
+```text
+Yes
+```
+
+Sample Input 2
+
+```text
+a##b
+#a#c
+```
+
+Sample Output 2
+
+```text
+No
+```
+
+Note
+For the first sample, processing `s = a##b` results in `b` and processing `t = #a#b` also results in `b`. Hence they are equal.
+
+For the second sample, processing `s = a##b` results in `b` while processing `t = #a#c` results in `c`. They are not equal.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+bool StringCompare(string s, string t) {
+	int n = s.size();
+    int m = t.size();
+
+    string ss = "";
+    string tt = "";
+    
+    for(int i = 0; i < n; i++)
+    {
+        if(s[i] != '#')
+        {
+            ss.push_back(s[i]);
+        }
+        else
+        {
+            if(!ss.empty())
+            {
+                ss.pop_back();
+            }
+        }
+    }
+
+     for(int i = 0; i < m; i++)
+    {
+        if(t[i] != '#')
+        {
+            tt.push_back(t[i]);
+        }
+        else
+        {
+            if(!tt.empty())
+            {
+                tt.pop_back();
+            }
+        }
+    }
+
+    return ss == tt;
+}
+
+
+int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	string s, t;
+	cin >> s >> t;
+	if (StringCompare(s, t))
+		cout << "Yes";
+	else
+		cout << "No";
+}
