@@ -1,0 +1,118 @@
+//bruteforce
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+   string s;
+   cin>>s;
+   int n = s.size();
+   int cnt = 0;
+   for(int i = 0; i < n; i++)
+   {
+
+    set<char>st;
+
+    for(int j = i; j < n; j++)
+    {
+        if(s[j] != 'a' && s[j] != 'e' && s[j] != 'i' && s[j] != 'o' && s[j] != 'u')
+        {
+            break;
+        }
+        else
+        {
+           st.insert(s[j]);
+           if(st.size() >= 5)
+           {
+            cnt++;
+           }
+        }
+    }
+    
+   }
+   cout<<cnt<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+//optimal
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n" // optional, better to avoid redefining endl
+
+void solve()
+{
+    string s;
+    cin >> s;
+
+    int n = s.size();
+
+    int tail = 0;
+    int head = -1;
+
+    unordered_map<char,int> freq;
+    set<char> vowels = {'a','e','i','o','u'};
+
+    long long ans = 0;
+
+    while (tail < n)
+    {
+        while (head + 1 < n && vowels.count(s[head + 1]))
+        {
+            head++;
+            freq[s[head]]++;
+
+            while (freq.size() == 5)
+            {
+                ans += (n - head);
+
+                freq[s[tail]]--;
+                if (freq[s[tail]] == 0)
+                    freq.erase(s[tail]);
+
+                tail++;
+            }
+        }
+
+        if (tail <= head)
+        {
+            freq.clear();
+            tail = head + 1;
+        }
+        else
+        {
+            tail++;
+            head = tail - 1;
+        }
+    }
+
+    cout << ans << endl;
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+
+    return 0;
+}
