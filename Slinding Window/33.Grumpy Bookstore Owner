@@ -1,0 +1,92 @@
+//brute 
+class Solution {
+public:
+    int maxSatisfied(vector<int>& customers, vector<int>& grumpy, int minutes) {
+        int n = customers.size();
+        int tot = 0;
+        int sum = 0;
+        int base = 0;
+
+        for(int i = 0; i < n; i++)
+        {
+            if(grumpy[i] == 0)
+            {
+                base += customers[i];
+            }
+        }
+
+        for(int i = 0; i <= n - minutes; i++)
+        {
+            int ans = 0;
+            for(int j = i; j < i + minutes; j++)
+            {
+                if(grumpy[j] == 1)
+                {
+                    ans += customers[j];
+                } 
+            }
+            tot = max(tot,ans);
+        }
+        return tot+base;
+    }
+};
+
+
+//optimal
+class Solution {
+public:
+    int maxSatisfied(vector<int>& customers, vector<int>& grumpy, int minutes) {
+        int n = customers.size();
+
+        int head = -1;
+        int tail = 0;
+
+        int base = 0;
+        int maxi = 0;
+        int sum = 0;
+
+        for(int i = 0; i < n; i++)
+        {
+            if(grumpy[i] == 0) base += customers[i];
+        }
+        
+        while(tail < n)
+        {
+            while(head + 1 < n && ((head+1) - tail + 1 <= minutes))
+            {
+               
+
+                head++;
+                
+                if(grumpy[head] == 1)
+                {
+                    sum += customers[head];
+
+                }
+            }
+
+            if(head - tail + 1 == minutes)
+            {
+                 maxi = max(maxi,sum);
+            }
+           
+
+            if(tail <= head)
+            {
+                if(grumpy[tail] == 1)
+                {
+                    sum -= customers[tail];
+                    
+                }
+                tail++;
+            }
+            else
+            {
+                tail++;
+                head = tail - 1;
+            }
+        }
+        return base + maxi;
+    }
+};
+
