@@ -1,0 +1,67 @@
+//bruteforce
+class Solution {
+public:
+    int numOfSubarrays(vector<int>& arr, int k, int threshold) {
+        int n = arr.size();
+
+        int cnt = 0;
+        for(int i = 0; i < n; i++)
+        {
+            long long sum = 0;
+            for(int j = i; j < n; j++)
+            {
+                sum += arr[j];
+                if(j-i+1 == k)
+                {
+                    if(sum/k >= threshold)
+                    {
+                        cnt++;
+                    }
+                }
+                else if(j-i+1>k)
+                {
+                    break;
+                }
+            }
+        }
+        return cnt;
+    }
+};
+
+//optimal
+class Solution {
+public:
+    int numOfSubarrays(vector<int>& arr, int k, int threshold) {
+        int n = arr.size();
+
+        int cnt = 0;
+        int head = -1;
+        int tail = 0;
+        long long sum = 0;
+        while(tail < n)
+        {
+            while(head + 1 < n && ((head+1) - tail + 1) <= k)
+            {
+                head++;
+                sum += arr[head];
+            }
+
+            if((head - tail + 1 == k) && sum/k >= threshold)
+            {
+                cnt++;
+            }
+
+            if(tail <= head)
+            {
+                sum -= arr[tail];
+                tail++;
+            }
+            else
+            {
+                tail++;
+                head = tail - 1;
+            }
+        }
+        return cnt;
+    }
+};
