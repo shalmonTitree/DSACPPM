@@ -1,0 +1,66 @@
+//bruteforce
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int n = s.size();
+        int ans = 0;
+
+        for(int i = 0; i < n; i++)
+        {
+            set<char>st;
+            for(int j = i; j < n; j++)
+            {
+                if(st.count(s[j]))
+                {
+                    break;
+                }
+                else
+                {
+                    st.insert(s[j]);
+                    ans = max(ans,j - i + 1);
+                }
+            }
+        }
+        return ans;
+    }
+};
+
+
+//optimal
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int n = s.size();
+        int ans = 0;
+
+        int head = -1;
+        int tail = 0;
+        vector<int>freq(256,0);
+
+        while(tail < n)
+        {
+            while(head + 1 < n && (freq[s[head+1]] == 0))
+            {
+                head++;
+                freq[s[head]]++;
+            }
+
+            ans = max(ans,head - tail + 1);
+
+            if(tail <= head)
+            {
+                
+                freq[s[tail]]--;
+                
+                tail++;
+            }
+            else
+            {
+                tail++;
+                head = tail - 1;
+            }
+        }
+        return ans;
+
+    }
+};
