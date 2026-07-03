@@ -1,0 +1,73 @@
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
+        int n = s.size();
+        int ans = 0;
+        int maxlen = 0;
+        for(int i = 0; i < n; i++)
+        {
+            vector<int>freq(26,0);
+            int maxifreq = 0;
+            for(int j = i; j < n; j++)
+            {
+                int idx = s[j] - 'A';
+                freq[idx]++;
+                maxifreq = max(maxifreq,freq[idx]);
+                int change = (j-i+1) - maxifreq;
+                if(change <= k)
+                {
+                    maxlen = max(maxlen,j-i+1);
+                }
+
+            }
+        }
+        return maxlen;
+    }
+};
+
+//optimal
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
+        int n = s.size();
+
+        int head = -1;
+        int tail = 0;
+        int maxLen = 0;
+        int maxFreq = 0;
+        vector<int> freq(26, 0);
+
+        while (tail < n) {
+
+            // Acquire
+            while (head + 1 < n) {
+                head++;
+
+                int idx = s[head] - 'A';
+                freq[idx]++;
+                maxFreq = max(maxFreq, freq[idx]);
+
+                int change = (head - tail + 1) - maxFreq;
+
+                if (change > k)
+                    break;
+            }
+
+            // If current window is valid
+            if ((head - tail + 1) - maxFreq <= k)
+                maxLen = max(maxLen, head - tail + 1);
+
+            // Release
+            if (tail <= head) {
+                int idx = s[tail] - 'A';
+                freq[idx]--;
+                tail++;
+            } else {
+                tail++;
+                head = tail - 1;
+            }
+        }
+
+        return maxLen;
+    }
+};
