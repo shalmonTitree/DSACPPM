@@ -25,7 +25,6 @@ public:
 
 
 //optimal
-
 class Solution {
 public:
     int countGoodSubstrings(string s) {
@@ -38,7 +37,7 @@ public:
         set<char>st;
         while(tail < n)
         {
-            while(head + 1 < n && ((head-1)- tail + 1) <= 3)
+            while(head + 1 < n && (head-tail + 2) <= 3)
             {
                 if(st.count(s[head+1]))
                 {
