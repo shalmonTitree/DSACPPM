@@ -1,0 +1,72 @@
+//bruteforce
+class Solution {
+public:
+    int countGoodSubstrings(string s) {
+        int n = s.size();
+        int cnt = 0;
+        for(int i = 0; i <= n - 3; i++)
+        {
+            set<int>st;
+            string ss = "";
+            for(int j = i; j < i + 3; j++)
+            {
+                st.insert(s[j]);
+                ss.push_back(s[j]);
+            }
+            if(st.size() == 3)
+            {
+                
+               cnt++;
+            }
+        }
+        return cnt;
+    }
+};
+
+
+//optimal
+
+class Solution {
+public:
+    int countGoodSubstrings(string s) {
+        int n = s.size();
+        int cnt = 0;
+        
+        int head = -1;
+        int tail = 0;
+        int ans = 0;
+        set<char>st;
+        while(tail < n)
+        {
+            while(head + 1 < n && ((head-1)- tail + 1) <= 3)
+            {
+                if(st.count(s[head+1]))
+                {
+                    break;
+                }
+                else
+                {
+                    head++;
+                    st.insert(s[head]);
+                }
+            }
+
+            if(head - tail + 1 == 3)
+            {
+                ans++;
+            }
+
+            if(tail <= head)
+            {
+                st.erase(s[tail]);
+                tail++;
+            }
+            else
+            {
+                tail++;
+                head = tail - 1;
+            }
+        }
+        return ans;
+    }
+};
