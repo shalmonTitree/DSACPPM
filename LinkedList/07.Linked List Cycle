@@ -1,0 +1,42 @@
+1. Using a Hash Set
+Time Complexity: O(n)
+Space Complexity: O(n)
+
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        unordered_set<ListNode*> st;
+
+        while (head != NULL) {
+            if (st.find(head) != st.end())
+                return true;
+
+            st.insert(head);
+            head = head->next;
+        }
+
+        return false;
+    }
+};
+
+2. Floyd's Cycle Detection Algorithm (Tortoise and Hare)
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        ListNode* slow = head;
+        ListNode* fast = head;
+
+        while (fast != NULL && fast->next != NULL) {
+            slow = slow->next;
+            fast = fast->next->next;
+
+            if (slow == fast)
+                return true;
+        }
+
+        return false;
+    }
+};
