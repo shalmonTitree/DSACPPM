@@ -1,0 +1,110 @@
+1.Using Array/Vector
+Time: O(n)
+Space: O(n)
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        vector<int> arr;
+
+        ListNode* temp = head;
+
+        while (temp != NULL) {
+            arr.push_back(temp->val);
+            temp = temp->next;
+        }
+
+        temp = head;
+        int i = arr.size() - 1;
+
+        while (temp != NULL) {
+            temp->val = arr[i--];
+            temp = temp->next;
+        }
+
+        return head;
+    }
+};
+
+2. Using Stack
+Time: O(n)
+Space: O(n)
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if (head == NULL)
+            return NULL;
+
+        stack<ListNode*> st;
+
+        ListNode* temp = head;
+
+        while (temp != NULL) {
+            st.push(temp);
+            temp = temp->next;
+        }
+
+        ListNode* newHead = st.top();
+        st.pop();
+
+        temp = newHead;
+
+        while (!st.empty()) {
+            temp->next = st.top();
+            st.pop();
+            temp = temp->next;
+        }
+
+        temp->next = NULL;
+
+        return newHead;
+    }
+};
+
+3. Iterative (Three Pointers) ✅ Optimal
+Time: O(n)
+Space: O(1)
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* prev = NULL;
+        ListNode* curr = head;
+
+        while (curr != NULL) {
+            ListNode* next = curr->next;
+
+            curr->next = prev;
+
+            prev = curr;
+            curr = next;
+        }
+
+        return prev;
+    }
+};
+
+
+4. Recursive
+Time: O(n)
+Space: O(n) (recursion stack)
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if (head == NULL || head->next == NULL)
+            return head;
+
+        ListNode* newHead = reverseList(head->next);
+
+        head->next->next = head;
+        head->next = NULL;
+
+        return newHead;
+    }
+};
+
+
+
+
