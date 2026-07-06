@@ -1,0 +1,55 @@
+1. Using Hash Map / Hash Set
+Time: O(n)
+Space: O(n)
+
+class Solution {
+public:
+    int countNodesinLoop(Node *head) {
+        unordered_map<Node*, int> mp;
+
+        Node* curr = head;
+        int step = 0;
+
+        while (curr != NULL) {
+            if (mp.find(curr) != mp.end()) {
+                return step - mp[curr];
+            }
+
+            mp[curr] = step;
+            step++;
+            curr = curr->next;
+        }
+
+        return 0;
+    }
+};
+
+2. Floyd's Cycle Detection
+Time: O(n)
+Space: O(1)
+class Solution {
+public:
+    int countNodesinLoop(Node *head) {
+        Node* slow = head;
+        Node* fast = head;
+
+        while (fast != NULL && fast->next != NULL) {
+            slow = slow->next;
+            fast = fast->next->next;
+
+            if (slow == fast) {
+                int cnt = 1;
+                fast = fast->next;
+
+                while (fast != slow) {
+                    cnt++;
+                    fast = fast->next;
+                }
+
+                return cnt;
+            }
+        }
+
+        return 0;
+    }
+};
