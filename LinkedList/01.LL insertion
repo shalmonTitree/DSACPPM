@@ -1,92 +1,111 @@
-#include <iostream>
+#include<iostream>
+#include<bits/stdc++.h>
 using namespace std;
 
-class Node {
-public:
+class Node{
+    public :
+    
     int data;
     Node* next;
-
-    Node(int val) {
-        data = val;
-        next = nullptr;
+    
+    Node(int x)
+    {
+        data = x;
+        next = NULL;
     }
 };
 
-Node* head = nullptr;
-
-// Insert at beginning
-void insertBeg(int val) {
-    Node* newNode = new Node(val);
-    newNode->next = head;
-    head = newNode;
-}
-
-// Insert at end
-void insertEnd(int val) {
-    Node* newNode = new Node(val);
-
-    if (head == nullptr) {
-        head = newNode;
+void insertAtBeg(Node* &head,int x)
+{
+    Node* newnode = new Node(x);
+    
+    if(head == NULL)
+    {
+        head = newnode;
         return;
     }
+    
+   newnode->next = head;
+   head = newnode;
+}
 
-    Node* temp = head;
-    while (temp->next != nullptr) {
+void insertAtEnd(Node* &head,int x)
+{
+    Node* newnode = new Node(x);
+    
+     if(head == NULL)
+    {
+        head = newnode;
+        return;
+    }
+    
+    Node*temp = head;
+    while(temp->next != NULL)
+    {
         temp = temp->next;
     }
-
-    temp->next = newNode;
+    
+    temp->next = newnode;
 }
 
-// Insert at position (1-based indexing)
-void insertPos(int val, int pos) {
-    if (pos <= 0) {
-        cout << "Invalid Position\n";
+void insertBetween(Node* &head,int x,int pos)
+{
+    if(pos < 1)
+    {
         return;
     }
-
-    if (pos == 1) {
-        insertBeg(val);
+    
+    if(pos == 1)
+    {
+        insertAtBeg(head,x);
         return;
     }
-
+    
+    Node* newnode = new Node(x);
+    Node* curr = head;
+    for(int i = 1; i < pos - 1 && curr != NULL; i++)
+    {
+        curr = curr->next;
+    }
+    
+    if(curr == NULL)
+    {
+        return;
+    }
+    
+    newnode->next = curr->next;
+    curr->next = newnode;
+}
+void print(Node* head)
+{
     Node* temp = head;
-
-    for (int i = 1; i < pos - 1 && temp != nullptr; i++) {
+    while(temp != NULL)
+    {
+        cout<<temp->data<<" ";
         temp = temp->next;
     }
-
-    if (temp == nullptr) {
-        cout << "Position Out of Range\n";
-        return;
-    }
-
-    Node* newNode = new Node(val);
-    newNode->next = temp->next;
-    temp->next = newNode;
 }
 
-// Display list
-void display() {
-    Node* temp = head;
-
-    while (temp != nullptr) {
-        cout << temp->data << " ";
-        temp = temp->next;
-    }
-    cout << endl;
-}
-
-int main() {
-    insertBeg(20);
-    insertBeg(10);
-
-    insertEnd(30);
-    insertEnd(40);
-
-    insertPos(25, 3);
-
-    display();
-
-    return 0;
+int main()
+{
+    Node* head = NULL;
+    insertAtBeg(head,10);
+    insertAtBeg(head,20);
+    insertAtBeg(head,30);
+    print(head);
+    cout<<endl;
+    insertAtEnd(head,-10);
+    insertAtEnd(head,-20);
+    insertAtEnd(head,-30);
+    print(head);
+    cout<<endl;
+    insertBetween(head,50,3);
+    print(head);
+    cout<<endl;
+    insertBetween(head,50,1);
+    print(head);
+    cout<<endl;
+    
+    
+    
 }
