@@ -1,0 +1,39 @@
+//bruteforce
+Complexity
+Time: O(n)
+Space: O(n)
+
+class Solution {
+public:
+    ListNode* middleNode(ListNode* head) {
+        vector<ListNode*> nodes;
+
+        ListNode* temp = head;
+
+        while (temp != NULL) {
+            nodes.push_back(temp);
+            temp = temp->next;
+        }
+
+        return nodes[nodes.size() / 2];
+    }
+};
+
+
+//optimal
+Time Complexity: O(n)
+Space Complexity: O(1)
+class Solution {
+public:
+    ListNode* middleNode(ListNode* head) {
+        ListNode* slow = head;
+        ListNode* fast = head;
+
+        while (fast != NULL && fast->next != NULL) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+
+        return slow;
+    }
+};
