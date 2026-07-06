@@ -1,0 +1,106 @@
+1. Copy Values into an Array/Vector (Brute Force)
+Time: O(n)
+Space: O(n)
+
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        vector<int> arr;
+
+        while (head != NULL) {
+            arr.push_back(head->val);
+            head = head->next;
+        }
+
+        int i = 0, j = arr.size() - 1;
+
+        while (i < j) {
+            if (arr[i] != arr[j])
+                return false;
+
+            i++;
+            j--;
+        }
+
+        return true;
+    }
+};
+
+2. Using a Stack
+Time: O(n)
+Space: O(n)
+
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        stack<int> st;
+
+        ListNode* temp = head;
+
+        while (temp != NULL) {
+            st.push(temp->val);
+            temp = temp->next;
+        }
+
+        temp = head;
+
+        while (temp != NULL) {
+            if (temp->val != st.top())
+                return false;
+
+            st.pop();
+            temp = temp->next;
+        }
+
+        return true;
+    }
+};
+
+3. Reverse the Second Half (Optimal) ✅
+Time: O(n)
+Space: O(1)
+
+class Solution {
+public:
+    ListNode* reverse(ListNode* head) {
+        ListNode* prev = NULL;
+        ListNode* curr = head;
+
+        while (curr != NULL) {
+            ListNode* next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+        }
+
+        return prev;
+    }
+
+    bool isPalindrome(ListNode* head) {
+        if (head == NULL || head->next == NULL)
+            return true;
+
+        ListNode* slow = head;
+        ListNode* fast = head;
+
+        while (fast != NULL && fast->next != NULL) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+
+        ListNode* secondHalf = reverse(slow);
+
+        ListNode* firstHalf = head;
+        ListNode* temp = secondHalf;
+
+        while (temp != NULL) {
+            if (firstHalf->val != temp->val)
+                return false;
+
+            firstHalf = firstHalf->next;
+            temp = temp->next;
+        }
+
+        return true;
+    }
+};
