@@ -1,0 +1,135 @@
+Approach 1: Brute Force (Store Values)
+Complexity
+Time: O(n log n)
+Space: O(n)
+C++
+class Solution {
+public:
+    Node* segregate(Node* head) {
+
+        vector<int> nums;
+
+        Node* curr = head;
+
+        while (curr) {
+            nums.push_back(curr->data);
+            curr = curr->next;
+        }
+
+        sort(nums.begin(), nums.end());
+
+        curr = head;
+
+        int i = 0;
+
+        while (curr) {
+            curr->data = nums[i++];
+            curr = curr->next;
+        }
+
+        return head;
+    }
+};
+
+Approach 2: Counting Sort (Better)
+class Solution {
+public:
+    Node* segregate(Node* head) {
+
+        // Count of 0s, 1s and 2s
+        int count[3] = {0, 0, 0};
+
+        Node* temp = head;
+
+        // Step 1: Count each value
+        while (temp != NULL) {
+            count[temp->data]++;
+            temp = temp->next;
+        }
+
+        // Step 2: Replace node values
+        temp = head;
+
+        while (temp != NULL) {
+
+            if (count[0] > 0) {
+                temp->data = 0;
+                count[0]--;
+            }
+            else if (count[1] > 0) {
+                temp->data = 1;
+                count[1]--;
+            }
+            else {
+                temp->data = 2;
+                count[2]--;
+            }
+
+            temp = temp->next;
+        }
+
+        return head;
+    }
+};
+
+
+Approach 3: Three Dummy Lists
+Complexity
+Time: O(n)
+Space: O(1)
+
+/* Node is defined as
+  class Node {
+  public:
+    int data;
+    Node* next;
+
+    Node(int x) {
+        data = x;
+        next = nullptr;
+    }
+};
+*/
+class Solution {
+  public:
+    Node* segregate(Node* head) {
+        if(!head || !head->next)
+        {
+            return head;
+        }
+        
+        Node zero(-1),one(-1),two(-1);
+        
+        Node* z = &zero;
+        Node* o = &one;
+        Node* t = &two;
+        Node* temp = head;
+        
+        while(temp)
+        {
+            if(temp->data == 0)
+            {
+                z->next = temp;
+                z = z->next;
+            }
+            else if(temp->data == 1)
+            {
+                o->next = temp;
+                o = o->next;
+            }
+            else
+            {
+                t->next = temp;
+                t = t->next;
+            }
+            temp = temp->next; 
+        }
+        t->next = NULL;
+        o->next = two.next;
+        z->next = one.next ? one.next : two.next;
+        
+        return zero.next ? zero.next : (one.next ? one.next : two.next);
+        
+        
+    }
+};
