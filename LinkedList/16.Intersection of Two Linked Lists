@@ -1,0 +1,107 @@
+Approach 1: Brute Force
+Time Complexity
+O(n × m)
+Space Complexity
+O(1)
+
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+
+        ListNode* a = headA;
+
+        while (a != NULL) {
+
+            ListNode* b = headB;
+
+            while (b != NULL) {
+
+                if (a == b)
+                    return a;
+
+                b = b->next;
+            }
+
+            a = a->next;
+        }
+
+        return NULL;
+    }
+};
+
+Approach 2: Hash Set
+Complexity
+Time: O(n + m)
+Space: O(n)
+C++
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+
+        unordered_set<ListNode*> st;
+
+        while (headA) {
+            st.insert(headA);
+            headA = headA->next;
+        }
+
+        while (headB) {
+
+            if (st.count(headB))
+                return headB;
+
+            headB = headB->next;
+        }
+
+        return nullptr;
+    }
+};
+
+
+Approach 3: Difference in Length
+Complexity
+Time: O(n + m)
+Space: O(1)
+C++
+class Solution {
+public:
+
+    int length(ListNode* head)
+    {
+        int len = 0;
+
+        while (head) {
+            len++;
+            head = head->next;
+        }
+
+        return len;
+    }
+
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+
+        int lenA = length(headA);
+        int lenB = length(headB);
+
+        while (lenA > lenB) {
+            headA = headA->next;
+            lenA--;
+        }
+
+        while (lenB > lenA) {
+            headB = headB->next;
+            lenB--;
+        }
+
+        while (headA && headB) {
+
+            if (headA == headB)
+                return headA;
+
+            headA = headA->next;
+            headB = headB->next;
+        }
+
+        return nullptr;
+    }
+};
