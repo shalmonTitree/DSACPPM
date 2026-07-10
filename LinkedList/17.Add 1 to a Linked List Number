@@ -1,0 +1,114 @@
+//brute
+class Solution {
+public:
+    Node* addOne(Node* head) {
+        long long num = 0;
+        Node* temp = head;
+
+        while (temp) {
+            num = num * 10 + temp->data;
+            temp = temp->next;
+        }
+
+        num++;
+
+        string s = to_string(num);
+
+        Node* newHead = new Node(s[0] - '0');
+        Node* curr = newHead;
+
+        for (int i = 1; i < s.size(); i++) {
+            curr->next = new Node(s[i] - '0');
+            curr = curr->next;
+        }
+
+        return newHead;
+    }
+};
+
+
+//brute
+class Solution {
+public:
+    Node* addOne(Node* head) {
+
+        stack<Node*> st;
+
+        Node* temp = head;
+
+        while (temp) {
+            st.push(temp);
+            temp = temp->next;
+        }
+
+        int carry = 1;
+
+        while (!st.empty() && carry) {
+
+            Node* node = st.top();
+            st.pop();
+
+            int sum = node->data + carry;
+
+            node->data = sum % 10;
+            carry = sum / 10;
+        }
+
+        if (carry) {
+            Node* newNode = new Node(carry);
+            newNode->next = head;
+            head = newNode;
+        }
+
+        return head;
+    }
+};
+
+Solution 2: Reverse Linked List
+Complexity
+Time: O(n)
+Space: O(1)
+
+class Solution {
+public:
+
+    Node* reverse(Node* head) {
+        Node *prev = NULL, *curr = head;
+
+        while (curr) {
+            Node* nextNode = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = nextNode;
+        }
+
+        return prev;
+    }
+
+    Node* addOne(Node* head) {
+
+        head = reverse(head);
+
+        Node* temp = head;
+        int carry = 1;
+
+        while (temp) {
+
+            int sum = temp->data + carry;
+
+            temp->data = sum % 10;
+            carry = sum / 10;
+
+            if (!temp->next && carry) {
+                temp->next = new Node(carry);
+                carry = 0;
+            }
+
+            temp = temp->next;
+        }
+
+        return reverse(head);
+    }
+};
+
+
