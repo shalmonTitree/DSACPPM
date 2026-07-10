@@ -1,0 +1,179 @@
+1. Brute Force (Convert to Integer)
+Time: O(n)
+Space: O(1)
+
+class Solution {
+public:
+    long long solve(ListNode* head) {
+        long long num = 0;
+        long long place = 1;
+
+        while (head) {
+            num += head->val * place;
+            place *= 10;
+            head = head->next;
+        }
+
+        return num;
+    }
+
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+
+        long long num = solve(l1) + solve(l2);
+
+        if (num == 0)
+            return new ListNode(0);
+
+        ListNode* head = new ListNode(num % 10);
+        num /= 10;
+
+        ListNode* temp = head;
+
+        while (num) {
+            temp->next = new ListNode(num % 10);
+            temp = temp->next;
+            num /= 10;
+        }
+
+        return head;
+    }
+};
+
+2. String-Based Addition
+Time: O(n)
+Space: O(n)
+
+class Solution {
+public:
+    string solve(ListNode* head) {
+        string s = "";
+
+        while (head) {
+            s.push_back(head->val + '0');
+            head = head->next;
+        }
+
+        reverse(s.begin(), s.end());
+        return s;
+    }
+
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+
+        string a = solve(l1);
+        string b = solve(l2);
+
+        int i = a.size() - 1;
+        int j = b.size() - 1;
+
+        int carry = 0;
+        string ans = "";
+
+        while (i >= 0 || j >= 0 || carry) {
+
+            int sum = carry;
+
+            if (i >= 0)
+                sum += a[i--] - '0';
+
+            if (j >= 0)
+                sum += b[j--] - '0';
+
+            ans.push_back(sum % 10 + '0');
+
+            carry = sum / 10;
+        }
+
+        ListNode* head = new ListNode(ans[0] - '0');
+        ListNode* temp = head;
+
+        for (int k = 1; k < ans.size(); k++) {
+            temp->next = new ListNode(ans[k] - '0');
+            temp = temp->next;
+        }
+
+        return head;
+    }
+};
+
+3. Stack Approach
+Time: O(n)
+Space: O(n)
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+
+        stack<int> s1, s2;
+
+        while (l1) {
+            s1.push(l1->val);
+            l1 = l1->next;
+        }
+
+        while (l2) {
+            s2.push(l2->val);
+            l2 = l2->next;
+        }
+
+        int carry = 0;
+        ListNode* head = nullptr;
+
+        while (!s1.empty() || !s2.empty() || carry) {
+
+            int sum = carry;
+
+            if (!s1.empty()) {
+                sum += s1.top();
+                s1.pop();
+            }
+
+            if (!s2.empty()) {
+                sum += s2.top();
+                s2.pop();
+            }
+
+            ListNode* node = new ListNode(sum % 10);
+            node->next = head;
+            head = node;
+
+            carry = sum / 10;
+        }
+
+        return head;
+    }
+};
+
+4. Optimal Solution (Expected)
+Time: O(max(n, m))
+Space: O(max(n, m))
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+
+        ListNode dummy(0);
+        ListNode* tail = &dummy;
+
+        int carry = 0;
+
+        while (l1 || l2 || carry) {
+
+            int sum = carry;
+
+            if (l1) {
+                sum += l1->val;
+                l1 = l1->next;
+            }
+
+            if (l2) {
+                sum += l2->val;
+                l2 = l2->next;
+            }
+
+            carry = sum / 10;
+
+            tail->next = new ListNode(sum % 10);
+            tail = tail->next;
+        }
+
+        return dummy.next;
+    }
+};
