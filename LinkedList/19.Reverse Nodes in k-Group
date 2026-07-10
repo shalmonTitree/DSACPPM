@@ -1,0 +1,150 @@
+Approach 1: Recursive
+Complexity
+Time: O(n)
+Space: O(n/k)
+
+Steps
+Check if there are at least k nodes.
+Reverse the first k nodes.
+Recursively solve the remaining list.
+Connect the reversed part to the recursive result.
+
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+
+        ListNode* temp = head;
+
+        // Check if at least k nodes exist
+        for (int i = 0; i < k; i++) {
+            if (temp == NULL)
+                return head;
+            temp = temp->next;
+        }
+
+        ListNode* prev = NULL;
+        ListNode* curr = head;
+        ListNode* next = NULL;
+
+        int count = 0;
+
+        while (curr && count < k) {
+            next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+            count++;
+        }
+
+        head->next = reverseKGroup(curr, k);
+
+        return prev;
+    }
+};
+
+Approach 2: Iterative (Optimal)
+Complexity
+Time: O(n)
+Space: O(1)
+
+class Solution {
+public:
+
+    ListNode* getKth(ListNode* curr, int k) {
+        while (curr && k > 0) {
+            curr = curr->next;
+            k--;
+        }
+        return curr;
+    }
+
+    ListNode* reverseKGroup(ListNode* head, int k) {
+
+        ListNode dummy(0);
+        dummy.next = head;
+
+        ListNode* groupPrev = &dummy;
+
+        while (true) {
+
+            ListNode* kth = getKth(groupPrev, k);
+
+            if (!kth)
+                break;
+
+            ListNode* groupNext = kth->next;
+
+            ListNode* prev = groupNext;
+            ListNode* curr = groupPrev->next;
+
+            while (curr != groupNext) {
+
+                ListNode* temp = curr->next;
+
+                curr->next = prev;
+
+                prev = curr;
+
+                curr = temp;
+            }
+
+            ListNode* temp = groupPrev->next;
+
+            groupPrev->next = kth;
+
+            groupPrev = temp;
+        }
+
+        return dummy.next;
+    }
+};
+
+Approach 3: Using Stack
+Complexity
+Time: O(n)
+Space: O(k)
+
+Idea
+Push k nodes into a stack.
+Pop them to reverse.
+If fewer than k nodes remain, attach them unchanged.
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+
+        stack<ListNode*> st;
+
+        ListNode dummy(0);
+        ListNode* tail = &dummy;
+
+        while (head) {
+
+            int count = 0;
+            ListNode* temp = head;
+
+            while (temp && count < k) {
+                st.push(temp);
+                temp = temp->next;
+                count++;
+            }
+
+            if (count < k) {
+                tail->next = head;
+                break;
+            }
+
+            while (!st.empty()) {
+                tail->next = st.top();
+                st.pop();
+                tail = tail->next;
+            }
+
+            head = temp;
+        }
+
+        tail->next = nullptr;
+
+        return dummy.next;
+    }
+};
+
