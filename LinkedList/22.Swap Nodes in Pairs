@@ -1,0 +1,105 @@
+//bruteforce
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        vector<int>nodes;
+        ListNode* temp = head;
+        while(temp)
+        {
+            nodes.push_back(temp->val);
+            temp = temp->next;
+        }
+
+        for(int i = 0; i + 1< nodes.size(); i+=2)
+        {
+            swap(nodes[i],nodes[i+1]);
+        }
+
+        temp = head;
+        for(int i = 0; i < nodes.size() ; i++)
+        {
+            temp->val = nodes[i];
+            temp = temp->next;
+        }
+        return head;
+    }
+};
+
+
+//better : because we are not swaping nodes but just values
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        ListNode* temp = head;
+        while(temp && temp->next)
+        {
+            int num = temp->val;
+            temp->val = temp->next->val;
+            temp->next->val = num;
+
+            temp = temp->next->next;
+        }
+        return head;
+    }
+};
+
+//actual node swaping
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        ListNode dummy(0);
+        dummy.next = head;
+
+        ListNode* prev = &dummy;
+
+        while(prev->next && prev->next->next)
+        {
+            ListNode* first = prev->next;
+            ListNode* second = first->next;
+
+
+            first->next = second->next;
+            second->next = first;
+            prev->next = second;
+
+            // Move to the next pair
+            prev = first;
+        }
+
+        return dummy.next;
+    }
+};
