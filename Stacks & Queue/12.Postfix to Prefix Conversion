@@ -1,0 +1,26 @@
+class Solution {
+public:
+    string postToPre(string post_exp) {
+
+        stack<string> st;
+
+        for (char ch : post_exp) {
+
+            if (isalnum(ch)) {
+                st.push(string(1, ch));
+            }
+            else {
+
+                string op2 = st.top();
+                st.pop();
+
+                string op1 = st.top();
+                st.pop();
+
+                st.push(ch + op1 + op2);
+            }
+        }
+
+        return st.top();
+    }
+};
