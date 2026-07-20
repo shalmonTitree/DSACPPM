@@ -1,0 +1,67 @@
+class Solution {
+public:
+    vector<int>PSI(vector<int>& heights)
+    {
+        vector<int>ans; //store index
+        stack<pair<int,int>>st; //element,index
+        for(int i = 0; i < heights.size(); i++)
+        {
+            while(!st.empty() && st.top().first >= heights[i])
+            {
+                st.pop();
+            }
+
+            if(st.empty())
+            {
+                ans.push_back(-1);
+            }
+            else
+            {
+                ans.push_back(st.top().second);
+            }
+
+            st.push({heights[i], i});
+        }
+        return ans;
+    }
+
+
+    vector<int>NSI(vector<int>& heights)
+    {
+        vector<int>ans; //store index
+        stack<pair<int,int>>st; //element,index
+        for(int i = heights.size() - 1; i >= 0; i--)
+        {
+            while(!st.empty() && st.top().first >= heights[i])
+            {
+                st.pop();
+            }
+
+            if(st.empty())
+            {
+                ans.push_back(heights.size());
+            }
+            else
+            {
+                ans.push_back(st.top().second);
+            }
+            st.push({heights[i], i});
+        }
+        reverse(ans.begin(), ans.end());
+        return ans;
+    }
+
+
+    int largestRectangleArea(vector<int>& heights) {
+        vector<int>previousSmallerIndex = PSI(heights);
+        vector<int>NextSmallerIndex = NSI(heights);
+        int ans = 0;
+        for(int i = 0; i < heights.size(); i++)
+        {
+            int val = (NextSmallerIndex[i] - previousSmallerIndex[i] - 1) * heights[i];
+            ans = max(ans,val);
+        }
+        return ans;
+    }
+};
+
