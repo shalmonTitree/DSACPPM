@@ -46,3 +46,54 @@ public:
  * int param_3 = obj->top();
  * int param_4 = obj->getMin();
  */
+
+
+//witout using extra space
+class MinStack {
+public:
+    stack<long long> s1;
+    long long mini;
+
+    MinStack() {
+
+    }
+
+    void push(int value) {
+
+        if (s1.empty()) {
+            mini = value;
+            s1.push(value);
+        }
+        else if (value >= mini) {
+            s1.push(value);
+        }
+        else {
+            s1.push(2LL * value - mini);
+            mini = value;
+        }
+    }
+
+    void pop() {
+
+        if (s1.empty())
+            return;
+
+        if (s1.top() < mini) {
+            mini = 2 * mini - s1.top();
+        }
+
+        s1.pop();
+    }
+
+    int top() {
+
+        if (s1.top() < mini)
+            return mini;
+
+        return s1.top();
+    }
+
+    int getMin() {
+        return mini;
+    }
+};
