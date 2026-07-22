@@ -1,0 +1,116 @@
+//bruteforce
+Time Complexity
+Exponential (O(2^n) approximately)
+Space Complexity
+O(n + cap) (recursive stack)
+
+class Solution {
+public:
+    int solve(int idx, vector<int>& price, vector<int>& length, int cap)
+    {
+        if (idx == 0)
+            return (cap / length[0]) * price[0];
+
+        int notTake = solve(idx - 1, price, length, cap);
+
+        int take = 0;
+        if (length[idx] <= cap)
+            take = price[idx] + solve(idx, price, length, cap - length[idx]);
+
+        return max(take, notTake);
+    }
+
+    int cutRod(vector<int>& price)
+    {
+        int n = price.size();
+
+        vector<int> length(n);
+        for (int i = 0; i < n; i++)
+            length[i] = i + 1;
+
+        return solve(n - 1, price, length, n);
+    }
+};
+
+//memo
+Time Complexity
+O(n × n) = O(n²)
+Space Complexity
+O(n²) DP table
+O(n) recursion stack
+
+Total: O(n²)
+
+class Solution {
+public:
+    int solve(int idx, vector<int>& price, vector<int>& length,
+              int cap, vector<vector<int>>& dp)
+    {
+        if (idx == 0)
+            return (cap / length[0]) * price[0];
+
+        if (dp[idx][cap] != -1)
+            return dp[idx][cap];
+
+        int notTake = solve(idx - 1, price, length, cap, dp);
+
+        int take = 0;
+        if (length[idx] <= cap)
+            take = price[idx] + solve(idx, price, length,
+                                      cap - length[idx], dp);
+
+        return dp[idx][cap] = max(take, notTake);
+    }
+
+    int cutRod(vector<int>& price)
+    {
+        int n = price.size();
+
+        vector<int> length(n);
+        for (int i = 0; i < n; i++)
+            length[i] = i + 1;
+
+        vector<vector<int>> dp(n, vector<int>(n + 1, -1));
+
+        return solve(n - 1, price, length, n, dp);
+    }
+};
+
+//tabu
+Time Complexity
+O(n²)
+Space Complexity
+O(n²)
+
+class Solution {
+public:
+    int cutRod(vector<int>& price)
+    {
+        int n = price.size();
+
+        vector<int> length(n);
+        for (int i = 0; i < n; i++)
+            length[i] = i + 1;
+
+        vector<vector<int>> dp(n, vector<int>(n + 1, 0));
+
+        for (int cap = 0; cap <= n; cap++)
+            dp[0][cap] = (cap / length[0]) * price[0];
+
+        for (int idx = 1; idx < n; idx++)
+        {
+            for (int cap = 0; cap <= n; cap++)
+            {
+                int notTake = dp[idx - 1][cap];
+
+                int take = 0;
+                if (length[idx] <= cap)
+                    take = price[idx] + dp[idx][cap - length[idx]];
+
+                dp[idx][cap] = max(take, notTake);
+            }
+        }
+
+        return dp[n - 1][n];
+    }
+};
