@@ -1,0 +1,131 @@
+//bruteforce
+Time Complexity
+At every item, you have 2 choices:
+Take the item.
+Don't take the item.
+so TC : O(2ⁿ) 
+
+Space Complexity
+There is no extra data structure used.
+The maximum depth of the recursion stack is n (one recursive call per item).
+SC : O(n)
+
+class Solution {
+	public:
+	int solve(int idx, int W, vector<int> &val, vector<int> &wt)
+	{
+		
+		if (idx == 0)
+			{
+			if (wt[0] <= W)
+				return val[0];
+			return 0;
+		}
+		
+		if (W == 0)
+			return 0;
+		
+		int notTake = solve(idx - 1, W, val, wt);
+		
+		int take = 0;
+		if (wt[idx] <= W)
+			{
+			take = val[idx] + solve(idx - 1, W - wt[idx], val, wt);
+		}
+		
+		return max(take, notTake);
+	}
+	int knapsack(int W, vector<int> &val, vector<int> &wt) {
+		int n = val.size();
+		return solve(n - 1, W, val, wt);
+	}
+};
+
+//memoization
+Time Complexity
+There are n possible values for idx (0 to n-1) and W + 1 possible capacities (0 to W).
+Each state (idx, W) is computed only once.
+Time Complexity=O(n×W)
+
+Space Complexity
+DP table: n × (W + 1) → O(n × W)
+Recursion stack: O(n)
+O(n×W)+O(n)
+
+class Solution {
+	public:
+	int solve(int idx, int W, vector<int> &val, vector<int> &wt, vector<vector<int>>&dp)
+	{
+		
+		if (idx == 0)
+			{
+			if (wt[0] <= W)
+				return val[0];
+			return 0;
+		}
+		
+		if (W == 0)
+			return 0;
+		
+		if(dp[idx][W] != -1)
+		{
+		    return dp[idx][W];
+		}
+		int notTake = solve(idx - 1, W, val, wt,dp);
+		
+		int take = 0;
+		if (wt[idx] <= W)
+			{
+			take = val[idx] + solve(idx - 1, W - wt[idx], val, wt,dp);
+		}
+		
+		return dp[idx][W] = max(take, notTake);
+	}
+	int knapsack(int W, vector<int> &val, vector<int> &wt) {
+		int n = val.size();
+		vector<vector<int>>dp(n+1,vector<int>(W+1,-1));
+		return solve(n - 1, W, val, wt,dp);
+	}
+};
+
+
+//tabulation
+O(n×W)
+O(n×W)
+
+class Solution {
+	public:
+
+	int knapsack(int W, vector<int> &val, vector<int> &wt) {
+		int n = val.size();
+		vector<vector<int>>dp(n+1,vector<int>(W+1,0));
+		
+		for(int i = 0; i <= n; i++)
+		{
+		    dp[i][0] = 0;
+		}
+		for(int i = 0; i <= W; i++)
+		{
+		    dp[0][i] = 0;
+		}
+		
+		
+		for(int idx = 1; idx <= n; idx++)
+		{
+		    for(int tar = 1; tar <= W; tar++)
+		    {
+		        int nottake = dp[idx - 1][tar];
+		        int take = 0;
+		        
+		        if(wt[idx - 1] <= tar)
+		        {
+		            take = val[idx - 1] + dp[idx - 1][tar - wt[idx-1]];
+		        }
+		        dp[idx][tar] = max(take,nottake);
+		    }
+		}
+		return dp[n][W];
+		
+	}
+};
+
