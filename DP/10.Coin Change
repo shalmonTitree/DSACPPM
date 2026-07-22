@@ -1,0 +1,176 @@
+//==============================================================
+//                LEETCODE 322 : COIN CHANGE
+//==============================================================
+//
+// Pattern : Unbounded Knapsack (Minimum Coins)
+//
+//--------------------------------------------------------------
+// 1. RECURSION
+//--------------------------------------------------------------
+
+class Solution {
+public:
+    int INF = 1e9;
+
+    int solve(int idx, int amount, vector<int>& coins)
+    {
+        if(idx == 0)
+        {
+            if(amount % coins[0] == 0)
+                return amount / coins[0];
+
+            return INF;
+        }
+
+        int notTake = solve(idx - 1, amount, coins);
+
+        int take = INF;
+        if(coins[idx] <= amount)
+            take = 1 + solve(idx, amount - coins[idx], coins);
+
+        return min(take, notTake);
+    }
+
+    int coinChange(vector<int>& coins, int amount)
+    {
+        int n = coins.size();
+
+        int ans = solve(n - 1, amount, coins);
+
+        if(ans >= INF)
+            return -1;
+
+        return ans;
+    }
+};
+
+/*
+Time Complexity : O(2^n)
+Space Complexity: O(amount)
+*/
+
+
+//--------------------------------------------------------------
+// 2. MEMOIZATION
+//--------------------------------------------------------------
+
+class Solution {
+public:
+    int INF = 1e9;
+
+    int solve(int idx, int amount,
+              vector<int>& coins,
+              vector<vector<int>>& dp)
+    {
+        if(idx == 0)
+        {
+            if(amount % coins[0] == 0)
+                return amount / coins[0];
+
+            return INF;
+        }
+
+        if(dp[idx][amount] != -1)
+            return dp[idx][amount];
+
+        int notTake = solve(idx - 1, amount, coins, dp);
+
+        int take = INF;
+        if(coins[idx] <= amount)
+            take = 1 + solve(idx, amount - coins[idx], coins, dp);
+
+        return dp[idx][amount] = min(take, notTake);
+    }
+
+    int coinChange(vector<int>& coins, int amount)
+    {
+        int n = coins.size();
+
+        vector<vector<int>> dp(n, vector<int>(amount + 1, -1));
+
+        int ans = solve(n - 1, amount, coins, dp);
+
+        if(ans >= INF)
+            return -1;
+
+        return ans;
+    }
+};
+
+/*
+Time Complexity : O(n × amount)
+Space Complexity: O(n × amount) + O(amount)
+*/
+
+
+//--------------------------------------------------------------
+// 3. TABULATION
+//--------------------------------------------------------------
+
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount)
+    {
+        int n = coins.size();
+        int INF = 1e9;
+
+        vector<vector<int>> dp(n, vector<int>(amount + 1, 0));
+
+        // Base Case
+        for(int amt = 0; amt <= amount; amt++)
+        {
+            if(amt % coins[0] == 0)
+                dp[0][amt] = amt / coins[0];
+            else
+                dp[0][amt] = INF;
+        }
+
+        for(int idx = 1; idx < n; idx++)
+        {
+            for(int amt = 0; amt <= amount; amt++)
+            {
+                int notTake = dp[idx - 1][amt];
+
+                int take = INF;
+                if(coins[idx] <= amt)
+                    take = 1 + dp[idx][amt - coins[idx]];
+
+                dp[idx][amt] = min(take, notTake);
+            }
+        }
+
+        if(dp[n - 1][amount] >= INF)
+            return -1;
+
+        return dp[n - 1][amount];
+    }
+};
+
+/*
+Time Complexity : O(n × amount)
+Space Complexity: O(n × amount)
+*/
+
+
+//==============================================================
+// SUMMARY
+//==============================================================
+//
+// Recursion
+// TC : O(2^n)
+// SC : O(amount)
+//
+// Memoization
+// TC : O(n × amount)
+// SC : O(n × amount) + O(amount)
+//
+// Tabulation
+// TC : O(n × amount)
+// SC : O(n × amount)
+//
+// Pattern:
+// take    -> 1 + solve(idx, amount - coin)
+// notTake -> solve(idx - 1, amount)
+// answer  -> min(take, notTake)
+//
+//==============================================================
