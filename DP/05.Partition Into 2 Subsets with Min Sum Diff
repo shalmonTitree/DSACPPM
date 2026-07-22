@@ -1,0 +1,153 @@
+//bruteforce
+Time Complexity: O(sum × 2^n)
+Space Complexity: O(n)
+
+class Solution {
+  public:
+  bool solve(int idx,vector<int>& arr, int target)
+    {
+        if(target == 0)
+        {
+            return true;
+        }
+        
+        if(idx == 0)
+        {
+            return (arr[0] == target);
+           
+        }
+        
+        bool nottake = solve(idx-1,arr,target);
+        bool take = false;
+        if(arr[idx] <= target)
+        {
+            take = solve(idx-1,arr,target - arr[idx]);
+        }
+        
+        return take || nottake;
+    }
+    int minDifference(vector<int>& arr) {
+        int sum = 0;
+        int n = arr.size();
+        int ans = INT_MAX;
+        for(int i = 0; i < n; i++) sum += arr[i];
+        
+        for(int s1 = 0; s1 <= sum/2; s1++)
+        {
+            if(solve(n-1,arr,s1))
+            {
+                int s2 = sum - s1;
+                ans = min(ans,abs(s1-s2));
+            }
+        }
+        return ans;
+        
+    }
+};
+
+
+//memo
+Time Complexity: O(n × sum²)
+Space Complexity: O(n × sum)
+
+class Solution {
+  public:
+  bool solve(int idx,vector<int>& arr, int target, vector<vector<int>>&dp)
+    {
+        if(target == 0)
+        {
+            return true;
+        }
+        
+        if(idx == 0)
+        {
+            return (arr[0] == target);
+           
+        }
+        if(dp[idx][target] != -1)
+        {
+            return dp[idx][target];
+            
+        }
+        bool nottake = solve(idx-1,arr,target,dp);
+        bool take = false;
+        if(arr[idx] <= target)
+        {
+            take = solve(idx-1,arr,target - arr[idx],dp);
+        }
+        
+        return dp[idx][target] =  take || nottake;
+    }
+    int minDifference(vector<int>& arr) {
+        int sum = 0;
+        int n = arr.size();
+        int ans = INT_MAX;
+        for(int i = 0; i < n; i++) sum += arr[i];
+        
+        
+        for(int s1 = 0; s1 <= sum/2; s1++)
+        {
+            vector<vector<int>>dp(n+1,vector<int>(s1+1,-1));
+            if(solve(n-1,arr,s1,dp))
+            {
+                int s2 = sum - s1;
+                ans = min(ans,abs(s1-s2));
+            }
+        }
+        return ans;
+        
+    }
+};
+
+
+//tabulation
+Time Complexity: O(n × sum)
+
+Space Complexity
+
+The DP table has (n+1) × (sum+1)
+
+class Solution {
+  public:
+  
+    int minDifference(vector<int>& arr) {
+        int n = arr.size();
+        int sum = 0;
+
+        for (int x : arr)
+            sum += x;
+
+        vector<vector<bool>> dp(n + 1, vector<bool>(sum + 1, false));
+
+        
+        for (int i = 0; i <= n; i++)
+            dp[i][0] = true;
+
+        for (int idx = 1; idx <= n; idx++)
+        {
+            for (int target = 1; target <= sum; target++)
+            {
+                bool notTake = dp[idx - 1][target];
+
+                bool take = false;
+                if (arr[idx - 1] <= target)
+                    take = dp[idx - 1][target - arr[idx - 1]];
+
+                dp[idx][target] = take || notTake;
+            }
+        }
+
+        int ans = INT_MAX;
+
+        for (int s1 = 0; s1 <= sum / 2; s1++)
+        {
+            if (dp[n][s1])
+            {
+                int s2 = sum - s1;
+                ans = min(ans, abs(s1 - s2));
+            }
+        }
+
+        return ans;
+    }
+};
