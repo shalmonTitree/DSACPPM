@@ -1,0 +1,176 @@
+/*
+===============================================================================
+Approach 1 : Brute Force
+===============================================================================
+
+Intuition:
+Generate every possible substring. For each substring, find the frequency of
+every character. If the number of characters to be replaced is less than or
+equal to k, update the answer.
+
+Condition:
+(length of substring - maximum frequency) <= k
+
+Algorithm:
+1. Generate all substrings.
+2. Maintain frequency of characters in the current substring.
+3. Find the maximum frequency.
+4. If replacements required <= k, update the answer.
+
+Time Complexity : O(n² × 26) ≈ O(n²)
+Space Complexity: O(26) = O(1)
+*/
+
+class Solution_Brute {
+public:
+    int characterReplacement(string s, int k) {
+
+        int n = s.size();
+        int ans = 0;
+
+        for(int i = 0; i < n; i++)
+        {
+            vector<int> freq(26,0);
+            int maxFreq = 0;
+
+            for(int j = i; j < n; j++)
+            {
+                freq[s[j]-'A']++;
+
+                maxFreq = max(maxFreq,freq[s[j]-'A']);
+
+                int len = j-i+1;
+
+                if(len-maxFreq <= k)
+                    ans = max(ans,len);
+            }
+        }
+
+        return ans;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2 : Better (Sliding Window)
+===============================================================================
+
+Intuition:
+Expand the window while it is valid.
+If the window becomes invalid, shrink it until it becomes valid again.
+
+Window is valid if:
+(window length - maximum frequency) <= k
+
+Time Complexity : O(2n)
+Space Complexity: O(26) = O(1)
+*/
+
+class Solution_Better {
+public:
+    int characterReplacement(string s, int k) {
+
+        int n = s.size();
+
+        int head = -1;
+        int tail = 0;
+
+        vector<int> freq(26,0);
+
+        int maxFreq = 0;
+        int ans = 0;
+
+        while(tail < n)
+        {
+            // Acquire
+            while(head + 1 < n)
+            {
+                head++;
+
+                freq[s[head]-'A']++;
+                maxFreq = max(maxFreq,freq[s[head]-'A']);
+
+                if((head-tail+1)-maxFreq > k)
+                {
+                    freq[s[head]-'A']--;
+                    head--;
+                    break;
+                }
+
+                ans = max(ans,head-tail+1);
+            }
+
+            // Release
+            if(tail <= head)
+            {
+                freq[s[tail]-'A']--;
+                tail++;
+
+                // Recompute max frequency
+                maxFreq = 0;
+                for(int i=0;i<26;i++)
+                    maxFreq = max(maxFreq,freq[i]);
+            }
+            else
+            {
+                tail++;
+                head = tail-1;
+            }
+        }
+
+        return ans;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3 : Optimal (Sliding Window)
+===============================================================================
+
+Intuition:
+Same sliding window idea, but never decrease maxFreq.
+Even if maxFreq becomes stale, the answer remains correct.
+This avoids recomputing the maximum frequency every time.
+
+Time Complexity : O(n)
+Space Complexity: O(26) = O(1)
+*/
+
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
+
+        int n = s.size();
+
+        int left = 0;
+        int right = 0;
+
+        vector<int> freq(26,0);
+
+        int maxFreq = 0;
+        int ans = 0;
+
+        while(right < n)
+        {
+            freq[s[right]-'A']++;
+
+            maxFreq = max(maxFreq,freq[s[right]-'A']);
+
+            while((right-left+1)-maxFreq > k)
+            {
+                freq[s[left]-'A']--;
+                left++;
+            }
+
+            ans = max(ans,right-left+1);
+
+            right++;
+        }
+
+        return ans;
+    }
+};
