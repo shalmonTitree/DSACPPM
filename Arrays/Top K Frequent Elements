@@ -1,0 +1,117 @@
+/*
+===============================================================================
+Approach 1 : Better (Hash Map + Sorting)
+===============================================================================
+
+Intuition:
+Count the frequency of each element using a hash map. Store the
+(element, frequency) pairs in a vector and sort them in descending order of
+frequency. The first k elements in the sorted vector are the answer.
+
+Algorithm:
+1. Traverse the array and count the frequency of each element.
+2. Store all {element, frequency} pairs in a vector.
+3. Sort the vector based on frequency in descending order.
+4. Return the first k elements.
+
+Time Complexity : O(n + m log m)
+                  n = size of array
+                  m = number of distinct elements
+
+Worst Case      : O(n log n)
+
+Space Complexity: O(m)
+*/
+
+class Solution_Better {
+public:
+    static bool comp(pair<int,int> &p1, pair<int,int> &p2)
+    {
+        if(p1.second == p2.second)
+            return p1.first > p2.first;
+
+        return p1.second > p2.second;
+    }
+
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+
+        unordered_map<int,int> mp;
+
+        for(int num : nums)
+            mp[num]++;
+
+        vector<pair<int,int>> freq(mp.begin(), mp.end());
+
+        sort(freq.begin(), freq.end(), comp);
+
+        vector<int> ans;
+
+        for(int i = 0; i < k; i++)
+            ans.push_back(freq[i].first);
+
+        return ans;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2 : Optimal (Hash Map + Min Heap)
+===============================================================================
+
+Intuition:
+Count the frequency of each element using a hash map. Maintain a min heap of
+size k based on frequency. Whenever the heap size exceeds k, remove the
+element with the smallest frequency. At the end, the heap contains the k most
+frequent elements.
+
+Algorithm:
+1. Count the frequency of each element using a hash map.
+2. Insert {frequency, element} into a min heap.
+3. If the heap size exceeds k, remove the top element.
+4. Extract all elements from the heap and return them.
+
+Time Complexity : O(n + m log k)
+                  n = size of array
+                  m = number of distinct elements
+
+Worst Case      : O(n log k)
+
+Space Complexity: O(m + k)
+*/
+
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+
+        unordered_map<int,int> mp;
+
+        for(int num : nums)
+            mp[num]++;
+
+        priority_queue<
+            pair<int,int>,
+            vector<pair<int,int>>,
+            greater<pair<int,int>>
+        > pq;
+
+        for(auto &it : mp)
+        {
+            pq.push({it.second, it.first});
+
+            if(pq.size() > k)
+                pq.pop();
+        }
+
+        vector<int> ans;
+
+        while(!pq.empty())
+        {
+            ans.push_back(pq.top().second);
+            pq.pop();
+        }
+
+        return ans;
+    }
+};
