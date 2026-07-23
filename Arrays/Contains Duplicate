@@ -1,0 +1,80 @@
+/*
+===============================================================================
+Approach 1 : Brute Force
+===============================================================================
+
+Intuition:
+Compare every element with all the elements after it. If any two elements are
+equal, then the array contains a duplicate.
+
+Algorithm:
+1. Traverse the array using two nested loops.
+2. For each element, compare it with all the remaining elements.
+3. If a duplicate is found, return true.
+4. If no duplicate is found after all comparisons, return false.
+
+Time Complexity : O(n²)
+Space Complexity: O(1)
+*/
+
+class Solution_Brute {
+public:
+    bool containsDuplicate(vector<int>& nums) {
+
+        int n = nums.size();
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = i + 1; j < n; j++)
+            {
+                if(nums[i] == nums[j])
+                    return true;
+            }
+        }
+
+        return false;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2 : Optimal (Hash Set)
+===============================================================================
+
+Intuition:
+Use a hash set to keep track of the elements seen so far. Before inserting an
+element, check whether it already exists in the set. If it does, a duplicate
+has been found.
+
+Algorithm:
+1. Create an empty unordered_set.
+2. Traverse the array.
+3. If the current element already exists in the set, return true.
+4. Otherwise, insert the element into the set.
+5. If the traversal completes, return false.
+
+Time Complexity : O(n) Average
+Worst Case      : O(n²) (due to hash collisions)
+
+Space Complexity: O(n)
+*/
+
+class Solution {
+public:
+    bool containsDuplicate(vector<int>& nums) {
+
+        unordered_set<int> st;
+
+        for(int num : nums)
+        {
+            if(st.find(num) != st.end())
+                return true;
+
+            st.insert(num);
+        }
+
+        return false;
+    }
+};
