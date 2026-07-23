@@ -1,0 +1,81 @@
+/*
+===============================================================================
+Approach 1 : Brute Force (Sorting)
+===============================================================================
+
+Intuition:
+If two strings are anagrams, they contain the same characters with the same
+frequencies. After sorting both strings, they should become identical.
+
+Algorithm:
+1. If the lengths of the strings are different, return false.
+2. Sort both strings.
+3. Compare the sorted strings.
+4. If they are equal, return true; otherwise, return false.
+
+Time Complexity : O(n log n)
+Space Complexity: O(1)  (Ignoring the recursion stack used by sort)
+*/
+
+class Solution_Sorting {
+public:
+    bool isAnagram(string s, string t) {
+
+        if(s.length() != t.length())
+            return false;
+
+        sort(s.begin(), s.end());
+        sort(t.begin(), t.end());
+
+        return s == t;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2 : Optimal (Frequency Count)
+===============================================================================
+
+Intuition:
+Two strings are anagrams if every character appears the same number of times in
+both strings. Count the frequency of each character in one string and decrease
+the count while traversing the other string.
+
+Algorithm:
+1. If the lengths of the strings are different, return false.
+2. Create a frequency array of size 26 (for lowercase English letters).
+3. Traverse the first string and increment the frequency.
+4. Traverse the second string and decrement the frequency.
+5. If any frequency is not zero, return false.
+6. Otherwise, return true.
+
+Time Complexity : O(n)
+Space Complexity: O(1)
+*/
+
+class Solution {
+public:
+    bool isAnagram(string s, string t) {
+
+        if(s.length() != t.length())
+            return false;
+
+        vector<int> freq(26, 0);
+
+        for(char ch : s)
+            freq[ch - 'a']++;
+
+        for(char ch : t)
+            freq[ch - 'a']--;
+
+        for(int count : freq)
+        {
+            if(count != 0)
+                return false;
+        }
+
+        return true;
+    }
+};
