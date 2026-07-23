@@ -1,0 +1,150 @@
+/*
+===============================================================================
+Approach 1 : Brute Force
+===============================================================================
+
+Intuition:
+Generate every possible substring. For each substring, check whether it
+contains all the characters of string t with the required frequency.
+Keep track of the minimum valid substring.
+
+Algorithm:
+1. Generate all substrings.
+2. Count the frequency of characters in the current substring.
+3. Compare it with the frequency of t.
+4. If valid, update the minimum window.
+
+Time Complexity : O(n² × 128)
+Space Complexity: O(128) = O(1)
+*/
+
+class Solution_Brute {
+public:
+    string minWindow(string s, string t) {
+
+        int n = s.size();
+
+        vector<int> target(128, 0);
+
+        for(char ch : t)
+            target[ch]++;
+
+        int minLen = INT_MAX;
+        int start = -1;
+
+        for(int i = 0; i < n; i++)
+        {
+            vector<int> freq(128, 0);
+
+            for(int j = i; j < n; j++)
+            {
+                freq[s[j]]++;
+
+                bool valid = true;
+
+                for(int k = 0; k < 128; k++)
+                {
+                    if(freq[k] < target[k])
+                    {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if(valid)
+                {
+                    if(j - i + 1 < minLen)
+                    {
+                        minLen = j - i + 1;
+                        start = i;
+                    }
+                }
+            }
+        }
+
+        if(start == -1)
+            return "";
+
+        return s.substr(start, minLen);
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2 : Optimal (Sliding Window)
+===============================================================================
+
+Intuition:
+Expand the window until all characters of t are included.
+Once the window becomes valid, shrink it from the left to obtain the minimum
+possible valid window.
+
+Algorithm:
+1. Store the frequency of characters in t.
+2. Expand the window by moving head.
+3. Decrease the frequency of acquired characters.
+4. When all required characters are matched, try shrinking the window.
+5. Update the minimum window whenever a smaller valid window is found.
+
+Time Complexity : O(n)
+Space Complexity: O(128) = O(1)
+*/
+
+class Solution {
+public:
+    string minWindow(string s, string t) {
+
+        int n = s.size();
+
+        vector<int> freq(128, 0);
+
+        for(char ch : t)
+            freq[ch]++;
+
+        int required = t.size();
+
+        int head = -1;
+        int tail = 0;
+
+        int start = -1;
+        int minLen = INT_MAX;
+
+        while(tail < n)
+        {
+            // Acquire
+            while(head + 1 < n && required > 0)
+            {
+                head++;
+
+                if(freq[s[head]] > 0)
+                    required--;
+
+                freq[s[head]]--;
+            }
+
+            // Release
+            while(required == 0)
+            {
+                if(head - tail + 1 < minLen)
+                {
+                    minLen = head - tail + 1;
+                    start = tail;
+                }
+
+                freq[s[tail]]++;
+
+                if(freq[s[tail]] > 0)
+                    required++;
+
+                tail++;
+            }
+
+            if(head + 1 == n && required > 0)
+                break;
+        }
+
+        return start == -1 ? "" : s.substr(start, minLen);
+    }
+};
