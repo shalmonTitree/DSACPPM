@@ -1,0 +1,82 @@
+/*
+===============================================================================
+Approach 1 : Brute Force
+===============================================================================
+
+Intuition:
+Check every possible pair of elements. If the sum of any pair equals the target,
+return their indices.
+
+Algorithm:
+1. Traverse the array using two nested loops.
+2. For each element, check all the remaining elements.
+3. If nums[i] + nums[j] == target, return {i, j}.
+4. If no such pair exists, return an empty vector.
+
+Time Complexity : O(n²)
+Space Complexity: O(1)
+*/
+
+class Solution_Brute {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+
+        int n = nums.size();
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = i + 1; j < n; j++)
+            {
+                if(nums[i] + nums[j] == target)
+                    return {i, j};
+            }
+        }
+
+        return {};
+    }
+};
+
+
+/*
+===============================================================================
+Approach 3 : Optimal (Hash Map)
+===============================================================================
+
+Intuition:
+While traversing the array, calculate the complement required to reach the
+target. If the complement has already been seen, return its index along with
+the current index.
+
+Algorithm:
+1. Create an unordered_map to store {number, index}.
+2. Traverse the array.
+3. Compute complement = target - nums[i].
+4. If complement exists in the map, return its index and the current index.
+5. Otherwise, store the current element and its index in the map.
+6. If no valid pair exists, return an empty vector.
+
+Time Complexity : O(n) Average
+Worst Case      : O(n²) (due to hash collisions)
+
+Space Complexity: O(n)
+*/
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+
+        unordered_map<int, int> mp;
+
+        for(int i = 0; i < nums.size(); i++)
+        {
+            int complement = target - nums[i];
+
+            if(mp.find(complement) != mp.end())
+                return {mp[complement], i};
+
+            mp[nums[i]] = i;
+        }
+
+        return {};
+    }
+};
