@@ -1,0 +1,114 @@
+/*
+===============================================================================
+Approach 1 : Brute Force
+===============================================================================
+
+Intuition:
+For every string, compare it with all the remaining strings. Two strings are
+anagrams if their sorted forms are equal. Group all matching strings together.
+
+Algorithm:
+1. Create a visited array.
+2. Traverse each string.
+3. If the string is already visited, continue.
+4. Sort the current string and use it as the reference.
+5. Compare it with every unvisited string by sorting them.
+6. If the sorted strings are equal, add them to the current group and mark them
+   as visited.
+7. Add the group to the answer.
+
+Time Complexity : O(n² × k log k)
+                  n = number of strings
+                  k = average length of a string
+
+Space Complexity: O(n)
+*/
+
+class Solution_Brute {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+
+        int n = strs.size();
+
+        vector<vector<string>> ans;
+        vector<bool> visited(n, false);
+
+        for(int i = 0; i < n; i++)
+        {
+            if(visited[i])
+                continue;
+
+            vector<string> group;
+            string temp1 = strs[i];
+            sort(temp1.begin(), temp1.end());
+
+            group.push_back(strs[i]);
+            visited[i] = true;
+
+            for(int j = i + 1; j < n; j++)
+            {
+                if(visited[j])
+                    continue;
+
+                string temp2 = strs[j];
+                sort(temp2.begin(), temp2.end());
+
+                if(temp1 == temp2)
+                {
+                    group.push_back(strs[j]);
+                    visited[j] = true;
+                }
+            }
+
+            ans.push_back(group);
+        }
+
+        return ans;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2 : Optimal (Hash Map + Sorted String)
+===============================================================================
+
+Intuition:
+All anagrams produce the same string after sorting. Use the sorted string as
+the key in a hash map and group all original strings having the same key.
+
+Algorithm:
+1. Create an unordered_map<string, vector<string>>.
+2. Traverse each string.
+3. Sort the string to obtain its canonical form.
+4. Use the sorted string as the key and push the original string into the map.
+5. Traverse the map and store all groups in the answer.
+
+Time Complexity : O(n × k log k)
+
+Space Complexity: O(n × k)
+*/
+
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+
+        unordered_map<string, vector<string>> mp;
+
+        for(string str : strs)
+        {
+            string key = str;
+            sort(key.begin(), key.end());
+
+            mp[key].push_back(str);
+        }
+
+        vector<vector<string>> ans;
+
+        for(auto &it : mp)
+            ans.push_back(it.second);
+
+        return ans;
+    }
+};
