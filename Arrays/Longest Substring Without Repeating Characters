@@ -1,0 +1,164 @@
+/*
+===============================================================================
+Approach 1 : Brute Force
+===============================================================================
+
+Intuition:
+Generate every possible substring and check whether all its characters are
+unique. Keep track of the maximum valid substring length.
+
+Algorithm:
+1. Generate all substrings using two nested loops.
+2. For each substring, check if all characters are unique.
+3. If unique, update the maximum length.
+
+Time Complexity : O(n³)
+                  O(n²) substrings × O(n) uniqueness check
+
+Space Complexity: O(n)
+*/
+
+class Solution_Brute {
+public:
+    bool isUnique(string &s, int start, int end)
+    {
+        unordered_set<char> st;
+
+        for(int i = start; i <= end; i++)
+        {
+            if(st.count(s[i]))
+                return false;
+
+            st.insert(s[i]);
+        }
+
+        return true;
+    }
+
+    int lengthOfLongestSubstring(string s) {
+
+        int n = s.size();
+        int ans = 0;
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = i; j < n; j++)
+            {
+                if(isUnique(s, i, j))
+                    ans = max(ans, j - i + 1);
+            }
+        }
+
+        return ans;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2 : Better (Sliding Window + Set)
+===============================================================================
+
+Intuition:
+Maintain a sliding window containing only unique characters. Expand the window
+until a duplicate is encountered. Then shrink the window from the left until
+the duplicate is removed.
+
+Algorithm:
+1. Initialize two pointers (head and tail).
+2. Expand the window while the next character is not present in the set.
+3. Update the maximum window size.
+4. Remove characters from the left and continue.
+
+Time Complexity : O(2n) ≈ O(n)
+
+Space Complexity: O(n)
+*/
+
+class Solution_Better {
+public:
+    int lengthOfLongestSubstring(string s) {
+
+        int n = s.size();
+
+        int head = -1;
+        int tail = 0;
+
+        set<char> st;
+
+        int ans = 0;
+
+        while(tail < n)
+        {
+            while(head + 1 < n && !st.count(s[head + 1]))
+            {
+                head++;
+                st.insert(s[head]);
+            }
+
+            ans = max(ans, head - tail + 1);
+
+            if(tail <= head)
+            {
+                st.erase(s[tail]);
+                tail++;
+            }
+            else
+            {
+                tail++;
+                head = tail - 1;
+            }
+        }
+
+        return ans;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3 : Optimal (Sliding Window + Hash Map)
+===============================================================================
+
+Intuition:
+Instead of removing characters one by one, store the last occurrence of every
+character. When a duplicate is found, directly move the left pointer to one
+position after its last occurrence.
+
+Algorithm:
+1. Store the last index of each character.
+2. Traverse the string using the right pointer.
+3. If the character is already present inside the current window,
+   move the left pointer.
+4. Update the last occurrence of the current character.
+5. Update the maximum window length.
+
+Time Complexity : O(n)
+
+Space Complexity: O(n)
+*/
+
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+
+        unordered_map<char, int> lastIndex;
+
+        int left = 0;
+        int ans = 0;
+
+        for(int right = 0; right < s.size(); right++)
+        {
+            if(lastIndex.count(s[right]))
+                left = max(left, lastIndex[s[right]] + 1);
+
+            lastIndex[s[right]] = right;
+
+            ans = max(ans, right - left + 1);
+        }
+
+        return ans;
+    }
+};
