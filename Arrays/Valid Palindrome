@@ -1,0 +1,99 @@
+/*
+===============================================================================
+Approach 1 : Better (Create a New String)
+===============================================================================
+
+Intuition:
+Ignore all non-alphanumeric characters and convert all letters to lowercase.
+Store the valid characters in a new string and then check whether the string is
+a palindrome using two pointers.
+
+Algorithm:
+1. Traverse the string.
+2. Keep only alphanumeric characters and convert them to lowercase.
+3. Store them in a new string.
+4. Use two pointers (left and right) to compare characters.
+5. If any pair differs, return false.
+6. Otherwise, return true.
+
+Time Complexity : O(n)
+Space Complexity: O(n)
+*/
+
+class Solution_Better {
+public:
+    bool isPalindrome(string s) {
+
+        string str;
+
+        for(char ch : s)
+        {
+            if(isalnum(ch))
+                str += tolower(ch);
+        }
+
+        int left = 0;
+        int right = str.size() - 1;
+
+        while(left < right)
+        {
+            if(str[left] != str[right])
+                return false;
+
+            left++;
+            right--;
+        }
+
+        return true;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2 : Optimal (Two Pointers)
+===============================================================================
+
+Intuition:
+Use two pointers from both ends of the string. Skip non-alphanumeric
+characters and compare the remaining characters after converting them to
+lowercase.
+
+Algorithm:
+1. Initialize left = 0 and right = n - 1.
+2. Skip non-alphanumeric characters from both ends.
+3. Compare lowercase characters.
+4. If they are different, return false.
+5. Move both pointers inward.
+6. If the traversal completes, return true.
+
+Time Complexity : O(n)
+Space Complexity: O(1)
+*/
+
+class Solution {
+public:
+    bool isPalindrome(string s) {
+
+        int left = 0;
+        int right = s.size() - 1;
+
+        while(left < right)
+        {
+            while(left < right && !isalnum(s[left]))
+                left++;
+
+            while(left < right && !isalnum(s[right]))
+                right--;
+
+            if(tolower(s[left]) != tolower(s[right]))
+                return false;
+
+            left++;
+            right--;
+        }
+
+        return true;
+    }
+};
