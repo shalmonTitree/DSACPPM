@@ -1,0 +1,162 @@
+/*
+===============================================================================
+Approach 1 : Brute Force
+===============================================================================
+
+Intuition:
+For every element, keep searching for the next consecutive element
+(num + 1, num + 2, ...) in the array using linear search.
+
+Algorithm:
+1. For every element in the array:
+   - Initialize count = 1.
+   - Keep checking whether current + 1 exists in the array.
+   - If found, increment count and continue searching.
+2. Update the maximum count.
+
+Time Complexity : O(n²)
+Space Complexity: O(1)
+*/
+
+class Solution_Brute {
+public:
+    bool linearSearch(vector<int>& nums, int target)
+    {
+        for(int num : nums)
+        {
+            if(num == target)
+                return true;
+        }
+
+        return false;
+    }
+
+    int longestConsecutive(vector<int>& nums) {
+
+        int longest = 0;
+
+        for(int num : nums)
+        {
+            int current = num;
+            int count = 1;
+
+            while(linearSearch(nums, current + 1))
+            {
+                current++;
+                count++;
+            }
+
+            longest = max(longest, count);
+        }
+
+        return longest;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2 : Better (Sorting)
+===============================================================================
+
+Intuition:
+After sorting, consecutive elements become adjacent. Traverse the sorted array
+and count the length of consecutive sequences while handling duplicates.
+
+Algorithm:
+1. Sort the array.
+2. Initialize count = 1.
+3. Traverse the array:
+   - Ignore duplicates.
+   - If current element is previous + 1, increment count.
+   - Otherwise, reset count to 1.
+4. Update the maximum count.
+
+Time Complexity : O(n log n)
+Space Complexity: O(1) (Ignoring sorting recursion stack)
+*/
+
+class Solution_Better {
+public:
+    int longestConsecutive(vector<int>& nums) {
+
+        if(nums.empty())
+            return 0;
+
+        sort(nums.begin(), nums.end());
+
+        int longest = 1;
+        int count = 1;
+
+        for(int i = 1; i < nums.size(); i++)
+        {
+            if(nums[i] == nums[i - 1])
+                continue;
+
+            if(nums[i] == nums[i - 1] + 1)
+                count++;
+            else
+                count = 1;
+
+            longest = max(longest, count);
+        }
+
+        return longest;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3 : Optimal (Hash Set)
+===============================================================================
+
+Intuition:
+Store all elements in a hash set. Only start counting a sequence if the current
+element is the beginning of a sequence (i.e., num - 1 is not present). Then
+keep extending the sequence using the hash set.
+
+Algorithm:
+1. Insert all elements into an unordered_set.
+2. Traverse each element in the set.
+3. If (num - 1) is not present:
+   - Start a new sequence.
+   - Keep checking for num + 1, num + 2, ...
+4. Update the maximum sequence length.
+
+Time Complexity : O(n) Average
+Worst Case      : O(n²) (due to hash collisions)
+
+Space Complexity: O(n)
+*/
+
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+
+        unordered_set<int> st(nums.begin(), nums.end());
+
+        int longest = 0;
+
+        for(int num : st)
+        {
+            if(st.find(num - 1) == st.end())
+            {
+                int current = num;
+                int count = 1;
+
+                while(st.find(current + 1) != st.end())
+                {
+                    current++;
+                    count++;
+                }
+
+                longest = max(longest, count);
+            }
+        }
+
+        return longest;
+    }
+};
