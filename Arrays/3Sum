@@ -1,0 +1,179 @@
+/*
+===============================================================================
+Approach 1 : Brute Force
+===============================================================================
+
+Intuition:
+Check every possible triplet in the array. If the sum of a triplet is zero,
+sort the triplet before inserting it into a set to avoid duplicate triplets.
+
+Algorithm:
+1. Traverse the array using three nested loops.
+2. If nums[i] + nums[j] + nums[k] == 0:
+   - Store the triplet.
+   - Sort it.
+   - Insert it into a set.
+3. Convert the set into the answer vector.
+
+Time Complexity : O(n³ × log m)
+                  m = number of unique triplets
+
+Space Complexity: O(m)
+*/
+
+class Solution_Brute {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+
+        int n = nums.size();
+        set<vector<int>> st;
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = i + 1; j < n; j++)
+            {
+                for(int k = j + 1; k < n; k++)
+                {
+                    if(nums[i] + nums[j] + nums[k] == 0)
+                    {
+                        vector<int> temp = {nums[i], nums[j], nums[k]};
+                        sort(temp.begin(), temp.end());
+                        st.insert(temp);
+                    }
+                }
+            }
+        }
+
+        return vector<vector<int>>(st.begin(), st.end());
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2 : Better (Hash Set)
+===============================================================================
+
+Intuition:
+Fix one element and use a hash set to solve the remaining Two Sum problem.
+Use a set to avoid duplicate triplets.
+
+Algorithm:
+1. Fix the first element.
+2. Create a hash set.
+3. Traverse the remaining elements.
+4. Find the third element required to make the sum zero.
+5. If found, sort the triplet and insert it into a set.
+6. Return all unique triplets.
+
+Time Complexity : O(n² × log m)
+
+Space Complexity: O(n + m)
+*/
+
+class Solution_Better {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+
+        int n = nums.size();
+        set<vector<int>> ans;
+
+        for(int i = 0; i < n; i++)
+        {
+            unordered_set<int> st;
+
+            for(int j = i + 1; j < n; j++)
+            {
+                int third = -(nums[i] + nums[j]);
+
+                if(st.find(third) != st.end())
+                {
+                    vector<int> temp = {nums[i], nums[j], third};
+                    sort(temp.begin(), temp.end());
+                    ans.insert(temp);
+                }
+
+                st.insert(nums[j]);
+            }
+        }
+
+        return vector<vector<int>>(ans.begin(), ans.end());
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3 : Optimal (Sorting + Two Pointers)
+===============================================================================
+
+Intuition:
+Sort the array. Fix one element and use two pointers to find the remaining
+two elements. Skip duplicate elements to avoid repeated triplets.
+
+Algorithm:
+1. Sort the array.
+2. Traverse the array and fix nums[i].
+3. Skip duplicate values of nums[i].
+4. Initialize left = i + 1 and right = n - 1.
+5. Calculate the sum.
+   - If sum == 0, store the triplet and skip duplicates.
+   - If sum < 0, move left.
+   - If sum > 0, move right.
+6. Return all unique triplets.
+
+Time Complexity : O(n²)
+
+Space Complexity: O(1) (excluding the output vector)
+*/
+
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+
+        sort(nums.begin(), nums.end());
+
+        vector<vector<int>> ans;
+        int n = nums.size();
+
+        for(int i = 0; i < n; i++)
+        {
+            if(i > 0 && nums[i] == nums[i - 1])
+                continue;
+
+            int left = i + 1;
+            int right = n - 1;
+
+            while(left < right)
+            {
+                int sum = nums[i] + nums[left] + nums[right];
+
+                if(sum < 0)
+                {
+                    left++;
+                }
+                else if(sum > 0)
+                {
+                    right--;
+                }
+                else
+                {
+                    ans.push_back({nums[i], nums[left], nums[right]});
+
+                    left++;
+                    right--;
+
+                    while(left < right && nums[left] == nums[left - 1])
+                        left++;
+
+                    while(left < right && nums[right] == nums[right + 1])
+                        right--;
+                }
+            }
+        }
+
+        return ans;
+    }
+};
