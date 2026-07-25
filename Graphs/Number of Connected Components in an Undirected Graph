@@ -1,0 +1,191 @@
+/*
+===============================================================================
+Approach 1: Brute Force
+===============================================================================
+
+Idea:
+- Build the adjacency list.
+- For every unvisited node:
+    - Run DFS.
+    - Mark the entire connected component.
+- Number of DFS calls = Number of Connected Components.
+
+Time Complexity : O(V + E)
+Space Complexity: O(V + E)
+
+V = Number of Nodes
+E = Number of Edges
+*/
+
+class Solution1 {
+public:
+    void dfs(int node,
+             vector<vector<int>>& adj,
+             vector<int>& vis) {
+
+        vis[node] = 1;
+
+        for (int nei : adj[node]) {
+
+            if (!vis[nei])
+                dfs(nei, adj, vis);
+        }
+    }
+
+    int countComponents(int n, vector<vector<int>>& edges) {
+
+        vector<vector<int>> adj(n);
+
+        for (auto &e : edges) {
+            adj[e[0]].push_back(e[1]);
+            adj[e[1]].push_back(e[0]);
+        }
+
+        vector<int> vis(n, 0);
+
+        int cnt = 0;
+
+        for (int i = 0; i < n; i++) {
+
+            if (!vis[i]) {
+                cnt++;
+                dfs(i, adj, vis);
+            }
+        }
+
+        return cnt;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2: Better (BFS)
+===============================================================================
+
+Idea:
+- Build the adjacency list.
+- For every unvisited node:
+    - Run BFS.
+    - Mark the entire connected component.
+- Number of BFS calls = Number of Connected Components.
+
+Time Complexity : O(V + E)
+Space Complexity: O(V + E)
+*/
+
+class Solution2 {
+public:
+    int countComponents(int n, vector<vector<int>>& edges) {
+
+        vector<vector<int>> adj(n);
+
+        for (auto &e : edges) {
+            adj[e[0]].push_back(e[1]);
+            adj[e[1]].push_back(e[0]);
+        }
+
+        vector<int> vis(n, 0);
+
+        int cnt = 0;
+
+        for (int i = 0; i < n; i++) {
+
+            if (vis[i])
+                continue;
+
+            cnt++;
+
+            queue<int> q;
+            q.push(i);
+            vis[i] = 1;
+
+            while (!q.empty()) {
+
+                int node = q.front();
+                q.pop();
+
+                for (int nei : adj[node]) {
+
+                    if (!vis[nei]) {
+                        vis[nei] = 1;
+                        q.push(nei);
+                    }
+                }
+            }
+        }
+
+        return cnt;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3: Optimal (Union Find / DSU) ⭐ Most Expected
+===============================================================================
+
+Idea:
+- Initially every node is its own component.
+- For every edge:
+    - If two nodes belong to different sets,
+      union them.
+    - Decrease component count.
+- Final count is the answer.
+
+Time Complexity : O(E * α(V))
+Space Complexity: O(V)
+*/
+
+class Solution3 {
+public:
+    vector<int> parent, rank;
+
+    int find(int x) {
+
+        if (parent[x] == x)
+            return x;
+
+        return parent[x] = find(parent[x]);
+    }
+
+    bool unite(int u, int v) {
+
+        int pu = find(u);
+        int pv = find(v);
+
+        if (pu == pv)
+            return false;
+
+        if (rank[pu] < rank[pv])
+            swap(pu, pv);
+
+        parent[pv] = pu;
+
+        if (rank[pu] == rank[pv])
+            rank[pu]++;
+
+        return true;
+    }
+
+    int countComponents(int n, vector<vector<int>>& edges) {
+
+        parent.resize(n);
+        rank.assign(n, 0);
+
+        for (int i = 0; i < n; i++)
+            parent[i] = i;
+
+        int components = n;
+
+        for (auto &e : edges) {
+
+            if (unite(e[0], e[1]))
+                components--;
+        }
+
+        return components;
+    }
+};
