@@ -1,0 +1,131 @@
+/*
+===============================================================================
+Approach 1: Recursive DFS (Most Expected)
+===============================================================================
+
+Idea:
+- Swap the left and right child of every node.
+- Recursively invert the left and right subtrees.
+- Return the root.
+
+Time Complexity : O(N)
+Space Complexity: O(H)
+
+where
+N = Number of nodes
+H = Height of the tree
+Worst Case : O(N)
+Balanced Tree : O(log N)
+*/
+
+class Solution1 {
+public:
+    TreeNode* invertTree(TreeNode* root) {
+
+        if (!root)
+            return nullptr;
+
+        swap(root->left, root->right);
+
+        invertTree(root->left);
+        invertTree(root->right);
+
+        return root;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2: Iterative DFS (Stack)
+===============================================================================
+
+Idea:
+- Use a stack for DFS.
+- Pop one node at a time.
+- Swap its left and right children.
+- Push both children into the stack.
+
+Time Complexity : O(N)
+Space Complexity: O(H)
+
+Worst Case : O(N)
+Balanced Tree : O(log N)
+*/
+
+class Solution2 {
+public:
+    TreeNode* invertTree(TreeNode* root) {
+
+        if (!root)
+            return nullptr;
+
+        stack<TreeNode*> st;
+        st.push(root);
+
+        while (!st.empty()) {
+
+            TreeNode* node = st.top();
+            st.pop();
+
+            swap(node->left, node->right);
+
+            if (node->left)
+                st.push(node->left);
+
+            if (node->right)
+                st.push(node->right);
+        }
+
+        return root;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3: Iterative BFS (Queue)
+===============================================================================
+
+Idea:
+- Perform level order traversal.
+- For every node, swap its left and right children.
+- Push both children into the queue.
+
+Time Complexity : O(N)
+Space Complexity: O(W)
+
+where
+W = Maximum width of the tree
+Worst Case : O(N)
+*/
+
+class Solution3 {
+public:
+    TreeNode* invertTree(TreeNode* root) {
+
+        if (!root)
+            return nullptr;
+
+        queue<TreeNode*> q;
+        q.push(root);
+
+        while (!q.empty()) {
+
+            TreeNode* node = q.front();
+            q.pop();
+
+            swap(node->left, node->right);
+
+            if (node->left)
+                q.push(node->left);
+
+            if (node->right)
+                q.push(node->right);
+        }
+
+        return root;
+    }
+};
