@@ -1,0 +1,141 @@
+/*
+===============================================================================
+Approach 1: Brute Force
+===============================================================================
+
+Idea:
+- Start DFS from every cell.
+- Use a visited matrix to avoid revisiting cells.
+- Explore all 4 directions.
+- If all characters are matched, return true.
+
+Time Complexity : O(n * m * 4^L)
+Space Complexity: O(n * m)
+
+n = Rows
+m = Columns
+L = Length of Word
+*/
+
+class Solution1 {
+public:
+    int n, m;
+
+    bool dfs(int i, int j, int idx, vector<vector<char>>& board,
+             vector<vector<bool>>& vis, string& word) {
+
+        if (idx == word.size())
+            return true;
+
+        if (i < 0 || i >= n || j < 0 || j >= m ||
+            vis[i][j] || board[i][j] != word[idx])
+            return false;
+
+        vis[i][j] = true;
+
+        bool found = dfs(i + 1, j, idx + 1, board, vis, word) ||
+                     dfs(i - 1, j, idx + 1, board, vis, word) ||
+                     dfs(i, j + 1, idx + 1, board, vis, word) ||
+                     dfs(i, j - 1, idx + 1, board, vis, word);
+
+        vis[i][j] = false;
+
+        return found;
+    }
+
+    bool exist(vector<vector<char>>& board, string word) {
+
+        n = board.size();
+        m = board[0].size();
+
+        vector<vector<bool>> vis(n, vector<bool>(m, false));
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+
+                if (dfs(i, j, 0, board, vis, word))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2: Better
+===============================================================================
+
+No meaningful better approach exists.
+
+The in-place DFS backtracking solution is optimal.
+*/
+
+
+
+/*
+===============================================================================
+Approach 3: Optimal (In-place DFS Backtracking) ⭐ Most Expected
+===============================================================================
+
+Idea:
+- Start DFS from every cell.
+- If the current character matches, temporarily mark it as visited.
+- Explore all 4 directions.
+- Restore the original character while backtracking.
+- No separate visited matrix is required.
+
+Time Complexity : O(n * m * 4^L)
+Space Complexity: O(L)
+
+n = Rows
+m = Columns
+L = Length of Word
+*/
+
+class Solution {
+public:
+    int n, m;
+
+    bool dfs(int i, int j, int idx, vector<vector<char>>& board,
+             string& word) {
+
+        if (idx == word.size())
+            return true;
+
+        if (i < 0 || i >= n || j < 0 || j >= m ||
+            board[i][j] != word[idx])
+            return false;
+
+        char ch = board[i][j];
+        board[i][j] = '#';
+
+        bool found = dfs(i + 1, j, idx + 1, board, word) ||
+                     dfs(i - 1, j, idx + 1, board, word) ||
+                     dfs(i, j + 1, idx + 1, board, word) ||
+                     dfs(i, j - 1, idx + 1, board, word);
+
+        board[i][j] = ch;
+
+        return found;
+    }
+
+    bool exist(vector<vector<char>>& board, string word) {
+
+        n = board.size();
+        m = board[0].size();
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+
+                if (dfs(i, j, 0, board, word))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+};
