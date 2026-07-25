@@ -1,0 +1,119 @@
+/*
+===============================================================================
+Approach 1: Brute Force
+===============================================================================
+
+Idea:
+- Create a new node for every node encountered.
+- Before creating a neighbor, linearly search whether it
+  has already been cloned.
+- If not found, create a new clone.
+
+Time Complexity : O(V² + E)
+Space Complexity: O(V)
+
+V = Number of Vertices
+E = Number of Edges
+*/
+
+
+
+/*
+===============================================================================
+Approach 2: Better (BFS + HashMap)
+===============================================================================
+
+Idea:
+- Use BFS to traverse the graph.
+- Maintain a hash map:
+      Original Node -> Cloned Node
+- Clone each node only once and connect neighbors.
+
+Time Complexity : O(V + E)
+Space Complexity: O(V)
+*/
+
+class Solution2 {
+public:
+    Node* cloneGraph(Node* node) {
+
+        if (!node)
+            return nullptr;
+
+        unordered_map<Node*, Node*> mp;
+        queue<Node*> q;
+
+        q.push(node);
+        mp[node] = new Node(node->val);
+
+        while (!q.empty()) {
+
+            Node* curr = q.front();
+            q.pop();
+
+            for (Node* nei : curr->neighbors) {
+
+                if (!mp.count(nei)) {
+                    mp[nei] = new Node(nei->val);
+                    q.push(nei);
+                }
+
+                mp[curr]->neighbors.push_back(mp[nei]);
+            }
+        }
+
+        return mp[node];
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3: Optimal (DFS + HashMap) ⭐ Most Expected
+===============================================================================
+
+Idea:
+- Use DFS to traverse the graph.
+- HashMap stores:
+      Original Node -> Cloned Node
+- If a node is already cloned, return it.
+- Otherwise:
+    1. Create its clone.
+    2. Clone all neighbors recursively.
+    3. Connect them.
+
+Time Complexity : O(V + E)
+Space Complexity: O(V)
+
+V = Number of Vertices
+E = Number of Edges
+*/
+
+class Solution {
+public:
+    unordered_map<Node*, Node*> mp;
+
+    Node* dfs(Node* node) {
+
+        if (!node)
+            return nullptr;
+
+        if (mp.count(node))
+            return mp[node];
+
+        Node* clone = new Node(node->val);
+        mp[node] = clone;
+
+        for (Node* nei : node->neighbors) {
+            clone->neighbors.push_back(dfs(nei));
+        }
+
+        return clone;
+    }
+
+    Node* cloneGraph(Node* node) {
+
+        return dfs(node);
+    }
+};
