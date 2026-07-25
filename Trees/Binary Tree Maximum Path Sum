@@ -1,0 +1,48 @@
+/*
+===============================================================================
+Approach 3: Optimal (DFS) ⭐ Most Expected
+===============================================================================
+
+Idea:
+- For every node, compute the maximum gain that can be contributed
+  to its parent.
+- Ignore negative gains by taking max(0, gain).
+- At every node, calculate:
+      currentPath = leftGain + rightGain + root->val
+- Update the global maximum path sum.
+- Return:
+      root->val + max(leftGain, rightGain)
+
+Time Complexity : O(N)
+Space Complexity: O(H)
+
+H = Height of Tree
+Balanced Tree : O(log N)
+Skewed Tree   : O(N)
+*/
+
+class Solution {
+public:
+
+    int ans = INT_MIN;
+
+    int dfs(TreeNode* root) {
+
+        if (!root)
+            return 0;
+
+        int leftGain = max(0, dfs(root->left));
+        int rightGain = max(0, dfs(root->right));
+
+        ans = max(ans, leftGain + rightGain + root->val);
+
+        return root->val + max(leftGain, rightGain);
+    }
+
+    int maxPathSum(TreeNode* root) {
+
+        dfs(root);
+
+        return ans;
+    }
+};
