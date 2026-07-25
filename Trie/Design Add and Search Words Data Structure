@@ -1,0 +1,199 @@
+/*
+===============================================================================
+Approach 1: Brute Force
+===============================================================================
+
+Idea:
+- Store all inserted words in a vector.
+- For search():
+    - Compare only words having the same length.
+    - Treat '.' as a wildcard matching any character.
+
+Time Complexity :
+addWord() : O(1)
+search()  : O(N * L)
+
+Space Complexity: O(N * L)
+
+N = Number of Words
+L = Average Length of Word
+*/
+
+class WordDictionary1 {
+public:
+    vector<string> words;
+
+    WordDictionary1() {}
+
+    void addWord(string word) {
+        words.push_back(word);
+    }
+
+    bool search(string word) {
+
+        for (string &s : words) {
+
+            if (s.size() != word.size())
+                continue;
+
+            bool ok = true;
+
+            for (int i = 0; i < word.size(); i++) {
+
+                if (word[i] != '.' && word[i] != s[i]) {
+                    ok = false;
+                    break;
+                }
+            }
+
+            if (ok)
+                return true;
+        }
+
+        return false;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2: Better
+===============================================================================
+
+Idea:
+- Group words by their length.
+- During search(), only compare words of the same length.
+- '.' can match any character.
+
+Time Complexity :
+addWord() : O(L)
+search()  : O(K * L)
+
+Space Complexity: O(N * L)
+
+K = Number of Words having the same length
+*/
+
+class WordDictionary2 {
+public:
+    unordered_map<int, vector<string>> mp;
+
+    WordDictionary2() {}
+
+    void addWord(string word) {
+        mp[word.size()].push_back(word);
+    }
+
+    bool search(string word) {
+
+        for (string &s : mp[word.size()]) {
+
+            bool ok = true;
+
+            for (int i = 0; i < word.size(); i++) {
+
+                if (word[i] != '.' && word[i] != s[i]) {
+                    ok = false;
+                    break;
+                }
+            }
+
+            if (ok)
+                return true;
+        }
+
+        return false;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3: Optimal (Trie + DFS) ⭐ Most Expected
+===============================================================================
+
+Idea:
+- Store all words in a Trie.
+- For normal characters, move to the corresponding child.
+- For '.', recursively try all possible children.
+- If any path reaches the end of a word, return true.
+
+Time Complexity :
+addWord() : O(L)
+search()  : O(26^L) (Worst Case)
+
+Space Complexity: O(T + L)
+
+L = Length of Word
+T = Total Characters Inserted
+*/
+
+class TrieNode {
+public:
+    TrieNode* child[26];
+    bool isEnd;
+
+    TrieNode() {
+
+        for (int i = 0; i < 26; i++)
+            child[i] = nullptr;
+
+        isEnd = false;
+    }
+};
+
+class WordDictionary {
+public:
+    TrieNode* root;
+
+    WordDictionary() {
+        root = new TrieNode();
+    }
+
+    void addWord(string word) {
+
+        TrieNode* node = root;
+
+        for (char ch : word) {
+
+            int idx = ch - 'a';
+
+            if (node->child[idx] == nullptr)
+                node->child[idx] = new TrieNode();
+
+            node = node->child[idx];
+        }
+
+        node->isEnd = true;
+    }
+
+    bool dfs(string &word, int idx, TrieNode* node) {
+
+        if (!node)
+            return false;
+
+        if (idx == word.size())
+            return node->isEnd;
+
+        if (word[idx] != '.') {
+
+            return dfs(word, idx + 1,
+                       node->child[word[idx] - 'a']);
+        }
+
+        for (int i = 0; i < 26; i++) {
+
+            if (dfs(word, idx + 1, node->child[i]))
+                return true;
+        }
+
+        return false;
+    }
+
+    bool search(string word) {
+
+        return dfs(word, 0, root);
+    }
+};
