@@ -1,0 +1,200 @@
+/*
+===============================================================================
+Approach 1: Brute Force
+===============================================================================
+
+Idea:
+- Store all inserted words in a vector.
+- For search(), compare every stored word.
+- For startsWith(), compare the prefix with every stored word.
+
+Time Complexity :
+insert()      : O(1)
+search()      : O(N * L)
+startsWith()  : O(N * L)
+
+Space Complexity: O(N * L)
+
+N = Number of Words
+L = Average Length of Word
+*/
+
+class Trie1 {
+public:
+    vector<string> words;
+
+    Trie1() {}
+
+    void insert(string word) {
+        words.push_back(word);
+    }
+
+    bool search(string word) {
+
+        for (string &s : words) {
+            if (s == word)
+                return true;
+        }
+
+        return false;
+    }
+
+    bool startsWith(string prefix) {
+
+        for (string &s : words) {
+
+            if (s.size() >= prefix.size() &&
+                s.substr(0, prefix.size()) == prefix)
+                return true;
+        }
+
+        return false;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2: Better
+===============================================================================
+
+Idea:
+- Store all words in an unordered_set.
+- search() becomes O(L).
+- startsWith() still scans all stored words.
+
+Time Complexity :
+insert()      : O(L)
+search()      : O(L)
+startsWith()  : O(N * L)
+
+Space Complexity: O(N * L)
+*/
+
+class Trie2 {
+public:
+    unordered_set<string> st;
+
+    Trie2() {}
+
+    void insert(string word) {
+        st.insert(word);
+    }
+
+    bool search(string word) {
+        return st.count(word);
+    }
+
+    bool startsWith(string prefix) {
+
+        for (auto &word : st) {
+
+            if (word.size() >= prefix.size() &&
+                word.substr(0, prefix.size()) == prefix)
+                return true;
+        }
+
+        return false;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3: Optimal (Trie / Prefix Tree) ⭐ Most Expected
+===============================================================================
+
+Idea:
+- Every node stores:
+    1. 26 child pointers
+    2. End-of-word flag
+- Insert creates missing nodes.
+- Search checks every character and the end flag.
+- startsWith() only verifies that the prefix exists.
+
+Time Complexity :
+insert()      : O(L)
+search()      : O(L)
+startsWith()  : O(L)
+
+Space Complexity: O(T)
+
+L = Length of Word
+T = Total Characters Inserted
+*/
+
+class TrieNode {
+public:
+    TrieNode* child[26];
+    bool isEnd;
+
+    TrieNode() {
+
+        for (int i = 0; i < 26; i++)
+            child[i] = nullptr;
+
+        isEnd = false;
+    }
+};
+
+class Trie {
+public:
+    TrieNode* root;
+
+    Trie() {
+        root = new TrieNode();
+    }
+
+    void insert(string word) {
+
+        TrieNode* node = root;
+
+        for (char ch : word) {
+
+            int idx = ch - 'a';
+
+            if (node->child[idx] == nullptr)
+                node->child[idx] = new TrieNode();
+
+            node = node->child[idx];
+        }
+
+        node->isEnd = true;
+    }
+
+    bool search(string word) {
+
+        TrieNode* node = root;
+
+        for (char ch : word) {
+
+            int idx = ch - 'a';
+
+            if (node->child[idx] == nullptr)
+                return false;
+
+            node = node->child[idx];
+        }
+
+        return node->isEnd;
+    }
+
+    bool startsWith(string prefix) {
+
+        TrieNode* node = root;
+
+        for (char ch : prefix) {
+
+            int idx = ch - 'a';
+
+            if (node->child[idx] == nullptr)
+                return false;
+
+            node = node->child[idx];
+        }
+
+        return true;
+    }
+};
