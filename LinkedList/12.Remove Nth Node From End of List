@@ -1,118 +1,78 @@
-//bruteforce
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-class Solution {
-public:
-    ListNode* removeNthFromEnd(ListNode* head, int n) {
-       if(head == NULL)
-       {
-        return head;
-       }
-       int cnt = 0;
-       ListNode* temp = head;
-       while(temp != NULL)
-       {
-            cnt++;
-            temp = temp->next;
-       }
-       if(cnt == n)
-       {
-            ListNode* newhead = head->next;
+/*
+===============================================================================
+Approach 1: Two Pass (Find Length)
+===============================================================================
 
-            delete head;
-            return newhead;
-       }
+Idea:
+- Traverse the list once to find its length.
+- Calculate the node to remove from the beginning:
+      position = length - n
+- Traverse again to that node and remove the next node.
 
-       int rem = cnt - n;
-       temp = head;
+Time Complexity : O(N)
+Space Complexity: O(1)
+*/
 
-       while(temp != NULL)
-       {
-            rem--;
-            if(rem == 0)
-            {
-                break;
-            }
-            temp = temp->next;
-       }
-       ListNode* node = temp->next;
-       temp->next = temp->next->next;
-       delete node;
-
-       return head;
-
-    }
-};
-
-Approach 2: Two Pass Solution (Length Counting)
-Complexity
-Time: O(n) + O(n) = O(n)
-Space: O(1)
-C++
-class Solution {
+class Solution1 {
 public:
     ListNode* removeNthFromEnd(ListNode* head, int n) {
 
+        ListNode* temp = head;
         int len = 0;
 
-        ListNode* curr = head;
-
-        while (curr) {
+        while (temp) {
             len++;
-            curr = curr->next;
+            temp = temp->next;
         }
 
-        // remove head
         if (len == n)
             return head->next;
 
-        curr = head;
+        temp = head;
 
         for (int i = 1; i < len - n; i++)
-            curr = curr->next;
+            temp = temp->next;
 
-        curr->next = curr->next->next;
+        temp->next = temp->next->next;
 
         return head;
     }
 };
 
-Approach 3: One Pass (Fast & Slow Pointer)
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-class Solution {
+
+
+/*
+===============================================================================
+Approach 2: One Pass (Fast & Slow Pointer) - Optimal
+===============================================================================
+
+Idea:
+- Create a dummy node before head.
+- Move the fast pointer n steps ahead.
+- Move both fast and slow until fast reaches the last node.
+- Slow will be just before the node to delete.
+- Remove the node.
+
+Time Complexity : O(N)
+Space Complexity: O(1)
+*/
+
+class Solution2 {
 public:
     ListNode* removeNthFromEnd(ListNode* head, int n) {
+
         ListNode dummy(0);
         dummy.next = head;
-        ListNode* slow = &dummy;
+
         ListNode* fast = &dummy;
+        ListNode* slow = &dummy;
 
-        for(int i = 0; i <= n; i++)
-        {
+        for (int i = 0; i < n; i++)
             fast = fast->next;
-        }
 
-        while(fast != NULL)
-        {
+        while (fast->next) {
+            fast = fast->next;
             slow = slow->next;
-            fast = fast->next;
         }
 
         slow->next = slow->next->next;
@@ -120,3 +80,4 @@ public:
         return dummy.next;
     }
 };
+
