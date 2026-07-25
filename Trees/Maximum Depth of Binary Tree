@@ -1,0 +1,136 @@
+/*
+===============================================================================
+Approach 1: Recursive DFS (Most Expected)
+===============================================================================
+
+Idea:
+- The depth of a node is:
+      1 + max(left subtree depth, right subtree depth)
+- Recursively calculate the depth of left and right subtrees.
+- Return the maximum depth.
+
+Time Complexity : O(N)
+Space Complexity: O(H)
+
+where
+N = Number of nodes
+H = Height of the tree
+
+Worst Case : O(N)
+Balanced Tree : O(log N)
+*/
+
+class Solution1 {
+public:
+    int maxDepth(TreeNode* root) {
+
+        if (!root)
+            return 0;
+
+        return 1 + max(maxDepth(root->left), maxDepth(root->right));
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2: Iterative DFS (Stack)
+===============================================================================
+
+Idea:
+- Use a stack to store {node, current depth}.
+- Traverse the tree using DFS.
+- Update the maximum depth encountered.
+
+Time Complexity : O(N)
+Space Complexity: O(H)
+
+Worst Case : O(N)
+Balanced Tree : O(log N)
+*/
+
+class Solution2 {
+public:
+    int maxDepth(TreeNode* root) {
+
+        if (!root)
+            return 0;
+
+        stack<pair<TreeNode*, int>> st;
+        st.push({root, 1});
+
+        int ans = 0;
+
+        while (!st.empty()) {
+
+            auto [node, depth] = st.top();
+            st.pop();
+
+            ans = max(ans, depth);
+
+            if (node->left)
+                st.push({node->left, depth + 1});
+
+            if (node->right)
+                st.push({node->right, depth + 1});
+        }
+
+        return ans;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3: Level Order Traversal (BFS)
+===============================================================================
+
+Idea:
+- Perform level order traversal.
+- Each level increases the depth by 1.
+- Number of levels = Maximum depth.
+
+Time Complexity : O(N)
+Space Complexity: O(W)
+
+where
+W = Maximum width of the tree
+
+Worst Case : O(N)
+*/
+
+class Solution3 {
+public:
+    int maxDepth(TreeNode* root) {
+
+        if (!root)
+            return 0;
+
+        queue<TreeNode*> q;
+        q.push(root);
+
+        int depth = 0;
+
+        while (!q.empty()) {
+
+            int size = q.size();
+            depth++;
+
+            while (size--) {
+
+                TreeNode* node = q.front();
+                q.pop();
+
+                if (node->left)
+                    q.push(node->left);
+
+                if (node->right)
+                    q.push(node->right);
+            }
+        }
+
+        return depth;
+    }
+};
