@@ -1,0 +1,136 @@
+/*
+===============================================================================
+Approach 1: Recursive BST Traversal (Most Expected)
+===============================================================================
+
+Idea:
+- If both p and q are smaller than root, move to the left subtree.
+- If both p and q are greater than root, move to the right subtree.
+- Otherwise, the current root is the Lowest Common Ancestor (LCA).
+
+Time Complexity : O(H)
+Space Complexity: O(H)
+
+where
+H = Height of the BST
+
+Balanced BST : O(log N)
+Skewed BST   : O(N)
+*/
+
+class Solution1 {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+
+        if (!root)
+            return nullptr;
+
+        if (p->val < root->val && q->val < root->val)
+            return lowestCommonAncestor(root->left, p, q);
+
+        if (p->val > root->val && q->val > root->val)
+            return lowestCommonAncestor(root->right, p, q);
+
+        return root;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2: Iterative BST Traversal (Optimal)
+===============================================================================
+
+Idea:
+- Traverse the BST iteratively.
+- If both nodes are smaller, move left.
+- If both nodes are greater, move right.
+- Otherwise, current node is the LCA.
+
+Time Complexity : O(H)
+Space Complexity: O(1)
+
+Balanced BST : O(log N)
+Skewed BST   : O(N)
+*/
+
+class Solution2 {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+
+        while (root) {
+
+            if (p->val < root->val && q->val < root->val)
+                root = root->left;
+
+            else if (p->val > root->val && q->val > root->val)
+                root = root->right;
+
+            else
+                return root;
+        }
+
+        return nullptr;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3: Store Root-to-Node Paths
+===============================================================================
+
+Idea:
+- Find the path from root to p.
+- Find the path from root to q.
+- Compare both paths until they differ.
+- The last common node is the LCA.
+
+Time Complexity : O(H)
+Space Complexity: O(H)
+*/
+
+class Solution3 {
+public:
+
+    bool findPath(TreeNode* root, TreeNode* target, vector<TreeNode*>& path) {
+
+        while (root) {
+
+            path.push_back(root);
+
+            if (root == target)
+                return true;
+
+            if (target->val < root->val)
+                root = root->left;
+            else
+                root = root->right;
+        }
+
+        return false;
+    }
+
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+
+        vector<TreeNode*> path1, path2;
+
+        findPath(root, p, path1);
+        findPath(root, q, path2);
+
+        TreeNode* ans = nullptr;
+
+        int i = 0;
+
+        while (i < path1.size() && i < path2.size() &&
+               path1[i] == path2[i]) {
+
+            ans = path1[i];
+            i++;
+        }
+
+        return ans;
+    }
+};
