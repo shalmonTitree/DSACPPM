@@ -1,0 +1,82 @@
+/*
+===============================================================================
+Approach 1: Brute Force (Inorder Traversal + Store Array)
+===============================================================================
+
+Idea:
+- Perform inorder traversal of the tree.
+- Store all node values in a vector.
+- Check if the vector is strictly increasing.
+
+Time Complexity : O(N)
+Space Complexity: O(N)
+*/
+
+class Solution1 {
+public:
+    void inorder(TreeNode* root, vector<int>& inorderList) {
+
+        if (!root)
+            return;
+
+        inorder(root->left, inorderList);
+        inorderList.push_back(root->val);
+        inorder(root->right, inorderList);
+    }
+
+    bool isValidBST(TreeNode* root) {
+
+        vector<int> inorderList;
+
+        inorder(root, inorderList);
+
+        for (int i = 1; i < inorderList.size(); i++) {
+            if (inorderList[i] <= inorderList[i - 1])
+                return false;
+        }
+
+        return true;
+    }
+};
+
+
+/*
+===============================================================================
+Approach 3: Optimal (Range Validation) ⭐ Most Expected
+===============================================================================
+
+Idea:
+- Every node must lie within a valid range.
+- Initially, the range is (-∞, +∞).
+- Left child:
+      (min, root->val)
+- Right child:
+      (root->val, max)
+- If any node violates the range, return false.
+
+Time Complexity : O(N)
+Space Complexity: O(H)
+
+H = Height of Tree
+*/
+
+class Solution3 {
+public:
+
+    bool validate(TreeNode* root, long long low, long long high) {
+
+        if (!root)
+            return true;
+
+        if (root->val <= low || root->val >= high)
+            return false;
+
+        return validate(root->left, low, root->val) &&
+               validate(root->right, root->val, high);
+    }
+
+    bool isValidBST(TreeNode* root) {
+
+        return validate(root, LLONG_MIN, LLONG_MAX);
+    }
+};
