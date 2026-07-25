@@ -1,0 +1,104 @@
+/*
+===============================================================================
+Approach 1: Brute Force (Linear Search)
+===============================================================================
+
+Idea:
+- Traverse the entire array.
+- Keep track of the minimum element.
+
+Time Complexity : O(n)
+Space Complexity: O(1)
+*/
+
+class Solution1 {
+public:
+    int findMin(vector<int>& nums) {
+
+        int mini = INT_MAX;
+
+        for (int x : nums)
+            mini = min(mini, x);
+
+        return mini;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 2: Binary Search (Using Sorted Half)
+===============================================================================
+
+Idea:
+- At every step, one half of the array is always sorted.
+- If the left half is sorted, nums[l] is a candidate for the minimum.
+- Otherwise, nums[mid] is a candidate.
+
+Time Complexity : O(log n)
+Space Complexity: O(1)
+*/
+
+class Solution2 {
+public:
+    int findMin(vector<int>& nums) {
+
+        int l = 0;
+        int h = nums.size() - 1;
+        int ans = INT_MAX;
+
+        while (l <= h) {
+
+            int mid = l + (h - l) / 2;
+
+            if (nums[l] <= nums[mid]) {
+                ans = min(ans, nums[l]);
+                l = mid + 1;
+            }
+            else {
+                ans = min(ans, nums[mid]);
+                h = mid - 1;
+            }
+        }
+
+        return ans;
+    }
+};
+
+
+
+/*
+===============================================================================
+Approach 3: Optimal Binary Search (Most Expected)
+===============================================================================
+
+Idea:
+- Compare nums[mid] with nums[h].
+- If nums[mid] > nums[h], minimum lies in the right half.
+- Otherwise, minimum lies in the left half (including mid).
+
+Time Complexity : O(log n)
+Space Complexity: O(1)
+*/
+
+class Solution3 {
+public:
+    int findMin(vector<int>& nums) {
+
+        int l = 0;
+        int h = nums.size() - 1;
+
+        while (l < h) {
+
+            int mid = l + (h - l) / 2;
+
+            if (nums[mid] > nums[h])
+                l = mid + 1;
+            else
+                h = mid;
+        }
+
+        return nums[l];
+    }
+};
