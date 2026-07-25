@@ -1,0 +1,47 @@
+
+Final Answer (Interview)
+Time Complexity: O(2^T * K) (Approx.)
+Space Complexity: O(T)
+
+where:
+
+T = Target value
+K = Average length of each combination
+
+class Solution {
+public:
+    vector<vector<int>>ans;
+    vector<int>curr;
+    void solve(int idx,vector<int>& candidates, int target)
+    {
+        if(target == 0)
+        {
+            ans.push_back(curr);
+            return;
+        }
+
+        if(idx < 0 || target < 0)
+        {
+            return ;
+        }
+
+        //take
+        if(candidates[idx] <= target)
+        {
+            curr.push_back(candidates[idx]);
+            solve(idx,candidates,target - candidates[idx]);
+            curr.pop_back();
+        }
+
+        //nottake
+        solve(idx-1,candidates,target);
+    }
+
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        int n = candidates.size();
+        
+        solve(n-1,candidates,target);
+        return ans;
+
+    }
+};
