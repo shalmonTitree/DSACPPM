@@ -1,0 +1,127 @@
+/*
+=========================================
+LeetCode 198 - House Robber
+=========================================
+*/
+
+///////////////////////
+// Brute Force (Recursion)
+///////////////////////
+class Solution {
+public:
+    int solve(int idx, vector<int>& nums)
+    {
+        if(idx < 0)
+        {
+            return 0;
+        }
+
+        if(idx == 0)
+        {
+            return nums[idx];
+        }
+
+        int nottake = solve(idx - 1, nums);
+        int take = nums[idx] + solve(idx - 2, nums);
+
+        return max(take, nottake);
+    }
+
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        return solve(n - 1, nums);
+    }
+};
+
+/*
+Time Complexity: O(2^n)
+Reason: Each index branches into two recursive calls, leading to
+an exponential number of function calls.
+
+Space Complexity: O(n)
+Reason: Maximum recursion depth is n.
+*/
+
+///////////////////////
+// Memoization
+///////////////////////
+class Solution {
+public:
+    int solve(int idx, vector<int>& nums, vector<int>& dp)
+    {
+        if(idx < 0)
+        {
+            return 0;
+        }
+
+        if(idx == 0)
+        {
+            return nums[idx];
+        }
+
+        if(dp[idx] != -1)
+        {
+            return dp[idx];
+        }
+
+        int nottake = solve(idx - 1, nums, dp);
+        int take = nums[idx] + solve(idx - 2, nums, dp);
+
+        return dp[idx] = max(take, nottake);
+    }
+
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> dp(n + 1, -1);
+        return solve(n - 1, nums, dp);
+    }
+};
+
+/*
+Time Complexity: O(n)
+Reason: Each index is computed only once.
+
+Space Complexity: O(n)
+Reason:
+- O(n) for the dp array.
+- O(n) recursion stack.
+Overall Space: O(n).
+*/
+
+///////////////////////
+// Tabulation
+///////////////////////
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+
+        if(n == 1)
+        {
+            return nums[0];
+        }
+
+        vector<int> dp(n + 1, 0);
+
+        dp[0] = nums[0];
+        dp[1] = max(nums[0], nums[1]);
+
+        for(int i = 2; i < n; i++)
+        {
+            int nottake = dp[i - 1];
+            int take = nums[i] + dp[i - 2];
+
+            dp[i] = max(nottake, take);
+        }
+
+        return dp[n - 1];
+    }
+};
+
+/*
+Time Complexity: O(n)
+Reason: Each index is processed exactly once.
+
+Space Complexity: O(n)
+Reason: Uses a dp array of size n.
+*/
