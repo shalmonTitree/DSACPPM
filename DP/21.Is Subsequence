@@ -1,0 +1,104 @@
+IS SUBSEQUENCE (LeetCode 392)
+
+------------------------------------------------------------
+1. RECURSION
+------------------------------------------------------------
+
+class Solution {
+public:
+    bool solve(int i, int j, string &s, string &t)
+    {
+        if(i < 0)
+            return true;
+
+        if(j < 0)
+            return false;
+
+        if(s[i] == t[j])
+            return solve(i - 1, j - 1, s, t);
+
+        return solve(i, j - 1, s, t);
+    }
+
+    bool isSubsequence(string s, string t)
+    {
+        return solve(s.size() - 1, t.size() - 1, s, t);
+    }
+};
+
+Time Complexity : O(m)
+Space Complexity: O(m)
+
+(m = length of t)
+
+------------------------------------------------------------
+2. MEMOIZATION (TOP-DOWN DP)
+------------------------------------------------------------
+
+class Solution {
+public:
+    bool solve(int i, int j, string &s, string &t,
+               vector<vector<int>> &dp)
+    {
+        if(i < 0)
+            return true;
+
+        if(j < 0)
+            return false;
+
+        if(dp[i][j] != -1)
+            return dp[i][j];
+
+        if(s[i] == t[j])
+            return dp[i][j] = solve(i - 1, j - 1, s, t, dp);
+
+        return dp[i][j] = solve(i, j - 1, s, t, dp);
+    }
+
+    bool isSubsequence(string s, string t)
+    {
+        int n = s.size();
+        int m = t.size();
+
+        if(n == 0)
+            return true;
+
+        vector<vector<int>> dp(n, vector<int>(m, -1));
+
+        return solve(n - 1, m - 1, s, t, dp);
+    }
+};
+
+Time Complexity : O(n*m)
+Space Complexity: O(n*m) + O(m)
+
+------------------------------------------------------------
+3. TABULATION (LCS)
+------------------------------------------------------------
+
+class Solution {
+public:
+    bool isSubsequence(string s, string t)
+    {
+        int n = s.size();
+        int m = t.size();
+
+        vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+        for(int i = 1; i <= n; i++)
+        {
+            for(int j = 1; j <= m; j++)
+            {
+                if(s[i - 1] == t[j - 1])
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+
+        return dp[n][m] == n;
+    }
+};
+
+Time Complexity : O(n*m)
+Space Complexity: O(n*m)
