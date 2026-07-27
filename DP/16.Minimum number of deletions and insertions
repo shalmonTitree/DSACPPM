@@ -1,0 +1,114 @@
+MINIMUM NUMBER OF DELETIONS AND INSERTIONS (GFG)
+
+Formula:
+
+LCS = Longest Common Subsequence
+
+Deletions = n - LCS
+Insertions = m - LCS
+
+Answer = (n - LCS) + (m - LCS)
+       = n + m - 2 * LCS
+
+------------------------------------------------------------
+1. RECURSION
+------------------------------------------------------------
+
+class Solution {
+public:
+    int solve(int i, int j, string &s1, string &s2)
+    {
+        if(i < 0 || j < 0)
+            return 0;
+
+        if(s1[i] == s2[j])
+            return 1 + solve(i - 1, j - 1, s1, s2);
+
+        return max(solve(i - 1, j, s1, s2),
+                   solve(i, j - 1, s1, s2));
+    }
+
+    int minOperations(string str1, string str2)
+    {
+        int n = str1.size();
+        int m = str2.size();
+
+        int lcs = solve(n - 1, m - 1, str1, str2);
+
+        return n + m - 2 * lcs;
+    }
+};
+
+Time Complexity : O(2^(n+m))
+Space Complexity: O(n+m)
+
+------------------------------------------------------------
+2. MEMOIZATION (TOP-DOWN DP)
+------------------------------------------------------------
+
+class Solution {
+public:
+    int solve(int i, int j, string &s1, string &s2,
+              vector<vector<int>> &dp)
+    {
+        if(i < 0 || j < 0)
+            return 0;
+
+        if(dp[i][j] != -1)
+            return dp[i][j];
+
+        if(s1[i] == s2[j])
+            return dp[i][j] = 1 + solve(i - 1, j - 1, s1, s2, dp);
+
+        return dp[i][j] = max(solve(i - 1, j, s1, s2, dp),
+                              solve(i, j - 1, s1, s2, dp));
+    }
+
+    int minOperations(string str1, string str2)
+    {
+        int n = str1.size();
+        int m = str2.size();
+
+        vector<vector<int>> dp(n, vector<int>(m, -1));
+
+        int lcs = solve(n - 1, m - 1, str1, str2, dp);
+
+        return n + m - 2 * lcs;
+    }
+};
+
+Time Complexity : O(n*m)
+Space Complexity: O(n*m) + O(n+m)
+
+------------------------------------------------------------
+3. TABULATION (BOTTOM-UP DP)
+------------------------------------------------------------
+
+class Solution {
+public:
+    int minOperations(string str1, string str2)
+    {
+        int n = str1.size();
+        int m = str2.size();
+
+        vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+        for(int i = 1; i <= n; i++)
+        {
+            for(int j = 1; j <= m; j++)
+            {
+                if(str1[i - 1] == str2[j - 1])
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+
+        int lcs = dp[n][m];
+
+        return n + m - 2 * lcs;
+    }
+};
+
+Time Complexity : O(n*m)
+Space Complexity: O(n*m)
