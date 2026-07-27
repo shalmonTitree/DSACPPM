@@ -1,0 +1,114 @@
+//bruteforce
+class Solution {
+public:
+     int solve(int idx, vector<int>& nums)
+    {
+        if(idx < 0)
+        {
+            return 0;
+        }
+
+        if(idx == 0)
+        {
+            return nums[idx];
+        }
+
+        int nottake = solve(idx - 1, nums);
+        int take = nums[idx] + solve(idx - 2, nums);
+
+        return max(take, nottake);
+    }
+
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+
+    if (n == 1)
+        return nums[0];
+
+    vector<int> newone(nums.begin(), nums.end() - 1);
+    vector<int> newtwo(nums.begin() + 1, nums.end());
+
+    return max(solve(newone.size() - 1, newone),solve(newtwo.size() - 1, newtwo));
+    }
+};
+
+
+//memo
+class Solution {
+public:
+     int solve(int idx, vector<int>& nums,vector<int>&dp)
+    {
+        if(idx < 0)
+        {
+            return 0;
+        }
+
+        if(idx == 0)
+        {
+            return nums[idx];
+        }
+
+        if(dp[idx] != -1) return dp[idx];
+        int nottake = solve(idx - 1, nums, dp);
+        int take = nums[idx] + solve(idx - 2, nums,dp);
+
+        return dp[idx] = max(take, nottake);
+    }
+
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+
+    if (n == 1)
+        return nums[0];
+
+    vector<int> newone(nums.begin(), nums.end() - 1);
+    vector<int> newtwo(nums.begin() + 1, nums.end());
+
+    vector<int>dpone(newone.size()+1,-1);
+    vector<int>dptwo(newtwo.size()+1,-1);
+    return max(solve(newone.size() - 1, newone,dpone),solve(newtwo.size() - 1, newtwo,dptwo));
+    }
+};
+
+//tabu
+
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+
+        if (n == 1)
+            return nums[0];
+
+        if (n == 2)
+            return max(nums[0], nums[1]);
+
+        vector<int> newone(nums.begin(), nums.end() - 1);
+        vector<int> newtwo(nums.begin() + 1, nums.end());
+
+        vector<int> dpone(newone.size());
+        vector<int> dptwo(newtwo.size());
+
+        // DP for newone
+        dpone[0] = newone[0];
+        dpone[1] = max(newone[0], newone[1]);
+
+        for (int i = 2; i < newone.size(); i++) {
+            int take = newone[i] + dpone[i - 2];
+            int nottake = dpone[i - 1];
+            dpone[i] = max(take, nottake);
+        }
+
+        // DP for newtwo
+        dptwo[0] = newtwo[0];
+        dptwo[1] = max(newtwo[0], newtwo[1]);
+
+        for (int i = 2; i < newtwo.size(); i++) {
+            int take = newtwo[i] + dptwo[i - 2];
+            int nottake = dptwo[i - 1];
+            dptwo[i] = max(take, nottake);
+        }
+
+        return max(dpone.back(), dptwo.back());
+    }
+};
