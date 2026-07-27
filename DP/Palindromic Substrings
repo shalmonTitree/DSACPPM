@@ -1,0 +1,189 @@
+/*
+=========================================
+LeetCode 647 - Palindromic Substrings
+=========================================
+*/
+
+///////////////////////
+// Brute Force
+///////////////////////
+class Solution {
+public:
+    bool isPalindrome(string &s, int left, int right) {
+        while (left < right) {
+            if (s[left] != s[right])
+                return false;
+            left++;
+            right--;
+        }
+        return true;
+    }
+
+    int countSubstrings(string s) {
+        int n = s.size();
+        int count = 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j < n; j++) {
+                if (isPalindrome(s, i, j))
+                    count++;
+            }
+        }
+
+        return count;
+    }
+};
+
+/*
+Time Complexity: O(n^3)
+Reason:
+- There are O(n²) substrings.
+- Checking whether each substring is a palindrome takes O(n).
+
+Space Complexity: O(1)
+Reason: No extra space is used.
+*/
+
+///////////////////////
+// Recursion
+///////////////////////
+class Solution {
+public:
+    bool solve(int i, int j, string &s)
+    {
+        if(i >= j)
+        {
+            return true;
+        }
+
+        if(s[i] != s[j])
+        {
+            return false;
+        }
+
+        return solve(i + 1, j - 1, s);
+    }
+
+    int countSubstrings(string s) {
+        int n = s.size();
+        int cnt = 0;
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = i; j < n; j++)
+            {
+                if(solve(i, j, s))
+                {
+                    cnt++;
+                }
+            }
+        }
+
+        return cnt;
+    }
+};
+
+/*
+Time Complexity: O(n^3)
+Reason:
+- O(n²) substrings.
+- Recursive palindrome check takes O(n) in the worst case.
+
+Space Complexity: O(n)
+Reason: Maximum recursion depth is n.
+*/
+
+///////////////////////
+// Memoization
+///////////////////////
+class Solution {
+public:
+    bool solve(int i, int j, string &s, vector<vector<int>>& dp)
+    {
+        if(i >= j)
+        {
+            return true;
+        }
+
+        if(dp[i][j] != -1)
+        {
+            return dp[i][j];
+        }
+
+        if(s[i] != s[j])
+        {
+            return dp[i][j] = false;
+        }
+
+        return dp[i][j] = solve(i + 1, j - 1, s, dp);
+    }
+
+    int countSubstrings(string s) {
+        int n = s.size();
+        int cnt = 0;
+
+        vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = i; j < n; j++)
+            {
+                if(solve(i, j, s, dp))
+                {
+                    cnt++;
+                }
+            }
+        }
+
+        return cnt;
+    }
+};
+
+/*
+Time Complexity: O(n²)
+Reason:
+Each state (i, j) is computed only once.
+
+Space Complexity: O(n²)
+Reason:
+- O(n²) for the DP table.
+- O(n) recursion stack.
+Overall Space: O(n²).
+*/
+
+///////////////////////
+// Tabulation
+///////////////////////
+class Solution {
+public:
+    int countSubstrings(string s) {
+        int n = s.size();
+        int cnt = 0;
+
+        vector<vector<int>> dp(n + 1, vector<int>(n + 1, false));
+
+        for(int i = n - 1; i >= 0; i--)
+        {
+            for(int j = i; j < n; j++)
+            {
+                if(s[i] == s[j] && (j - i <= 2 || dp[i + 1][j - 1]))
+                {
+                    dp[i][j] = true;
+                    cnt++;
+                }
+            }
+        }
+
+        return cnt;
+    }
+};
+
+/*
+Time Complexity: O(n²)
+Reason:
+Every pair (i, j) is processed exactly once.
+
+Space Complexity: O(n²)
+Reason:
+Uses a DP table of size n × n.
+*/
