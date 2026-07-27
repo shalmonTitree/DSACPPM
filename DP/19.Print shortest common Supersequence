@@ -1,0 +1,149 @@
+SHORTEST COMMON SUPERSEQUENCE (LeetCode 1092)
+
+------------------------------------------------------------
+1. RECURSION (Not Accepted - TLE)
+------------------------------------------------------------
+
+class Solution {
+public:
+    string solve(int i, int j, string &s1, string &s2)
+    {
+        if(i == s1.size())
+            return s2.substr(j);
+
+        if(j == s2.size())
+            return s1.substr(i);
+
+        if(s1[i] == s2[j])
+            return s1[i] + solve(i + 1, j + 1, s1, s2);
+
+        string op1 = s1[i] + solve(i + 1, j, s1, s2);
+        string op2 = s2[j] + solve(i, j + 1, s1, s2);
+
+        return (op1.size() < op2.size()) ? op1 : op2;
+    }
+
+    string shortestCommonSupersequence(string str1, string str2)
+    {
+        return solve(0, 0, str1, str2);
+    }
+};
+
+Time Complexity : Exponential
+Space Complexity: O(n+m)
+
+------------------------------------------------------------
+2. MEMOIZATION (Not Accepted - MLE/TLE)
+------------------------------------------------------------
+
+class Solution {
+public:
+    string solve(int i, int j, string &s1, string &s2,
+                 vector<vector<string>> &dp)
+    {
+        if(i == s1.size())
+            return s2.substr(j);
+
+        if(j == s2.size())
+            return s1.substr(i);
+
+        if(dp[i][j] != "#")
+            return dp[i][j];
+
+        if(s1[i] == s2[j])
+            return dp[i][j] = s1[i] + solve(i + 1, j + 1, s1, s2, dp);
+
+        string op1 = s1[i] + solve(i + 1, j, s1, s2, dp);
+        string op2 = s2[j] + solve(i, j + 1, s1, s2, dp);
+
+        if(op1.size() < op2.size())
+            return dp[i][j] = op1;
+
+        return dp[i][j] = op2;
+    }
+
+    string shortestCommonSupersequence(string str1, string str2)
+    {
+        int n = str1.size();
+        int m = str2.size();
+
+        vector<vector<string>> dp(n, vector<string>(m, "#"));
+
+        return solve(0, 0, str1, str2, dp);
+    }
+};
+
+Time Complexity : O(n*m*L)
+Space Complexity: O(n*m*L)
+
+(L = Average length of stored strings)
+
+------------------------------------------------------------
+3. TABULATION + BACKTRACKING (Accepted)
+------------------------------------------------------------
+
+class Solution {
+public:
+    string shortestCommonSupersequence(string str1, string str2)
+    {
+        int n = str1.size();
+        int m = str2.size();
+
+        vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+        for(int i = 1; i <= n; i++)
+        {
+            for(int j = 1; j <= m; j++)
+            {
+                if(str1[i - 1] == str2[j - 1])
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+
+        string ans = "";
+
+        int i = n;
+        int j = m;
+
+        while(i > 0 && j > 0)
+        {
+            if(str1[i - 1] == str2[j - 1])
+            {
+                ans += str1[i - 1];
+                i--;
+                j--;
+            }
+            else if(dp[i - 1][j] > dp[i][j - 1])
+            {
+                ans += str1[i - 1];
+                i--;
+            }
+            else
+            {
+                ans += str2[j - 1];
+                j--;
+            }
+        }
+
+        while(i > 0)
+        {
+            ans += str1[i - 1];
+            i--;
+        }
+
+        while(j > 0)
+        {
+            ans += str2[j - 1];
+            j--;
+        }
+
+        reverse(ans.begin(), ans.end());
+
+        return ans;
+    }
+};
+
+Time Complexity : O(n*m)
+Space Complexity: O(n*m)
