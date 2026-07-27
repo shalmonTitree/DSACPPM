@@ -1,0 +1,134 @@
+/*
+=========================================
+LeetCode 91 - Decode Ways
+=========================================
+*/
+
+///////////////////////
+// Brute Force (Recursion)
+///////////////////////
+class Solution {
+public:
+    int solve(int idx, string &s)
+    {
+        if(idx == s.size())
+            return 1;
+
+        if(s[idx] == '0')
+            return 0;
+
+        int one = solve(idx + 1, s);
+        int two = 0;
+
+        if(idx + 1 < s.size() &&
+          (s[idx] == '1' || (s[idx] == '2' && s[idx + 1] <= '6')))
+        {
+            two = solve(idx + 2, s);
+        }
+
+        return one + two;
+    }
+
+    int numDecodings(string s) {
+        return solve(0, s);
+    }
+};
+
+/*
+Time Complexity: O(2^n)
+Reason:
+Each position can branch into one-digit or two-digit decoding.
+
+Space Complexity: O(n)
+Reason:
+Maximum recursion depth is n.
+*/
+
+///////////////////////
+// Memoization
+///////////////////////
+class Solution {
+public:
+    int solve(int idx, string &s, vector<int>& dp)
+    {
+        if(idx == s.size())
+            return 1;
+
+        if(s[idx] == '0')
+            return 0;
+
+        if(dp[idx] != -1)
+            return dp[idx];
+
+        int one = solve(idx + 1, s, dp);
+        int two = 0;
+
+        if(idx + 1 < s.size() &&
+          (s[idx] == '1' || (s[idx] == '2' && s[idx + 1] <= '6')))
+        {
+            two = solve(idx + 2, s, dp);
+        }
+
+        return dp[idx] = one + two;
+    }
+
+    int numDecodings(string s) {
+        vector<int> dp(s.size(), -1);
+        return solve(0, s, dp);
+    }
+};
+
+/*
+Time Complexity: O(n)
+Reason:
+Each index is computed only once.
+
+Space Complexity: O(n)
+Reason:
+- O(n) DP array.
+- O(n) recursion stack.
+Overall Space: O(n).
+*/
+
+///////////////////////
+// Tabulation
+///////////////////////
+class Solution {
+public:
+    int numDecodings(string s) {
+        int n = s.size();
+
+        vector<int> dp(n + 1, 0);
+
+        dp[n] = 1;
+
+        for(int i = n - 1; i >= 0; i--)
+        {
+            if(s[i] == '0')
+            {
+                dp[i] = 0;
+                continue;
+            }
+
+            dp[i] = dp[i + 1];
+
+            if(i + 1 < n &&
+              (s[i] == '1' || (s[i] == '2' && s[i + 1] <= '6')))
+            {
+                dp[i] += dp[i + 2];
+            }
+        }
+
+        return dp[0];
+    }
+};
+
+/*
+Time Complexity: O(n)
+Reason:
+Each index is processed exactly once.
+
+Space Complexity: O(n)
+Reason:
+Uses a DP array of size n+1.
+*/
