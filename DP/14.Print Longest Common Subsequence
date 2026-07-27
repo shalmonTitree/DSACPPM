@@ -1,0 +1,231 @@
+PRINT LONGEST COMMON SUBSEQUENCE (LCS)
+
+============================================================
+1. RECURSION
+============================================================
+
+class Solution {
+public:
+    int solve(int i, int j, string &s, string &t)
+    {
+        if(i < 0 || j < 0)
+            return 0;
+
+        if(s[i] == t[j])
+            return 1 + solve(i - 1, j - 1, s, t);
+
+        return max(solve(i - 1, j, s, t),
+                   solve(i, j - 1, s, t));
+    }
+
+    string findLCS(string &s, string &t)
+    {
+        int i = s.size() - 1;
+        int j = t.size() - 1;
+
+        string ans = "";
+
+        while(i >= 0 && j >= 0)
+        {
+            if(s[i] == t[j])
+            {
+                ans += s[i];
+                i--;
+                j--;
+            }
+            else
+            {
+                int up = solve(i - 1, j, s, t);
+                int left = solve(i, j - 1, s, t);
+
+                if(up >= left)
+                    i--;
+                else
+                    j--;
+            }
+        }
+
+        reverse(ans.begin(), ans.end());
+        return ans;
+    }
+};
+
+Time Complexity:
+- Computing recursive calls repeatedly: O(2^(N+M))
+- Reconstruction: O(N+M)
+
+Overall TC: O(2^(N+M))
+
+Space Complexity:
+- Recursive Stack: O(N+M)
+- Answer String: O(L)
+
+Overall SC: O(N+M)
+
+where L = Length of LCS.
+
+
+============================================================
+2. MEMOIZATION
+============================================================
+
+class Solution {
+public:
+    int solve(int i, int j, string &s, string &t,
+              vector<vector<int>> &dp)
+    {
+        if(i < 0 || j < 0)
+            return 0;
+
+        if(dp[i][j] != -1)
+            return dp[i][j];
+
+        if(s[i] == t[j])
+            return dp[i][j] = 1 + solve(i - 1, j - 1, s, t, dp);
+
+        return dp[i][j] = max(solve(i - 1, j, s, t, dp),
+                              solve(i, j - 1, s, t, dp));
+    }
+
+    string findLCS(string &s, string &t)
+    {
+        int n = s.size();
+        int m = t.size();
+
+        vector<vector<int>> dp(n, vector<int>(m, -1));
+
+        solve(n - 1, m - 1, s, t, dp);
+
+        int i = n - 1;
+        int j = m - 1;
+
+        string ans = "";
+
+        while(i >= 0 && j >= 0)
+        {
+            if(s[i] == t[j])
+            {
+                ans += s[i];
+                i--;
+                j--;
+            }
+            else
+            {
+                int up = (i > 0) ? dp[i - 1][j] : 0;
+                int left = (j > 0) ? dp[i][j - 1] : 0;
+
+                if(up >= left)
+                    i--;
+                else
+                    j--;
+            }
+        }
+
+        reverse(ans.begin(), ans.end());
+
+        return ans;
+    }
+};
+
+Time Complexity:
+- DP Computation: O(N × M)
+- Reconstruction: O(N+M)
+
+Overall TC: O(N × M)
+
+Space Complexity:
+- DP Table: O(N × M)
+- Recursive Stack: O(N+M)
+- Answer String: O(L)
+
+Overall SC: O(N × M) + O(N+M)
+
+where L = Length of LCS.
+
+
+============================================================
+3. TABULATION
+============================================================
+
+class Solution {
+public:
+    string findLCS(string &s, string &t)
+    {
+        int n = s.size();
+        int m = t.size();
+
+        vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+        for(int i = 1; i <= n; i++)
+        {
+            for(int j = 1; j <= m; j++)
+            {
+                if(s[i - 1] == t[j - 1])
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+
+        int i = n;
+        int j = m;
+
+        string ans = "";
+
+        while(i > 0 && j > 0)
+        {
+            if(s[i - 1] == t[j - 1])
+            {
+                ans += s[i - 1];
+                i--;
+                j--;
+            }
+            else if(dp[i - 1][j] >= dp[i][j - 1])
+            {
+                i--;
+            }
+            else
+            {
+                j--;
+            }
+        }
+
+        reverse(ans.begin(), ans.end());
+
+        return ans;
+    }
+};
+
+Time Complexity:
+- DP Table Filling: O(N × M)
+- Reconstruction: O(N+M)
+
+Overall TC: O(N × M)
+
+Space Complexity:
+- DP Table: O(N × M)
+- Answer String: O(L)
+
+Overall SC: O(N × M)
+
+where L = Length of LCS.
+
+
+============================================================
+SUMMARY
+============================================================
+
+Recursion
+----------
+Time Complexity  : O(2^(N+M))
+Space Complexity : O(N+M)
+
+Memoization
+-----------
+Time Complexity  : O(N × M)
+Space Complexity : O(N × M) + O(N+M)
+
+Tabulation
+----------
+Time Complexity  : O(N × M)
+Space Complexity : O(N × M)
