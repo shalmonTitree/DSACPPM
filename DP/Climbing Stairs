@@ -1,0 +1,115 @@
+
+1. Recursion
+Time Complexity: O(2^n)
+Space Complexity: O(n)
+
+2. Memoization (Top-Down DP)
+Time Complexity: O(n)
+Space Complexity: O(n)
+(dp array + recursion stack)
+
+3. Tabulation (Bottom-Up DP)
+Time Complexity: O(n)
+Space Complexity: O(n)
+*/
+
+///////////////////////
+// Recursion
+///////////////////////
+class Solution {
+public:
+    int solve(int n)
+    {
+        if(n == 1)
+        {
+            return 1;
+        }
+
+        if(n == 2)
+        {
+            return 2;
+        }
+        return solve(n-1) + solve(n-2);
+    }
+
+    int climbStairs(int n) {
+        return solve(n);
+    }
+};
+
+/*
+Time Complexity: O(2^n)
+Reason: Each function call branches into two recursive calls,
+resulting in an exponential number of calls.
+
+Space Complexity: O(n)
+Reason: Maximum recursion depth is n.
+*/
+
+///////////////////////
+// Memoization
+///////////////////////
+class Solution {
+public:
+    int solve(int n, vector<int>& dp)
+    {
+        if(n == 1)
+        {
+            return 1;
+        }
+
+        if(n == 2)
+        {
+            return 2;
+        }
+
+        if(dp[n] != -1)
+        {
+            return dp[n];
+        }
+
+        return dp[n] = solve(n-1, dp) + solve(n-2, dp);
+    }
+
+    int climbStairs(int n) {
+        vector<int> dp(n+1, -1);
+        return solve(n, dp);
+    }
+};
+
+/*
+Time Complexity: O(n)
+Reason: Each state is computed only once.
+
+Space Complexity: O(n)
+Reason: O(n) for the dp array and O(n) recursion stack.
+Overall Space: O(n).
+*/
+
+///////////////////////
+// Tabulation
+///////////////////////
+class Solution {
+public:
+    int climbStairs(int n) {
+        vector<int> dp(n+1, 0);
+
+        dp[0] = 1;
+        dp[1] = 1;
+
+        for(int i = 2; i <= n; i++)
+        {
+            dp[i] = dp[i-1] + dp[i-2];
+        }
+
+        return dp[n];
+    }
+};
+
+/*
+Time Complexity: O(n)
+Reason: A single loop computes each state once.
+
+Space Complexity: O(n)
+Reason: Uses a dp array of size n+1.
+*/
