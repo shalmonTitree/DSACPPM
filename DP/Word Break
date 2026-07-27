@@ -1,0 +1,170 @@
+/*
+=========================================
+LeetCode 139 - Word Break
+=========================================
+*/
+
+///////////////////////
+// Brute Force (Recursion)
+///////////////////////
+class Solution {
+public:
+    bool solve(int idx, string &s, set<string> &st)
+    {
+        if(idx == s.size())
+        {
+            return true;
+        }
+
+        string temp = "";
+
+        for(int i = idx; i < s.size(); i++)
+        {
+            temp += s[i];
+
+            if(st.find(temp) != st.end())
+            {
+                if(solve(i + 1, s, st))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool wordBreak(string s, vector<string>& wordDict) {
+        set<string> st;
+
+        for(auto it : wordDict)
+        {
+            st.insert(it);
+        }
+
+        return solve(0, s, st);
+    }
+};
+
+/*
+Time Complexity: O(2^n)
+Reason:
+At every index, multiple partitions are explored recursively,
+leading to an exponential number of recursive calls.
+
+Space Complexity: O(n)
+Reason:
+Maximum recursion depth is n.
+*/
+
+///////////////////////
+// Memoization
+///////////////////////
+class Solution {
+public:
+    bool solve(int idx, string &s, set<string> &st, vector<int> &dp)
+    {
+        if(idx == s.size())
+        {
+            return true;
+        }
+
+        if(dp[idx] != -1)
+        {
+            return dp[idx];
+        }
+
+        string temp = "";
+
+        for(int i = idx; i < s.size(); i++)
+        {
+            temp += s[i];
+
+            if(st.find(temp) != st.end())
+            {
+                if(solve(i + 1, s, st, dp))
+                {
+                    return dp[idx] = true;
+                }
+            }
+        }
+
+        return dp[idx] = false;
+    }
+
+    bool wordBreak(string s, vector<string>& wordDict) {
+        set<string> st;
+
+        for(auto it : wordDict)
+        {
+            st.insert(it);
+        }
+
+        vector<int> dp(s.size(), -1);
+
+        return solve(0, s, st, dp);
+    }
+};
+
+/*
+Time Complexity: O(n²)
+Reason:
+Each starting index is solved only once, and from each index
+we may scan up to n characters.
+
+Space Complexity: O(n)
+Reason:
+- O(n) DP array.
+- O(n) recursion stack.
+Overall Space: O(n).
+*/
+
+///////////////////////
+// Tabulation
+///////////////////////
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        int n = s.size();
+
+        set<string> st;
+
+        for(auto it : wordDict)
+        {
+            st.insert(it);
+        }
+
+        vector<bool> dp(n + 1, false);
+
+        dp[n] = true;
+
+        for(int i = n - 1; i >= 0; i--)
+        {
+            string temp = "";
+
+            for(int j = i; j < n; j++)
+            {
+                temp += s[j];
+
+                if(st.find(temp) != st.end() && dp[j + 1])
+                {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+
+        return dp[0];
+    }
+};
+
+/*
+Time Complexity: O(n²)
+Reason:
+Each index is processed once, and for every index,
+up to n characters are checked.
+
+Space Complexity: O(n)
+Reason:
+Uses a DP array of size n+1.
+*/
