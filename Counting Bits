@@ -1,0 +1,101 @@
+LeetCode 338 - Counting Bits
+
+====================================================
+1. Brute Force (Count Bits for Every Number)
+TC: O(n × 32) = O(n)
+SC: O(1) (excluding output)
+====================================================
+
+class Solution {
+public:
+    int countOnes(int x) {
+        int cnt = 0;
+        while (x) {
+            cnt += (x & 1);
+            x >>= 1;
+        }
+        return cnt;
+    }
+
+    vector<int> countBits(int n) {
+
+        vector<int> ans(n + 1);
+
+        for (int i = 0; i <= n; i++)
+            ans[i] = countOnes(i);
+
+        return ans;
+    }
+};
+
+====================================================
+2. Brian Kernighan's Algorithm
+TC: O(n × k)
+(k = number of set bits)
+Worst Case: O(n × 32) = O(n)
+SC: O(1) (excluding output)
+====================================================
+
+class Solution {
+public:
+    int countOnes(int x) {
+        int cnt = 0;
+
+        while (x) {
+            x &= (x - 1);
+            cnt++;
+        }
+
+        return cnt;
+    }
+
+    vector<int> countBits(int n) {
+
+        vector<int> ans(n + 1);
+
+        for (int i = 0; i <= n; i++)
+            ans[i] = countOnes(i);
+
+        return ans;
+    }
+};
+
+====================================================
+3. DP (Using Right Shift) ⭐ Optimal
+TC: O(n)
+SC: O(n)
+====================================================
+
+class Solution {
+public:
+    vector<int> countBits(int n) {
+
+        vector<int> dp(n + 1, 0);
+
+        for (int i = 1; i <= n; i++) {
+            dp[i] = dp[i >> 1] + (i & 1);
+        }
+
+        return dp;
+    }
+};
+
+====================================================
+4. DP (Using Last Set Bit)
+TC: O(n)
+SC: O(n)
+====================================================
+
+class Solution {
+public:
+    vector<int> countBits(int n) {
+
+        vector<int> dp(n + 1, 0);
+
+        for (int i = 1; i <= n; i++) {
+            dp[i] = dp[i & (i - 1)] + 1;
+        }
+
+        return dp;
+    }
+};
