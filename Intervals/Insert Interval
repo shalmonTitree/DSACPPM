@@ -1,0 +1,67 @@
+LeetCode 57 - Insert Interval
+
+====================================================
+1. Brute Force (Append + Sort + Merge)
+TC: O(n log n)
+SC: O(n)
+====================================================
+
+class Solution {
+public:
+    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+        intervals.push_back(newInterval);
+
+        sort(intervals.begin(), intervals.end());
+
+        vector<vector<int>> ans;
+
+        for (auto &it : intervals) {
+            if (ans.empty() || ans.back()[1] < it[0]) {
+                ans.push_back(it);
+            } else {
+                ans.back()[1] = max(ans.back()[1], it[1]);
+            }
+        }
+
+        return ans;
+    }
+};
+
+====================================================
+2. Linear Scan (Optimal)
+TC: O(n)
+SC: O(1) (Ignoring output array)
+====================================================
+
+class Solution {
+public:
+    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+
+        vector<vector<int>> ans;
+        int i = 0;
+        int n = intervals.size();
+
+        // Add all intervals before newInterval
+        while (i < n && intervals[i][1] < newInterval[0]) {
+            ans.push_back(intervals[i]);
+            i++;
+        }
+
+        // Merge overlapping intervals
+        while (i < n && intervals[i][0] <= newInterval[1]) {
+            newInterval[0] = min(newInterval[0], intervals[i][0]);
+            newInterval[1] = max(newInterval[1], intervals[i][1]);
+            i++;
+        }
+
+        ans.push_back(newInterval);
+
+        // Add remaining intervals
+        while (i < n) {
+            ans.push_back(intervals[i]);
+            i++;
+        }
+
+        return ans;
+    }
+};
