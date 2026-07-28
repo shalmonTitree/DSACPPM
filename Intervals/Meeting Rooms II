@@ -1,0 +1,99 @@
+GFG - Attend All Meetings II
+
+====================================================
+1. Brute Force
+TC: O(n²)
+SC: O(1)
+====================================================
+
+class Solution {
+public:
+    int minMeetingRooms(vector<int> &start, vector<int> &end) {
+
+        int n = start.size();
+        int ans = 0;
+
+        for (int i = 0; i < n; i++) {
+            int rooms = 1;
+
+            for (int j = 0; j < n; j++) {
+                if (i != j &&
+                    start[j] < end[i] &&
+                    end[j] > start[i]) {
+                    rooms++;
+                }
+            }
+
+            ans = max(ans, (rooms + 1) / 2);
+        }
+
+        return ans;
+    }
+};
+
+====================================================
+2. Min Heap
+TC: O(n log n)
+SC: O(n)
+====================================================
+
+class Solution {
+public:
+    int minMeetingRooms(vector<int> &start, vector<int> &end) {
+
+        int n = start.size();
+
+        vector<pair<int,int>> meetings;
+
+        for (int i = 0; i < n; i++)
+            meetings.push_back({start[i], end[i]});
+
+        sort(meetings.begin(), meetings.end());
+
+        priority_queue<int, vector<int>, greater<int>> pq;
+
+        for (auto &it : meetings) {
+
+            if (!pq.empty() && it.first >= pq.top())
+                pq.pop();
+
+            pq.push(it.second);
+        }
+
+        return pq.size();
+    }
+};
+
+====================================================
+3. Two Pointers (Optimal)
+TC: O(n log n)
+SC: O(1) (excluding sorting)
+====================================================
+
+class Solution {
+public:
+    int minMeetingRooms(vector<int> &start, vector<int> &end) {
+
+        int n = start.size();
+
+        sort(start.begin(), start.end());
+        sort(end.begin(), end.end());
+
+        int rooms = 0, ans = 0;
+        int i = 0, j = 0;
+
+        while (i < n) {
+
+            if (start[i] < end[j]) {
+                rooms++;
+                ans = max(ans, rooms);
+                i++;
+            } else {
+                rooms--;
+                j++;
+            }
+        }
+
+        return ans;
+    }
+};
