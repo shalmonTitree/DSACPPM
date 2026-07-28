@@ -1,0 +1,86 @@
+LeetCode 48 - Rotate Image
+
+====================================================
+1. Extra Matrix (Brute Force)
+TC: O(n²)
+SC: O(n²)
+====================================================
+
+class Solution {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+
+        int n = matrix.size();
+
+        vector<vector<int>> ans(n, vector<int>(n));
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                ans[j][n - 1 - i] = matrix[i][j];
+            }
+        }
+
+        matrix = ans;
+    }
+};
+
+====================================================
+2. In-Place (Transpose + Reverse) ⭐ Optimal
+TC: O(n²)
+SC: O(1)
+====================================================
+
+class Solution {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+
+        int n = matrix.size();
+
+        // Transpose
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                swap(matrix[i][j], matrix[j][i]);
+            }
+        }
+
+        // Reverse each row
+        for (int i = 0; i < n; i++) {
+            reverse(matrix[i].begin(), matrix[i].end());
+        }
+    }
+};
+
+====================================================
+3. In-Place (Layer by Layer / Four-Way Swap)
+TC: O(n²)
+SC: O(1)
+====================================================
+
+class Solution {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+
+        int n = matrix.size();
+
+        for (int layer = 0; layer < n / 2; layer++) {
+
+            int first = layer;
+            int last = n - 1 - layer;
+
+            for (int i = first; i < last; i++) {
+
+                int offset = i - first;
+
+                int top = matrix[first][i];
+
+                matrix[first][i] = matrix[last - offset][first];
+
+                matrix[last - offset][first] = matrix[last][last - offset];
+
+                matrix[last][last - offset] = matrix[i][last];
+
+                matrix[i][last] = top;
+            }
+        }
+    }
+};
