@@ -1,0 +1,44 @@
+LeetCode 191 - Number of 1 Bits
+
+====================================================
+1. Check Every Bit
+TC: O(32) = O(1)
+SC: O(1)
+====================================================
+
+class Solution {
+public:
+    int hammingWeight(uint32_t n) {
+
+        int count = 0;
+
+        while (n) {
+            count += (n & 1);
+            n >>= 1;
+        }
+
+        return count;
+    }
+};
+
+====================================================
+2. Brian Kernighan's Algorithm ⭐ Optimal
+TC: O(k)   (k = number of set bits)
+Worst Case: O(32) = O(1)
+SC: O(1)
+====================================================
+
+class Solution {
+public:
+    int hammingWeight(uint32_t n) {
+
+        int count = 0;
+
+        while (n) {
+            n = n & (n - 1);
+            count++;
+        }
+
+        return count;
+    }
+};
