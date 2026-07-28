@@ -1,0 +1,41 @@
+LeetCode 371 - Sum of Two Integers
+
+====================================================
+1. Recursive Bit Manipulation
+TC: O(1) (At most 32 recursive calls)
+SC: O(1) (Recursion depth ≤ 32)
+====================================================
+
+class Solution {
+public:
+    int getSum(int a, int b) {
+
+        if (b == 0)
+            return a;
+
+        return getSum(a ^ b, (unsigned int)(a & b) << 1);
+    }
+};
+
+====================================================
+2. Iterative Bit Manipulation ⭐ Optimal
+TC: O(1) (At most 32 iterations)
+SC: O(1)
+====================================================
+
+class Solution {
+public:
+    int getSum(int a, int b) {
+
+        while (b != 0) {
+
+            unsigned int carry = (unsigned int)(a & b) << 1;
+
+            a = a ^ b;
+
+            b = carry;
+        }
+
+        return a;
+    }
+};
