@@ -1,0 +1,123 @@
+LeetCode 268 - Missing Number
+
+====================================================
+1. Brute Force
+TC: O(n²)
+SC: O(1)
+====================================================
+
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+
+        int n = nums.size();
+
+        for (int i = 0; i <= n; i++) {
+
+            bool found = false;
+
+            for (int j = 0; j < n; j++) {
+                if (nums[j] == i) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+                return i;
+        }
+
+        return -1;
+    }
+};
+
+====================================================
+2. Sorting
+TC: O(n log n)
+SC: O(1)
+====================================================
+
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+
+        sort(nums.begin(), nums.end());
+
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] != i)
+                return i;
+        }
+
+        return nums.size();
+    }
+};
+
+====================================================
+3. Hashing
+TC: O(n)
+SC: O(n)
+====================================================
+
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+
+        int n = nums.size();
+
+        vector<bool> vis(n + 1, false);
+
+        for (int x : nums)
+            vis[x] = true;
+
+        for (int i = 0; i <= n; i++) {
+            if (!vis[i])
+                return i;
+        }
+
+        return -1;
+    }
+};
+
+====================================================
+4. Sum Formula
+TC: O(n)
+SC: O(1)
+====================================================
+
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+
+        int n = nums.size();
+
+        int expected = n * (n + 1) / 2;
+        int actual = 0;
+
+        for (int x : nums)
+            actual += x;
+
+        return expected - actual;
+    }
+};
+
+====================================================
+5. XOR ⭐ Optimal
+TC: O(n)
+SC: O(1)
+====================================================
+
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+
+        int n = nums.size();
+        int ans = n;
+
+        for (int i = 0; i < n; i++) {
+            ans ^= i;
+            ans ^= nums[i];
+        }
+
+        return ans;
+    }
+};
