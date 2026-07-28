@@ -1,0 +1,193 @@
+//rec
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+int compute(int i,int j,vector<vector<int>>&v)
+{
+    int n = v.size() - 1;
+    int m = v[0].size() - 1;
+
+    if(i == n && j == m)
+    {
+        return 0;
+    }
+
+
+    if(i > n || j > m)
+    {
+        return 1e9;
+    }
+
+    if(v[i][j] == 0)
+    {
+        return 1e9;
+    }
+
+    int down = compute(i + v[i][j], j, v);
+    int right = compute(i, j + v[i][j], v);
+
+    return 1 + min(down,right);
+}
+void solve() {
+    int n,m;
+    cin>>n>>m;
+    vector<vector<int>>v(n+1,vector<int>(m+1,0));
+
+    for(int i = 1; i <= n; i++)
+    {
+        for(int j = 1; j <=m; j++)
+        {
+            cin>>v[i][j];
+        }
+    }
+
+    int ans = compute(1,1,v);
+    if(ans >= 1e9)
+    {
+        cout<<"-1"<<endl;
+    }
+    else
+    {
+        cout<<ans<<endl;
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+//memo
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+int compute(int i,int j,vector<vector<int>>&v,vector<vector<int>>&dp)
+{
+    int n = v.size() - 1;
+    int m = v[0].size() - 1;
+
+    if(i == n && j == m)
+    {
+        return 0;
+    }
+
+
+    if(i > n || j > m)
+    {
+        return 1e9;
+    }
+
+    if(v[i][j] == 0)
+    {
+        return 1e9;
+    }
+
+    if(dp[i][j] != -1)
+    {
+        return dp[i][j];
+    }
+
+    int down = compute(i + v[i][j], j, v,dp);
+    int right = compute(i, j + v[i][j], v,dp);
+
+    return dp[i][j] = 1 + min(down,right);
+}
+void solve() {
+    int n,m;
+    cin>>n>>m;
+    vector<vector<int>>v(n+1,vector<int>(m+1,0));
+    vector<vector<int>>dp(n+1,vector<int>(m+1,-1));
+    for(int i = 1; i <= n; i++)
+    {
+        for(int j = 1; j <=m; j++)
+        {
+            cin>>v[i][j];
+        }
+    }
+
+    int ans = compute(1,1,v,dp);
+    if(ans >= 1e9)
+    {
+        cout<<"-1"<<endl;
+    }
+    else
+    {
+        cout<<ans<<endl;
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+//tabu
+#include <bits/stdc++.h>
+using namespace std;
+
+const int INF = 1e9;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, m;
+    cin >> n >> m;
+
+    vector<vector<int>> v(n + 1, vector<int>(m + 1));
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, INF));
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            cin >> v[i][j];
+        }
+    }
+
+    dp[n][m] = 0;
+
+    for (int i = n; i >= 1; i--) {
+        for (int j = m; j >= 1; j--) {
+
+            if (i == n && j == m)
+                continue;
+
+            if (v[i][j] == 0)
+                continue;
+
+            int jump = v[i][j];
+
+            if (i + jump <= n)
+                dp[i][j] = min(dp[i][j], 1 + dp[i + jump][j]);
+
+            if (j + jump <= m)
+                dp[i][j] = min(dp[i][j], 1 + dp[i][j + jump]);
+        }
+    }
+
+    if (dp[1][1] >= INF)
+        cout << -1 << '\n';
+    else
+        cout << dp[1][1] << '\n';
+
+    return 0;
+}
