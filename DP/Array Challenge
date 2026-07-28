@@ -1,0 +1,70 @@
+Time Limit: 1 sec
+Memory: 256 MB
+
+Description
+Given an array of numbers. Determine the largest sum that can be formed by any contiguous sub-array in the array.
+
+Input Format
+The first line of input contains an integer T (1 ≤ T ≤ 10), the number of test cases.
+
+The first line of each test case contains an integer n. (1 ≤ n ≤ 100000)
+
+The next line contains n space-separated integers, -1e9 ≤ Ai ≤ 1e9.
+
+Output Format
+For each test case, print the maximum subarray sum on a new line.
+
+Constraints
+1 ≤ T ≤ 10
+1 ≤ n ≤ 100000
+-1e9 ≤ Ai ≤ 1e9
+
+Sample Input
+1
+4
+1 -2 0 3
+
+Sample Output
+3
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    ll n;
+    cin>>n;
+
+    vector<ll>v(n);
+    for(int i = 0; i < n; i++)
+    {
+        cin>>v[i];
+    }
+    vector<ll>dp(n,0);
+    dp[0] = v[0];
+
+    for(ll i = 1; i < n; i++)
+    {
+        ll val = dp[i-1] + v[i];
+        dp[i] = max(val,v[i]);
+    }
+    ll maxi = *max_element(dp.begin(),dp.end());
+
+    cout<<maxi<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
