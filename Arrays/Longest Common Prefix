@@ -1,0 +1,140 @@
+Brute Force
+-----------
+Idea:
+- Compare characters column by column using the first string as a reference.
+- Stop when a mismatch is found or one string ends.
+
+Algorithm:
+1. Take the first string as the reference.
+2. Traverse each character of the first string.
+3. For every other string:
+   - If the current index is out of bounds or characters differ, return the prefix built so far.
+4. If all characters match, append the character to the answer.
+5. Return the final prefix.
+
+Time Complexity: O(n × m)
+Space Complexity: O(1)
+
+Where:
+- n = number of strings
+- m = length of the shortest string
+
+```cpp
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        string ans = "";
+
+        for (int i = 0; i < strs[0].size(); i++) {
+            char ch = strs[0][i];
+
+            for (int j = 1; j < strs.size(); j++) {
+                if (i >= strs[j].size() || strs[j][i] != ch)
+                    return ans;
+            }
+
+            ans += ch;
+        }
+
+        return ans;
+    }
+};
+```
+
+Better Solution
+---------------
+Idea:
+- Sort the strings lexicographically.
+- After sorting, only the first and last strings need to be compared.
+- Their common prefix is the common prefix of the entire array.
+
+Algorithm:
+1. Sort the array of strings.
+2. Compare the first and last strings character by character.
+3. Append matching characters to the answer.
+4. Stop at the first mismatch.
+5. Return the answer.
+
+Time Complexity: O(n log n × m)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        sort(strs.begin(), strs.end());
+
+        string first = strs.front();
+        string last = strs.back();
+
+        string ans = "";
+
+        for (int i = 0; i < min(first.size(), last.size()); i++) {
+            if (first[i] != last[i])
+                break;
+
+            ans += first[i];
+        }
+
+        return ans;
+    }
+};
+```
+
+Optimal Solution
+----------------
+Idea:
+- Start with the first string as the current prefix.
+- Compare it with every other string.
+- Keep shrinking the prefix until it matches the beginning of the current string.
+
+Algorithm:
+1. Initialize prefix = strs[0].
+2. For each remaining string:
+   - While the string does not start with prefix:
+     - Remove the last character from prefix.
+3. If prefix becomes empty, return "".
+4. Return prefix.
+
+Time Complexity: O(n × m)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        string prefix = strs[0];
+
+        for (int i = 1; i < strs.size(); i++) {
+            while (strs[i].find(prefix) != 0) {
+                prefix.pop_back();
+
+                if (prefix.empty())
+                    return "";
+            }
+        }
+
+        return prefix;
+    }
+};
+```
+
+Interview Notes
+---------------
+- The vertical scanning approach compares one character position across all strings.
+- Sorting works because the maximum difference appears between the lexicographically smallest and largest strings.
+- The prefix-shrinking approach avoids sorting and keeps reducing the candidate prefix until it matches every string.
+- Example:
+  - ["flower", "flow", "flight"]
+  - Start with "flower"
+  - Compare with "flow" → "flow"
+  - Compare with "flight" → "fl"
+- Edge Cases:
+  - Only one string.
+  - Empty string in the array.
+  - No common prefix.
+  - All strings are identical.
+- Follow-up:
+  - Can this be solved using a Trie?
+    - Yes. Insert all strings into a Trie and traverse until reaching a branching node or the end of a word.
+- The prefix-shrinking approach is the standard interview solution because it avoids sorting while maintaining O(n × m) time and O(1) extra space.
