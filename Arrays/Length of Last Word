@@ -1,0 +1,100 @@
+Brute Force
+-----------
+Idea:
+- Split the string into words.
+- Store each word in a vector.
+- Return the length of the last word.
+
+Algorithm:
+1. Traverse the string.
+2. Build words character by character.
+3. Whenever a space is encountered, store the current word.
+4. Return the length of the last stored word.
+
+Time Complexity: O(n)
+Space Complexity: O(n)
+
+```cpp
+class Solution {
+public:
+    int lengthOfLastWord(string s) {
+        vector<string> words;
+        string word = "";
+
+        for (char ch : s) {
+            if (ch == ' ') {
+                if (!word.empty()) {
+                    words.push_back(word);
+                    word = "";
+                }
+            } else {
+                word += ch;
+            }
+        }
+
+        if (!word.empty())
+            words.push_back(word);
+
+        return words.back().size();
+    }
+};
+```
+
+Better Solution
+---------------
+Idea:
+- Traverse the string from the end.
+- Ignore trailing spaces.
+- Count characters until the next space.
+
+Algorithm:
+1. Start from the last index.
+2. Skip trailing spaces.
+3. Count characters until a space or beginning of string.
+4. Return the count.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    int lengthOfLastWord(string s) {
+        int i = s.size() - 1;
+
+        while (i >= 0 && s[i] == ' ')
+            i--;
+
+        int length = 0;
+
+        while (i >= 0 && s[i] != ' ') {
+            length++;
+            i--;
+        }
+
+        return length;
+    }
+};
+```
+
+Optimal Solution
+----------------
+No intermediate improvement exists. The reverse traversal approach is already the optimal solution.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+Interview Notes
+---------------
+- The brute-force approach stores all words unnecessarily.
+- Traversing from the end avoids extra space and immediately finds the last word.
+- Always skip trailing spaces first, as the input may end with one or more spaces.
+- Edge Cases:
+  - Single word.
+  - Multiple spaces between words.
+  - Trailing spaces.
+  - One-character word.
+- Follow-up:
+  - Can you solve it without using `split()` or extra space?
+    - Yes, by traversing the string from the end.
+- This is a simple string traversal problem commonly asked to test attention to edge cases.
