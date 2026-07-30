@@ -1,0 +1,108 @@
+Brute Force
+-----------
+Idea:
+- Try every possible buy day.
+- For each buy day, find the next profitable sell day.
+- Repeat until the end of the array.
+- This approach repeatedly scans the remaining array.
+
+Algorithm:
+1. For every day i:
+   - Find a future day j where prices[j] > prices[i].
+   - Add the maximum possible profit.
+2. Continue until the last day.
+
+Time Complexity: O(n²)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        int profit = 0;
+        int i = 0;
+
+        while (i < n - 1) {
+            while (i < n - 1 && prices[i] >= prices[i + 1])
+                i++;
+
+            if (i == n - 1) break;
+
+            int buy = prices[i++];
+
+            while (i < n && prices[i] >= prices[i - 1])
+                i++;
+
+            int sell = prices[i - 1];
+
+            profit += sell - buy;
+        }
+
+        return profit;
+    }
+};
+```
+
+Better Solution
+---------------
+Idea:
+- Every increasing adjacent pair contributes to the final answer.
+- If today's price is greater than yesterday's, take the profit immediately.
+- The sum of all positive differences equals the maximum profit.
+
+Algorithm:
+1. Initialize profit = 0.
+2. Traverse from index 1.
+3. If prices[i] > prices[i-1]:
+   - profit += prices[i] - prices[i-1]
+4. Return profit.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int profit = 0;
+
+        for (int i = 1; i < prices.size(); i++) {
+            if (prices[i] > prices[i - 1])
+                profit += prices[i] - prices[i - 1];
+        }
+
+        return profit;
+    }
+};
+```
+
+Optimal Solution
+----------------
+No intermediate improvement exists. The greedy approach above is already the optimal solution.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+Interview Notes
+---------------
+- Unlike Best Time to Buy and Sell Stock I, multiple transactions are allowed.
+- Greedy works because every increasing sequence:
+  - Buy at the start.
+  - Sell at the end.
+  - is equivalent to adding every positive daily increase.
+- Example:
+  - Prices = [1,2,3,4]
+  - Profit = (2-1) + (3-2) + (4-3) = 3
+  - Same as buying at 1 and selling at 4.
+- Edge Cases:
+  - Single day.
+  - Strictly decreasing prices (profit = 0).
+  - Strictly increasing prices.
+  - Repeated equal prices.
+- Follow-up:
+  - What if only one transaction is allowed?
+    - Use the minimum-price approach (LeetCode 121).
+  - What if there's a transaction fee or cooldown?
+    - Use Dynamic Programming.
+- This greedy observation is one of the most frequently asked stock interview patterns.
