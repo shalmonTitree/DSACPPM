@@ -1,0 +1,124 @@
+Brute Force
+-----------
+Idea:
+- Store all valid Roman numeral symbols and subtractive combinations (IV, IX, XL, XC, CD, CM) in a hash map.
+- Traverse the string from left to right.
+- If the current and next characters form a valid subtractive pair, add its value and skip both characters.
+- Otherwise, add the value of the current symbol.
+
+Algorithm:
+1. Create a map for single Roman symbols and subtractive pairs.
+2. Traverse the string using index i.
+3. If i+1 exists and s.substr(i,2) is in the map:
+   - Add its value.
+   - Increment i by 2.
+4. Otherwise:
+   - Add the value of s[i].
+   - Increment i by 1.
+5. Return the total.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    int romanToInt(string s) {
+        unordered_map<string, int> mp = {
+            {"I", 1}, {"V", 5}, {"X", 10},
+            {"L", 50}, {"C", 100}, {"D", 500},
+            {"M", 1000}, {"IV", 4}, {"IX", 9},
+            {"XL", 40}, {"XC", 90},
+            {"CD", 400}, {"CM", 900}
+        };
+
+        int ans = 0;
+
+        for (int i = 0; i < s.size();) {
+            if (i + 1 < s.size() && mp.count(s.substr(i, 2))) {
+                ans += mp[s.substr(i, 2)];
+                i += 2;
+            } else {
+                ans += mp[string(1, s[i])];
+                i++;
+            }
+        }
+
+        return ans;
+    }
+};
+```
+
+Better Solution
+---------------
+Idea:
+- Store values of individual Roman symbols.
+- Traverse from left to right.
+- If the current value is smaller than the next value, subtract it.
+- Otherwise, add it.
+
+Algorithm:
+1. Store values of I, V, X, L, C, D, M.
+2. Traverse the string.
+3. If value(current) < value(next):
+   - Subtract current value.
+4. Else:
+   - Add current value.
+5. Return the total.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    int romanToInt(string s) {
+        unordered_map<char, int> value = {
+            {'I',1}, {'V',5}, {'X',10},
+            {'L',50}, {'C',100}, {'D',500},
+            {'M',1000}
+        };
+
+        int ans = 0;
+
+        for (int i = 0; i < s.size(); i++) {
+            if (i + 1 < s.size() && value[s[i]] < value[s[i + 1]])
+                ans -= value[s[i]];
+            else
+                ans += value[s[i]];
+        }
+
+        return ans;
+    }
+};
+```
+
+Optimal Solution
+----------------
+No intermediate improvement exists. The add/subtract approach is already the optimal solution.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+Interview Notes
+---------------
+- The brute-force approach explicitly stores all subtractive combinations, making the implementation longer.
+- The optimal observation is:
+  - If a smaller Roman numeral appears before a larger one, subtract it.
+  - Otherwise, add it.
+- Valid subtractive pairs are:
+  - IV = 4
+  - IX = 9
+  - XL = 40
+  - XC = 90
+  - CD = 400
+  - CM = 900
+- Edge Cases:
+  - Single character (e.g., "V").
+  - Largest valid Roman numeral ("MMMCMXCIX" = 3999).
+  - Consecutive repeated symbols (III, XXX, CCC).
+- Follow-up:
+  - Can you convert an integer back to a Roman numeral?
+    - Use a greedy approach with values:
+      - 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1.
+- The add/subtract pattern is the standard interview solution and is preferred due to its simplicity and constant extra space.
