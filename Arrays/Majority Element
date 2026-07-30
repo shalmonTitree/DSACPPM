@@ -1,0 +1,129 @@
+Brute Force
+-----------
+Idea:
+- For every element, count its occurrences by traversing the entire array.
+- If the count is greater than n/2, return that element.
+
+Algorithm:
+1. Traverse each element.
+2. Count its frequency using another loop.
+3. If frequency > n/2, return the element.
+
+Time Complexity: O(n²)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        int n = nums.size();
+
+        for (int i = 0; i < n; i++) {
+            int count = 0;
+
+            for (int j = 0; j < n; j++) {
+                if (nums[j] == nums[i])
+                    count++;
+            }
+
+            if (count > n / 2)
+                return nums[i];
+        }
+
+        return -1;
+    }
+};
+```
+
+Better Solution
+---------------
+Idea:
+- Use a hash map to count the frequency of every element.
+- As soon as an element's frequency exceeds n/2, return it.
+
+Algorithm:
+1. Create an unordered_map.
+2. Traverse the array.
+3. Increment frequency of each element.
+4. If frequency > n/2, return the element.
+
+Time Complexity: O(n)
+Space Complexity: O(n)
+
+```cpp
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        unordered_map<int, int> freq;
+        int n = nums.size();
+
+        for (int num : nums) {
+            freq[num]++;
+            if (freq[num] > n / 2)
+                return num;
+        }
+
+        return -1;
+    }
+};
+```
+
+Optimal Solution
+----------------
+Idea:
+- Use Boyer-Moore Voting Algorithm.
+- Maintain a candidate and a count.
+- If count becomes 0, choose the current element as the new candidate.
+- If the current element matches the candidate, increment count; otherwise, decrement it.
+- Since a majority element always exists, the final candidate is the answer.
+
+Algorithm:
+1. Initialize candidate = 0 and count = 0.
+2. Traverse the array:
+   - If count == 0, set candidate = current element.
+   - If current element == candidate, increment count.
+   - Else, decrement count.
+3. Return candidate.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        int candidate = 0;
+        int count = 0;
+
+        for (int num : nums) {
+            if (count == 0)
+                candidate = num;
+
+            if (num == candidate)
+                count++;
+            else
+                count--;
+        }
+
+        return candidate;
+    }
+};
+```
+
+Interview Notes
+---------------
+- Brute force repeatedly counts frequencies, making it O(n²).
+- Hash map reduces time to O(n) but uses extra space.
+- Boyer-Moore Voting Algorithm achieves O(n) time and O(1) space.
+- Intuition:
+  - Pair every majority element with a different element.
+  - Since the majority element appears more than n/2 times, it can never be completely canceled out.
+  - The remaining candidate is guaranteed to be the majority element.
+- Edge Cases:
+  - Single element.
+  - All elements identical.
+  - Majority element appears exactly (n/2 + 1) times.
+- Follow-up:
+  - What if the majority element is not guaranteed to exist?
+    - Run Boyer-Moore to get the candidate, then perform a second pass to verify its frequency.
+- Boyer-Moore Voting Algorithm is a very popular interview question and is expected in top product-based companies.
