@@ -1,0 +1,101 @@
+Brute Force
+-----------
+Idea:
+- Use a temporary array to store only unique elements.
+- Since the array is sorted, compare each element with the previous one.
+- Copy the unique elements back to nums.
+
+Algorithm:
+1. Add nums[0] to temp.
+2. Traverse from index 1 to n-1.
+3. If nums[i] != nums[i-1], add it to temp.
+4. Copy temp back to nums.
+5. Return temp.size().
+
+Time Complexity: O(n)
+Space Complexity: O(n)
+
+```cpp
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if (nums.empty()) return 0;
+
+        vector<int> temp;
+        temp.push_back(nums[0]);
+
+        for (int i = 1; i < nums.size(); i++) {
+            if (nums[i] != nums[i - 1])
+                temp.push_back(nums[i]);
+        }
+
+        for (int i = 0; i < temp.size(); i++)
+            nums[i] = temp[i];
+
+        return temp.size();
+    }
+};
+```
+
+Better Solution
+---------------
+Idea:
+- Use two pointers.
+- One pointer (i) tracks the last unique element.
+- The other pointer (j) scans the array.
+- Whenever a new unique element is found, place it after the last unique element.
+
+Algorithm:
+1. If array size is 0 or 1, return its size.
+2. Initialize i = 0.
+3. Traverse j from 1 to n-1.
+4. If nums[j] != nums[i]:
+   - i++
+   - nums[i] = nums[j]
+5. Return i + 1.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if (nums.size() <= 1)
+            return nums.size();
+
+        int i = 0;
+
+        for (int j = 1; j < nums.size(); j++) {
+            if (nums[j] != nums[i]) {
+                i++;
+                nums[i] = nums[j];
+            }
+        }
+
+        return i + 1;
+    }
+};
+```
+
+Optimal Solution
+----------------
+No intermediate improvement exists. The two-pointer approach above is already the optimal solution.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+Interview Notes
+---------------
+- Since the array is sorted, all duplicates are adjacent.
+- Two pointers are sufficient to overwrite duplicates in-place.
+- The first (i + 1) elements always contain the unique sorted elements.
+- Edge Cases:
+  - Empty array.
+  - Single element.
+  - All elements are the same.
+  - No duplicates.
+- Follow-up:
+  - Why does this fail for an unsorted array?
+    - Because duplicates are no longer adjacent; sorting or a hash set would be required.
+- This is a classic in-place array manipulation problem and is frequently asked in interviews.
