@@ -1,0 +1,125 @@
+Brute Force
+-----------
+Idea:
+- Convert each digit separately (thousands, hundreds, tens, ones).
+- Use precomputed arrays containing the Roman representation for each possible digit (0-9).
+- Concatenate the corresponding strings.
+
+Algorithm:
+1. Store Roman representations for:
+   - Thousands
+   - Hundreds
+   - Tens
+   - Ones
+2. Extract each digit using division and modulo.
+3. Concatenate the corresponding Roman strings.
+4. Return the result.
+
+Time Complexity: O(1)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    string intToRoman(int num) {
+        vector<string> thousands = {
+            "", "M", "MM", "MMM"
+        };
+
+        vector<string> hundreds = {
+            "", "C", "CC", "CCC", "CD",
+            "D", "DC", "DCC", "DCCC", "CM"
+        };
+
+        vector<string> tens = {
+            "", "X", "XX", "XXX", "XL",
+            "L", "LX", "LXX", "LXXX", "XC"
+        };
+
+        vector<string> ones = {
+            "", "I", "II", "III", "IV",
+            "V", "VI", "VII", "VIII", "IX"
+        };
+
+        return thousands[num / 1000] +
+               hundreds[(num % 1000) / 100] +
+               tens[(num % 100) / 10] +
+               ones[num % 10];
+    }
+};
+```
+
+Better Solution
+---------------
+No intermediate improvement exists. We can directly optimize from brute force to the optimal approach.
+
+Optimal Solution
+----------------
+Idea:
+- Use a greedy approach.
+- Store Roman values in descending order, including subtractive values (900, 400, 90, etc.).
+- Repeatedly append the largest possible Roman symbol while subtracting its value from the number.
+
+Algorithm:
+1. Store Roman values and symbols in descending order.
+2. Traverse the list.
+3. While num >= current value:
+   - Append its Roman symbol.
+   - Subtract its value from num.
+4. Return the constructed string.
+
+Time Complexity: O(1)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    string intToRoman(int num) {
+        vector<int> value = {
+            1000, 900, 500, 400,
+            100, 90, 50, 40,
+            10, 9, 5, 4, 1
+        };
+
+        vector<string> symbol = {
+            "M", "CM", "D", "CD",
+            "C", "XC", "L", "XL",
+            "X", "IX", "V", "IV", "I"
+        };
+
+        string ans = "";
+
+        for (int i = 0; i < value.size(); i++) {
+            while (num >= value[i]) {
+                ans += symbol[i];
+                num -= value[i];
+            }
+        }
+
+        return ans;
+    }
+};
+```
+
+Interview Notes
+---------------
+- The lookup-table approach converts each digit independently using precomputed arrays.
+- The greedy approach repeatedly chooses the largest valid Roman symbol.
+- Always include the subtractive combinations:
+  - IV = 4
+  - IX = 9
+  - XL = 40
+  - XC = 90
+  - CD = 400
+  - CM = 900
+- Why does greedy work?
+  - Roman numerals are constructed by always taking the largest possible valid symbol first.
+  - Including subtractive values guarantees the shortest valid representation.
+- Edge Cases:
+  - Smallest value: 1 → I
+  - Largest valid value: 3999 → MMMCMXCIX
+  - Numbers containing subtractive notation (4, 9, 40, 90, 400, 900).
+- Follow-up:
+  - Can you convert Roman numerals back to integers?
+    - Use the add/subtract approach from LeetCode 13 (Roman to Integer).
+- Both approaches run in constant time because the input range is limited (1 ≤ num ≤ 3999), but the greedy solution is the standard interview approach due to its simplicity and scalability.
