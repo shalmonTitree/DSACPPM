@@ -1,0 +1,159 @@
+Brute Force
+-----------
+Idea:
+- Check every possible starting index in haystack.
+- Compare characters one by one with needle.
+- If all characters match, return the starting index.
+
+Algorithm:
+1. Traverse i from 0 to n-m.
+2. Compare haystack[i+j] with needle[j].
+3. If all characters match, return i.
+4. If no match is found, return -1.
+
+Time Complexity: O((n - m + 1) × m) ≈ O(nm)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    int strStr(string haystack, string needle) {
+        int n = haystack.size();
+        int m = needle.size();
+
+        for (int i = 0; i <= n - m; i++) {
+            int j = 0;
+
+            while (j < m && haystack[i + j] == needle[j])
+                j++;
+
+            if (j == m)
+                return i;
+        }
+
+        return -1;
+    }
+};
+```
+
+Better Solution
+---------------
+Idea:
+- Use the built-in `find()` function provided by C++ STL.
+- It internally uses an optimized string searching algorithm.
+
+Algorithm:
+1. Call haystack.find(needle).
+2. If found, return the index.
+3. Otherwise, return -1.
+
+Time Complexity: Average O(n)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    int strStr(string haystack, string needle) {
+        int pos = haystack.find(needle);
+
+        return (pos == string::npos) ? -1 : pos;
+    }
+};
+```
+
+Optimal Solution
+----------------
+Idea:
+- Use the KMP (Knuth-Morris-Pratt) Algorithm.
+- Preprocess the pattern (needle) to build the LPS (Longest Prefix Suffix) array.
+- While matching, use the LPS array to avoid rechecking already matched characters.
+
+Algorithm:
+1. Build the LPS array for the needle.
+2. Traverse both strings using two pointers.
+3. If characters match, move both pointers.
+4. If mismatch occurs:
+   - Use LPS to shift the pattern.
+   - Do not move the haystack pointer unnecessarily.
+5. Return the first matching index or -1.
+
+Time Complexity: O(n + m)
+Space Complexity: O(m)
+
+```cpp
+class Solution {
+public:
+    vector<int> buildLPS(string pattern) {
+        int m = pattern.size();
+        vector<int> lps(m, 0);
+
+        int len = 0;
+        int i = 1;
+
+        while (i < m) {
+            if (pattern[i] == pattern[len]) {
+                len++;
+                lps[i] = len;
+                i++;
+            } else {
+                if (len != 0)
+                    len = lps[len - 1];
+                else
+                    i++;
+            }
+        }
+
+        return lps;
+    }
+
+    int strStr(string haystack, string needle) {
+        int n = haystack.size();
+        int m = needle.size();
+
+        if (m == 0)
+            return 0;
+
+        vector<int> lps = buildLPS(needle);
+
+        int i = 0, j = 0;
+
+        while (i < n) {
+            if (haystack[i] == needle[j]) {
+                i++;
+                j++;
+
+                if (j == m)
+                    return i - j;
+            } else {
+                if (j != 0)
+                    j = lps[j - 1];
+                else
+                    i++;
+            }
+        }
+
+        return -1;
+    }
+};
+```
+
+Interview Notes
+---------------
+- Brute force checks every possible starting position and may compare the same characters repeatedly.
+- `find()` is convenient but interviewers usually expect you to implement the algorithm yourself.
+- KMP preprocesses the pattern using the LPS (Longest Prefix Suffix) array.
+- LPS tells how many characters can be reused after a mismatch, avoiding unnecessary comparisons.
+- Edge Cases:
+  - needle is empty.
+  - needle longer than haystack.
+  - Exact match.
+  - Multiple occurrences (return the first one).
+  - No occurrence.
+- Follow-up:
+  - What is the LPS array?
+    - `lps[i]` stores the length of the longest proper prefix that is also a suffix for the substring `needle[0...i]`.
+  - Other string matching algorithms:
+    - Rabin-Karp (Rolling Hash)
+    - Z Algorithm
+    - Boyer-Moore
+- KMP is one of the most important string algorithms for coding interviews and competitive programming.
