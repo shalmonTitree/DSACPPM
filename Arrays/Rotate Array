@@ -1,0 +1,121 @@
+Brute Force
+-----------
+Idea:
+- Rotate the array one step to the right, k times.
+- In each rotation, store the last element, shift all elements one position right, and place the last element at the beginning.
+
+Algorithm:
+1. Compute k = k % n.
+2. Repeat k times:
+   - Store last element.
+   - Shift all elements right by one.
+   - Place stored element at index 0.
+
+Time Complexity: O(n × k)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        int n = nums.size();
+        k %= n;
+
+        while (k--) {
+            int last = nums[n - 1];
+
+            for (int i = n - 1; i > 0; i--)
+                nums[i] = nums[i - 1];
+
+            nums[0] = last;
+        }
+    }
+};
+```
+
+Better Solution
+---------------
+Idea:
+- Create a temporary array.
+- Every element at index i moves to (i + k) % n.
+- Copy the temporary array back to nums.
+
+Algorithm:
+1. Compute k = k % n.
+2. Create temp array of size n.
+3. Place nums[i] at temp[(i + k) % n].
+4. Copy temp into nums.
+
+Time Complexity: O(n)
+Space Complexity: O(n)
+
+```cpp
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        int n = nums.size();
+        k %= n;
+
+        vector<int> temp(n);
+
+        for (int i = 0; i < n; i++)
+            temp[(i + k) % n] = nums[i];
+
+        nums = temp;
+    }
+};
+```
+
+Optimal Solution
+----------------
+Idea:
+- Use the Reversal Algorithm.
+- Reverse the entire array.
+- Reverse the first k elements.
+- Reverse the remaining n-k elements.
+- This achieves rotation in-place.
+
+Algorithm:
+1. Compute k = k % n.
+2. Reverse the entire array.
+3. Reverse indices [0, k-1].
+4. Reverse indices [k, n-1].
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+```cpp
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        int n = nums.size();
+        k %= n;
+
+        reverse(nums.begin(), nums.end());
+        reverse(nums.begin(), nums.begin() + k);
+        reverse(nums.begin() + k, nums.end());
+    }
+};
+```
+
+Interview Notes
+---------------
+- Brute force performs k rotations, making it inefficient for large k.
+- Using an extra array gives linear time but requires O(n) extra space.
+- The Reversal Algorithm is the expected optimal solution in interviews.
+- Why does the reversal algorithm work?
+  - Reverse the whole array.
+  - The last k elements come to the front (but reversed).
+  - Reverse the first k elements to restore their order.
+  - Reverse the remaining n-k elements to restore their order.
+- Edge Cases:
+  - k = 0.
+  - k > n (always use k %= n).
+  - n = 1.
+  - Empty array (if allowed).
+- Follow-up:
+  - Can you rotate left by k positions?
+    - Reverse first k elements.
+    - Reverse remaining elements.
+    - Reverse the entire array.
+- The reversal technique is a classic interview pattern and is useful in many array/string problems.
