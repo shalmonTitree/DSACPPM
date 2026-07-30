@@ -1,0 +1,162 @@
+Brute Force
+-----------
+Idea:
+- Store all elements in a vector.
+- For insertion, check whether the element already exists.
+- For deletion, search for the element and erase it.
+- Pick a random index for getRandom().
+
+Algorithm:
+1. For insert():
+   - Traverse the vector.
+   - If value exists, return false.
+   - Otherwise, push_back().
+2. For remove():
+   - Traverse the vector.
+   - If found, erase it.
+3. For getRandom():
+   - Return nums[rand() % nums.size()].
+
+Time Complexity:
+- insert: O(n)
+- remove: O(n)
+- getRandom: O(1)
+
+Space Complexity: O(n)
+
+```cpp
+class RandomizedSet {
+    vector<int> nums;
+
+public:
+    RandomizedSet() {}
+
+    bool insert(int val) {
+        for (int x : nums)
+            if (x == val)
+                return false;
+
+        nums.push_back(val);
+        return true;
+    }
+
+    bool remove(int val) {
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] == val) {
+                nums.erase(nums.begin() + i);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    int getRandom() {
+        return nums[rand() % nums.size()];
+    }
+};
+```
+
+Better Solution
+---------------
+No intermediate improvement exists. We can directly optimize from brute force to the optimal approach.
+
+Optimal Solution
+----------------
+Idea:
+- Use:
+  - A vector to store elements.
+  - A hash map to store each element's index in the vector.
+- For deletion:
+  - Swap the element to delete with the last element.
+  - Update the last element's index in the hash map.
+  - Remove the last element from the vector.
+  - Delete the removed value from the hash map.
+- This avoids the O(n) shifting caused by vector::erase().
+
+Algorithm:
+1. insert(val):
+   - If val already exists, return false.
+   - Store its index in the map.
+   - Push it into the vector.
+2. remove(val):
+   - If val doesn't exist, return false.
+   - Find its index.
+   - Swap it with the last element.
+   - Update the last element's index.
+   - Pop the last element.
+   - Remove val from the map.
+3. getRandom():
+   - Return nums[rand() % nums.size()].
+
+Time Complexity:
+- insert: O(1)
+- remove: O(1)
+- getRandom: O(1)
+
+Space Complexity: O(n)
+
+```cpp
+class RandomizedSet {
+    vector<int> nums;
+    unordered_map<int, int> index;
+
+public:
+    RandomizedSet() {}
+
+    bool insert(int val) {
+        if (index.count(val))
+            return false;
+
+        nums.push_back(val);
+        index[val] = nums.size() - 1;
+        return true;
+    }
+
+    bool remove(int val) {
+        if (!index.count(val))
+            return false;
+
+        int idx = index[val];
+        int last = nums.back();
+
+        nums[idx] = last;
+        index[last] = idx;
+
+        nums.pop_back();
+        index.erase(val);
+
+        return true;
+    }
+
+    int getRandom() {
+        return nums[rand() % nums.size()];
+    }
+};
+```
+
+Interview Notes
+---------------
+- A vector provides O(1) random access but O(n) deletion because elements must be shifted.
+- A hash map provides O(1) lookup but cannot return a random element efficiently.
+- Combining both data structures gives O(1) average time for all operations.
+- Why swap with the last element?
+  - Removing the last element from a vector is O(1).
+  - Swapping avoids shifting every element after the deleted one.
+- Example:
+  - nums = [10, 20, 30, 40]
+  - Remove 20.
+  - Swap with 40 → [10, 40, 30, 20]
+  - Pop last → [10, 40, 30]
+  - Update index of 40 in the map.
+- Edge Cases:
+  - Insert duplicate value.
+  - Remove a non-existing value.
+  - Remove the last element.
+  - Remove the only element.
+- Follow-up:
+  - Why not use `unordered_set`?
+    - It supports O(1) insert/remove but does not support O(1) random access.
+  - Why not call `vector.erase()`?
+    - `erase()` shifts all following elements, making deletion O(n).
+- This is one of the classic interview questions testing the combination of multiple data structures to achieve constant-time operations.
