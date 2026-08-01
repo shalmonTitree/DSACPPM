@@ -1,0 +1,182 @@
+//rec
+Time Complexity
+
+At each row:
+
+You have n - 1 choices (every column except the current one).
+
+There are n rows, so the recursion tree has approximately:
+
+Level 0: n starting columns
+Level 1: n - 1 choices
+Level 2: n - 1 choices
+...
+Level n - 1
+
+So the total time is:
+
+O(n⋅(n−1)
+n−1
+)
+	​
+
+
+This is exponential.
+
+People often simplify it as:
+
+O(n
+n
+)
+	​
+
+
+Time Complexity: O(n × (n−1)^(n−1)) (commonly written as O(n^n))
+Space Complexity: O(n)
+
+class Solution {
+public:
+    int solve(int row, int col, vector<vector<int>>& grid)
+    {
+        int n = grid.size();
+
+        if (row == n - 1)
+            return grid[row][col];
+
+        int mini = INT_MAX;
+
+        for (int k = 0; k < n; k++)
+        {
+            if (k != col)
+            {
+                mini = min(mini, solve(row + 1, k, grid));
+            }
+        }
+
+        return grid[row][col] + mini;
+    }
+
+    int minFallingPathSum(vector<vector<int>>& grid) {
+        int n = grid.size();
+
+        int ans = INT_MAX;
+
+        for (int j = 0; j < n; j++)
+        {
+            ans = min(ans, solve(0, j, grid));
+        }
+
+        return ans;
+    }
+};
+
+//memo
+There are:
+
+n rows
+n columns (the grid is n × n)
+
+So the number of DP states is:
+
+n × n = O(n²)
+
+For each state (row, col), you run:
+
+for (int k = 0; k < n; k++)
+
+which scans all columns of the next row.
+
+Therefore,
+
+Time per state: O(n)
+Number of states: O(n²)
+
+Hence,
+
+Time Complexity=O(n
+3
+)
+	​
+
+
+Time Complexity: O(n³)
+Space Complexity: O(n²)
+
+class Solution {
+public:
+    int solve(int row, int col, vector<vector<int>>& grid,vector<vector<int>>&dp)
+    {
+        int n = grid.size();
+
+        if (row == n - 1)
+            return grid[row][col];
+
+        int mini = INT_MAX;
+
+        if(dp[row][col] != 1e9)
+        {
+            return dp[row][col];
+        }
+
+        for (int k = 0; k < n; k++)
+        {
+            if (k != col)
+            {
+                mini = min(mini, solve(row + 1, k, grid,dp));
+            }
+        }
+
+        return dp[row][col] = grid[row][col] + mini;
+    }
+
+    int minFallingPathSum(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+        int ans = INT_MAX;
+        vector<vector<int>>dp(n,vector<int>(m,1e9));
+
+        for (int j = 0; j < n; j++)
+        {
+            ans = min(ans, solve(0, j, grid,dp));
+        }
+
+        return ans;
+    }
+};
+
+
+//tabu
+class Solution {
+public:
+    int minFallingPathSum(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+
+        vector<vector<int>> dp(n, vector<int>(m, 0));
+
+        for (int j = 0; j < m; j++) {
+            dp[n - 1][j] = grid[n - 1][j];
+        }
+
+        for (int i = n - 2; i >= 0; i--) {
+
+            for (int j = 0; j < m; j++) {
+                int mini = INT_MAX;
+                for (int k = 0; k < m; k++) {
+
+                    if (j != k) {
+
+                        mini = min(mini, dp[i + 1][k]);
+                    }
+                }
+                dp[i][j] = grid[i][j] + mini;
+            }
+        }
+        int ans = INT_MAX;
+        for (int i = 0; i < m; i++) {
+            ans = min(ans, dp[0][i]);
+        }
+
+        return ans;
+    }
+};
