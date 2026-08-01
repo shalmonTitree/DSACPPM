@@ -1,0 +1,257 @@
+Description
+
+There are N items numbered from 1 to N. The i-th item has a weight of wi and a value of vi.
+
+You have to choose some items out of the N items and carry them home in a knapsack. The capacity of the knapsack is W, which denotes the maximum weight that can be carried inside the knapsack. In other words, W means the total sum of the weights of all selected items.
+
+Print the maximum possible sum of values of items that you can take home.
+
+Note: Solve this problem using recursion.
+
+Input Format
+
+- The first line contains T, the number of test cases.
+- For each test case:
+  - The first line contains two space-separated integers N and W.
+  - The next N lines each contain two space-separated integers wi and vi.
+
+Output Format
+
+Print the maximum possible sum of values of items that you can take home.
+
+Constraints
+
+1 ≤ T ≤ 10
+1 ≤ N ≤ 20
+1 ≤ W ≤ 100
+1 ≤ wi ≤ 50
+1 ≤ vi ≤ 1000
+
+Sample Input 1
+
+1
+3 8
+3 30
+4 50
+5 60
+
+Sample Output 1
+
+90
+
+Sample Input 2
+
+1
+4 60
+10 60
+20 100
+30 120
+40 180
+
+Sample Output 2
+
+280
+
+Sample Input 3
+
+1
+6 15
+6 5
+5 6
+6 4
+6 6
+3 5
+7 2
+
+Sample Output 3
+
+17
+
+Explanation
+
+In the first test case, we can select items 1 and 3 with weights 3 and 5, totaling 8 (which does not exceed W = 8), and values 30 and 60, totaling 90. This is the maximum possible value we can obtain.
+
+//rec
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n" // optional, better to avoid redefining endl
+const int MOD = 1000000007;
+
+int solve(int idx,vector<int> v,vector<int> wt,int tar)
+{
+
+    if(tar == 0)
+    {
+        return 0;
+    }
+    if(idx < 0)
+    {
+        return 0;
+    }
+
+    int nottake = solve(idx-1,v,wt,tar);
+    int take = 0;
+    if(v[idx] <= tar)
+    {
+        take = wt[idx] + solve(idx-1,v,wt,tar-v[idx]);
+    }
+
+    return max(take,nottake);
+}
+void solve()
+{
+    int n, tar;
+    cin >> n >> tar;
+    vector<int> v;
+    vector<int> wt;
+    for (int i = 0; i < n; i++)
+    {
+        int a,b;
+        cin>>a>>b;
+        v.push_back(a);
+        wt.push_back(b);
+    }
+    cout<<solve(n-1,v,wt,tar)<<endl;
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+
+    return 0;
+}
+
+
+//memo
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n" // optional, better to avoid redefining endl
+const int MOD = 1000000007;
+
+int solve(int idx,vector<int> v,vector<int> wt,int tar,vector<vector<int>>dp)
+{
+
+    if (idx == 0)
+    {
+        if (v[0] <= tar)
+            return wt[0];
+        return 0;
+    }
+    if(dp[idx][tar] != -1)
+    {
+        return dp[idx][tar];
+    }
+
+    int nottake = solve(idx-1,v,wt,tar,dp);
+    int take = 0;
+    if(v[idx] <= tar)
+    {
+        take = wt[idx] + solve(idx-1,v,wt,tar-v[idx],dp);
+    }
+
+    return dp[idx][tar]= max(take,nottake);
+}
+void solve()
+{
+    int n, tar;
+    cin >> n >> tar;
+    vector<int> v;
+    vector<int> wt;
+    for (int i = 0; i < n; i++)
+    {
+        int a,b;
+        cin>>a>>b;
+        v.push_back(a);
+        wt.push_back(b);
+    }
+    vector<vector<int>>dp(n,vector<int>(tar+1,-1));
+    cout<<solve(n-1,v,wt,tar,dp)<<endl;
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+
+    return 0;
+}
+
+
+
+
+//tabu
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n" // optional, better to avoid redefining endl
+const int MOD = 1000000007;
+
+
+void solve()
+{
+    int n, tar;
+    cin >> n >> tar;
+    vector<int> v;
+    vector<int> wt;
+    for (int i = 0; i < n; i++)
+    {
+        int a, b;
+        cin >> a >> b;
+        v.push_back(a);
+        wt.push_back(b);
+    }
+    vector<vector<int>> dp(n, vector<int>(tar + 1, 0));
+
+    for (int j = v[0]; j <= tar; j++)
+    {
+        dp[0][j] = wt[0];
+    }
+
+    for (int idx = 1; idx < n; idx++)
+    {
+        for(int target = 1; target <= tar; target++)
+        {
+            int nottake = dp[idx-1][target];
+            int take = 0;
+            if (v[idx] <= target)
+            {
+                take = wt[idx] + dp[idx-1][target - v[idx]];
+            }
+            dp[idx][target] = max(take,nottake);
+
+        }
+    }
+    cout <<dp[n-1][tar]<< endl;
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+
+    return 0;
+}
