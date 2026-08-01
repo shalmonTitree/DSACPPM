@@ -1,0 +1,27 @@
+Space: O(V²)
+Add edge: O(1)
+Check edge: O(1)
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int V = 4;
+
+    vector<vector<int>> adj(V, vector<int>(V, 0));
+
+    // Undirected graph
+    adj[0][1] = adj[1][0] = 1;
+    adj[0][2] = adj[2][0] = 1;
+    adj[1][3] = adj[3][1] = 1;
+    adj[2][3] = adj[3][2] = 1;
+
+    // Print matrix
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++)
+            cout << adj[i][j] << " ";
+        cout << endl;
+    }
+}
