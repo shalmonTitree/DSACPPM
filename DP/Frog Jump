@@ -1,0 +1,104 @@
+//rec
+O(2ⁿ)
+O(n)
+
+class Solution {
+  public:
+    int solve(int idx,vector<int>& height)
+    {
+        if(idx == 0)
+        {
+            return 0;
+        }
+        
+        if(idx < 0)
+        {
+            return 0;
+        }
+        
+        int one = solve(idx-1, height) + abs(height[idx] - height[idx-1]);
+        int two = INT_MAX;
+        if(idx > 1)
+        {
+            two = solve(idx-2, height) + abs(height[idx] - height[idx-2]);
+
+        }
+        
+        return min(one,two);
+    }
+    int minCost(vector<int>& height) {
+        int n = height.size();
+        return solve(n - 1,height);
+        
+    }
+};
+
+//memo
+O(n)
+O(n)
+
+class Solution {
+  public:
+    int solve(int idx,vector<int>& height,vector<int>&dp)
+    {
+        if(idx == 0)
+        {
+            return 0;
+        }
+        
+        if(idx < 0)
+        {
+            return 0;
+        }
+        
+        if(dp[idx] != -1)
+        {
+            return dp[idx];
+        }
+        
+        int one = solve(idx-1, height,dp) + abs(height[idx] - height[idx-1]);
+        int two = INT_MAX;
+        if(idx > 1)
+        {
+            two = solve(idx-2, height,dp) + abs(height[idx] - height[idx-2]);
+
+        }
+        
+        return dp[idx] = min(one,two);
+    }
+    int minCost(vector<int>& height) {
+        int n = height.size();
+        vector<int>dp(n+1,-1);
+        return solve(n - 1,height,dp);
+        
+    }
+};
+
+
+//tabu
+O(n)
+O(n)
+class Solution {
+	public:
+
+	int minCost(vector<int>& height) {
+		int n = height.size();
+		vector<int>dp(n, 0);
+		
+		dp[0] = 0;
+		
+		for (int idx = 1; idx < n; idx++)
+		{
+			int one = dp[idx - 1] + abs(height[idx] - height[idx - 1]);
+			int two = INT_MAX;
+			if (idx > 1)
+			{
+				two = dp[idx - 2] + abs(height[idx] - height[idx - 2]);
+				
+			}
+			dp[idx] = min(one,two);
+		}
+		return dp[n-1];
+		
+	}
+};
