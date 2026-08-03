@@ -1,0 +1,180 @@
+//rec
+class Solution {
+public:
+    int solve(int r, int c1,int c2,vector<vector<int>>& grid)
+    {
+        int n = grid.size();
+        int m = grid[0].size();
+
+        if(c1 < 0 || c1 >= m || c2 < 0 || c2 >=m)
+        {
+            return INT_MIN;
+        }
+
+        if(r == n - 1)
+        {
+            if(c1 == c2)
+            {
+                return grid[r][c1];
+            }
+            else
+            {
+                return grid[r][c1] + grid[r][c2];
+            }
+        }
+
+        int cherries;
+
+        if(c1 == c2)
+            {
+                cherries =  grid[r][c1];
+            }
+            else
+            {
+                cherries =  grid[r][c1] + grid[r][c2];
+            }
+
+
+        
+
+        int maxi = INT_MIN;
+        
+        for(int d1 = -1; d1 <= 1; d1++)
+        {
+            for(int d2 = -1; d2 <= 1;d2++)
+            {
+                maxi = max(maxi,cherries + solve(r+1,c1+d1,c2+d2,grid));
+            }
+        }
+        return maxi;
+    }
+    int cherryPickup(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+        return solve(0,0,m-1,grid);
+    }
+};
+
+
+//memo
+class Solution {
+public:
+    int solve(int r, int c1,int c2,vector<vector<int>>& grid,vector<vector<vector<int>>>&dp)
+    {
+        int n = grid.size();
+        int m = grid[0].size();
+
+        if(c1 < 0 || c1 >= m || c2 < 0 || c2 >=m)
+        {
+            return INT_MIN;
+        }
+
+        if(dp[r][c1][c2] != -1)
+        {
+            return dp[r][c1][c2];
+        }
+        if(r == n - 1)
+        {
+            if(c1 == c2)
+            {
+                return dp[r][c1][c2] = grid[r][c1];
+            }
+            else
+            {
+                return dp[r][c1][c2] = grid[r][c1] + grid[r][c2];
+            }
+        }
+
+        int cherries;
+
+        if(c1 == c2)
+            {
+                cherries =  grid[r][c1];
+            }
+            else
+            {
+                cherries =  grid[r][c1] + grid[r][c2];
+            }
+
+
+        
+
+        int maxi = INT_MIN;
+        
+        for(int d1 = -1; d1 <= 1; d1++)
+        {
+            for(int d2 = -1; d2 <= 1;d2++)
+            {
+                maxi = max(maxi,cherries + solve(r+1,c1+d1,c2+d2,grid,dp));
+            }
+        }
+        return dp[r][c1][c2] = maxi;
+    }
+    int cherryPickup(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+
+        vector<vector<vector<int>>>dp(n,vector<vector<int>>(m,vector<int>(m,-1)));
+        return solve(0,0,m-1,grid,dp);
+    }
+};
+
+//tabu
+class Solution {
+public:
+    int cherryPickup(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+
+        vector<vector<vector<int>>> dp(
+            n,
+            vector<vector<int>>(m, vector<int>(m, 0))
+        );
+
+        // Base case: last row
+        for (int col1 = 0; col1 < m; col1++) {
+            for (int col2 = 0; col2 < m; col2++) {
+                if (col1 == col2)
+                    dp[n - 1][col1][col2] = grid[n - 1][col1];
+                else
+                    dp[n - 1][col1][col2] = grid[n - 1][col1] + grid[n - 1][col2];
+            }
+        }
+
+        // Fill DP from bottom to top
+        for (int row = n - 2; row >= 0; row--) {
+            for (int col1 = 0; col1 < m; col1++) {
+                for (int col2 = 0; col2 < m; col2++) {
+
+                    int maxi = INT_MIN;
+
+                    for (int d1 = -1; d1 <= 1; d1++) {
+                        for (int d2 = -1; d2 <= 1; d2++) {
+
+                            int newCol1 = col1 + d1;
+                            int newCol2 = col2 + d2;
+
+                            if (newCol1 >= 0 && newCol1 < m &&
+                                newCol2 >= 0 && newCol2 < m) {
+
+                                int cherries;
+                                if (col1 == col2)
+                                    cherries = grid[row][col1];
+                                else
+                                    cherries = grid[row][col1] + grid[row][col2];
+
+                                cherries += dp[row + 1][newCol1][newCol2];
+
+                                maxi = max(maxi, cherries);
+                            }
+                        }
+                    }
+
+                    dp[row][col1][col2] = maxi;
+                }
+            }
+        }
+
+        return dp[0][0][m - 1];
+    }
+};
