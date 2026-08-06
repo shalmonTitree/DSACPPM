@@ -1,0 +1,178 @@
+//rec
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+const int MOD = 1e9 + 7;
+int fun(int i,int j,string &s, string &target)
+{
+
+    if(j == target.size())
+    {
+        return 1;
+    }
+
+    if(i == s.size())
+    {
+        return 0;
+    }
+    
+
+    if(s[i] == target[j])
+    {
+        int nottake = fun(i+1,j,s,target);
+        int take = fun(i+1,j+1,s,target);
+
+        return take + nottake;
+
+    }
+    else
+    {
+        return fun(i+1,j,s,target);
+    }
+}
+void solve() {
+    string s;
+    cin>>s;
+    string target = "chokudai";
+    int n = s.size();
+    int m = target.size();
+
+    cout<<fun(0,0,s,target);
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+//memo
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+const int MOD = 1e9 + 7;
+int fun(int i,int j,string &s, string &target, vector<vector<int>>&dp)
+{
+
+    if(j == target.size())
+    {
+        return 1;
+    }
+
+    if(i == s.size())
+    {
+        return 0;
+    }
+    
+    if(dp[i][j] != -1)
+    {
+        return dp[i][j];
+    }
+
+    if(s[i] == target[j])
+    {
+        int nottake = fun(i+1,j,s,target,dp);
+        int take = fun(i+1,j+1,s,target,dp);
+
+        return dp[i][j] = (take + nottake)%MOD;
+
+    }
+    else
+    {
+        return dp[i][j] = fun(i+1,j,s,target,dp);
+    }
+}
+void solve() {
+    string s;
+    cin>>s;
+    string target = "chokudai";
+    int n = s.size();
+    int m = target.size();
+
+    vector<vector<int>>dp(n+1,vector<int>(m+1,-1));
+
+    cout<<fun(0,0,s,target,dp);
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+
+//tabu
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n" // optional, better to avoid redefining endl
+const int MOD = 1e9 + 7;
+
+void solve()
+{
+    string s;
+    cin >> s;
+    string target = "chokudai";
+    int n = s.size();
+    int m = target.size();
+
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    
+    dp[0][0] = 1;
+    for(int i = 1; i <= n; i++)
+    {
+        dp[i][0] = 1;
+    }
+
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 1; j <= m; j++)
+        {
+            if (s[i-1] == target[j-1])
+            {
+                int nottake = dp[i - 1][j];
+                int take = dp[i - 1][j - 1];
+
+                dp[i][j] = (take + nottake) % MOD;
+            }
+            else
+            {
+                dp[i][j] = dp[i - 1][j];
+            }
+        }
+    }
+
+    cout << dp[n][m];
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    // cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+
+    return 0;
+}
