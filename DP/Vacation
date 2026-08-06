@@ -1,0 +1,178 @@
+//rec
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+
+
+int func(int day,int last,vector<vector<int>>&v)
+{
+   int n = v.size();
+   if(day == n)
+   {
+        return 0;
+   }
+
+   int ans = 0;
+
+   for(int task = 0; task < 3; task++)
+   {
+        if(task != last)
+        {
+            ans = max(ans, v[day][task] + func(day+1,task,v));
+        }
+   }
+
+   return ans;
+}
+void solve() {
+    int n;
+    cin>>n;
+    vector<vector<int>>v(n,vector<int>(3));
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < 3; j++)
+        {
+            cin>>v[i][j];
+        }
+    }
+    
+    
+    cout<<func(0,3,v);
+    
+    
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+//memoo
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+
+
+int func(int day,int last,vector<vector<int>>&v,vector<vector<int>>&dp)
+{
+   int n = v.size();
+   if(day == n)
+   {
+        return 0;
+   }
+
+   if(dp[day][last] != -1)
+   {
+    return dp[day][last];
+   }
+   int ans = 0;
+
+   for(int task = 0; task < 3; task++)
+   {
+        if(task != last)
+        {
+            ans = max(ans, v[day][task] + func(day+1,task,v,dp));
+        }
+   }
+
+   return dp[day][last] = ans;
+}
+void solve() {
+    int n;
+    cin>>n;
+    vector<vector<int>>v(n,vector<int>(3));
+    vector<vector<int>>dp(n,vector<int>(4,-1));
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < 3; j++)
+        {
+            cin>>v[i][j];
+        }
+    }
+    
+    
+    cout<<func(0,3,v,dp);
+    
+    
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+//tabu
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+
+void solve() {
+    int n;
+    cin>>n;
+    vector<vector<int>>v(n,vector<int>(3));
+    vector<vector<int>>dp(n+1,vector<int>(4,0));
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < 3; j++)
+        {
+            cin>>v[i][j];
+        }
+    }
+    
+    for (int day = n - 1; day >= 0; day--)
+{
+    for (int last = 0; last < 4; last++)
+    {
+        dp[day][last] = 0;
+
+        for (int task = 0; task < 3; task++)
+        {
+            if (task != last)
+            {
+                dp[day][last] = max(dp[day][last],
+                                    v[day][task] + dp[day + 1][task]);
+            }
+        }
+    }
+}
+
+
+    cout<<dp[0][3]<<endl;
+    
+    
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
