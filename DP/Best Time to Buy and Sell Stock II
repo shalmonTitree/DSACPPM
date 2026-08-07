@@ -1,0 +1,108 @@
+//rec
+class Solution {
+public:
+    int solve(int idx,int buy,vector<int>& prices)
+    {
+        //basecase
+        if(idx == prices.size())
+        {
+            return 0;
+        }
+
+        //if you want to buy
+        if(buy)
+        {
+            return max(-prices[idx] + solve(idx+1,0,prices), //buy
+                    solve(idx+1,1,prices));//skip
+        }
+
+        //if you dont want to buy
+        return max(prices[idx] + solve(idx+1,1,prices), //sell
+                solve(idx+1,0,prices)); //hold
+
+    }
+    int maxProfit(vector<int>& prices) {
+        return solve(0,1,prices);
+    }
+};
+
+//memo
+class Solution {
+public:
+    int solve(int idx,int buy,vector<int>& prices,vector<vector<int>>&dp)
+    {
+        //basecase
+        if(idx == prices.size())
+        {
+            return 0;
+        }
+        
+        if(dp[idx][buy] != -1)
+        {
+            return dp[idx][buy];
+        }
+        //if you want to buy
+        if(buy)
+        {
+            return dp[idx][buy] = max(-prices[idx] + solve(idx+1,0,prices,dp), //buy
+                    solve(idx+1,1,prices,dp));//skip
+        }
+
+        //if you dont want to buy
+        return  dp[idx][buy] = max(prices[idx] + solve(idx+1,1,prices,dp), //sell
+                solve(idx+1,0,prices,dp)); //hold
+
+    }
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        vector<vector<int>>dp(n,vector<int>(2,-1));
+        return solve(0,1,prices,dp);
+    }
+};
+
+//tabu
+class Solution {
+public:
+    int solve(int idx,int buy,vector<int>& prices,vector<vector<int>>&dp)
+    {
+        //basecase
+        if(idx == prices.size())
+        {
+            return 0;
+        }
+        
+        if(dp[idx][buy] != -1)
+        {
+            return dp[idx][buy];
+        }
+        //if you want to buy
+        if(buy)
+        {
+            return dp[idx][buy] = max(-prices[idx] + solve(idx+1,0,prices,dp), //buy
+                    solve(idx+1,1,prices,dp));//skip
+        }
+
+        //if you dont want to buy
+        return  dp[idx][buy] = max(prices[idx] + solve(idx+1,1,prices,dp), //sell
+                solve(idx+1,0,prices,dp)); //hold
+
+    }
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        vector<vector<int>>dp(n+1,vector<int>(2,0));
+
+        for(int i = n - 1; i >= 0; i--)
+        {
+            dp[i][1] = max(
+                -prices[i] + dp[i + 1][0],
+                dp[i + 1][1]
+            );
+
+            dp[i][0] = max(
+                prices[i] + dp[i + 1][1],
+                dp[i + 1][0]
+            );
+        }
+        return dp[0][1];
+    }
+};
