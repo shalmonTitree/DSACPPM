@@ -1,0 +1,78 @@
+//bfs
+class Solution {
+public:
+    void bfs(int n, int m,
+             vector<vector<int>>& grid,
+             int& time,
+             vector<vector<bool>>& vis) {
+
+        queue<pair<pair<int, int>, int>> q;
+        // {{row, col}, time}
+
+        // Put ALL rotten oranges into the queue
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+
+                if (grid[i][j] == 2) {
+                    q.push({{i, j}, 0});
+                    vis[i][j] = true;
+                }
+            }
+        }
+
+        int drow[] = {-1, 0, 1, 0};
+        int dcol[] = {0, 1, 0, -1};
+
+        while (!q.empty()) {
+
+            int u = q.front().first.first;
+            int v = q.front().first.second;
+            int t = q.front().second;
+
+            q.pop();
+
+            time = max(time, t);
+
+            for (int k = 0; k < 4; k++) {
+
+                int nrow = u + drow[k];
+                int ncol = v + dcol[k];
+
+                if (nrow >= 0 && nrow < n &&
+                    ncol >= 0 && ncol < m &&
+                    grid[nrow][ncol] == 1 &&
+                    !vis[nrow][ncol]) {
+
+                    vis[nrow][ncol] = true;
+
+                    q.push({{nrow, ncol}, t + 1});
+                }
+            }
+        }
+    }
+
+    int orangesRotting(vector<vector<int>>& grid) {
+
+        int n = grid.size();
+        int m = grid[0].size();
+
+        int time = 0;
+
+        vector<vector<bool>> vis(n, vector<bool>(m, false));
+
+        // Call BFS only ONCE
+        bfs(n, m, grid, time, vis);
+
+        // Check if any fresh orange remains
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+
+                if (grid[i][j] == 1 && !vis[i][j]) {
+                    return -1;
+                }
+            }
+        }
+
+        return time;
+    }
+};
