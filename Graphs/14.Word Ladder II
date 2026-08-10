@@ -1,0 +1,92 @@
+class Solution {
+public:
+
+    void dfs(string word, string beginWord,
+             unordered_map<string, vector<string>>& adj,
+             vector<string>& path,
+             vector<vector<string>>& ans)
+    {
+        if (word == beginWord)
+        {
+            reverse(path.begin(), path.end());
+            ans.push_back(path);
+            reverse(path.begin(), path.end());
+            return;
+        }
+
+        for (auto next : adj[word])
+        {
+            path.push_back(next);
+
+            dfs(next, beginWord, adj, path, ans);
+
+            path.pop_back();
+        }
+    }
+
+    vector<vector<string>> findLadders(
+        string beginWord,
+        string endWord,
+        vector<string>& wordList)
+    {
+        unordered_set<string> st(wordList.begin(), wordList.end());
+
+        vector<vector<string>> ans;
+
+        if (st.find(endWord) == st.end())
+            return ans;
+
+        // parent/next relationships for shortest paths
+        unordered_map<string, vector<string>> adj;
+
+        queue<string> q;
+        q.push(beginWord);
+
+        unordered_map<string, int> dist;
+        dist[beginWord] = 0;
+
+        int wordLen = beginWord.size();
+
+        while (!q.empty())
+        {
+            string word = q.front();
+            q.pop();
+
+            int currDist = dist[word];
+
+            for (int i = 0; i < wordLen; i++)
+            {
+                char original = word[i];
+
+                for (char ch = 'a'; ch <= 'z'; ch++)
+                {
+                    word[i] = ch;
+
+                    if (st.find(word) != st.end())
+                    {
+                        // First time seeing this word
+                        if (!dist.count(word))
+                        {
+                            dist[word] = currDist + 1;
+                            q.push(word);
+
+                            adj[word].push_back(
+                                q.empty() ? "" : ""
+                            );
+                        }
+
+                        // We need previous word -> current word
+                        if (dist[word] == currDist + 1)
+                        {
+                            adj[word].push_back("");
+                        }
+                    }
+                }
+
+                word[i] = original;
+            }
+        }
+
+        return ans;
+    }
+};
