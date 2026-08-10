@@ -1,0 +1,122 @@
+//dfs
+DFS
+
+Time Complexity: O(V + E)
+
+Every vertex is visited once → O(V)
+Every edge is checked → O(E)
+
+Space Complexity: O(V)
+
+vis array → O(V)
+DFS recursion stack → O(V) worst case
+
+DFS: TC = O(V + E), SC = O(V)
+
+
+class Solution {
+public:
+    bool flag = true;
+    
+    void dfs(int node,int color,vector<int>&vis,vector<vector<int>>& graph)
+    {
+        vis[node] = color;
+
+        for(auto it : graph[node])
+        {
+            if(vis[it] == -1)
+            {
+                dfs(it,3 - color,vis,graph);
+            }
+            else if(vis[it] == color)
+            {
+                flag = false;
+                return;
+            }
+        }
+    }
+    bool isBipartite(vector<vector<int>>& graph) {
+        int n = graph.size();
+        vector<int>vis(n,-1);
+
+        for(int i = 0; i < n; i++)
+        {
+            if(vis[i] == -1)
+            {
+                dfs(i,0,vis,graph);
+            }
+        }
+
+        return flag;
+    }
+};
+
+
+//bfs
+Time Complexity: O(V + E)
+
+Every vertex enters the queue at most once → O(V)
+Every edge is checked → O(E)
+
+Space Complexity: O(V)
+
+vis array → O(V)
+Queue → O(V) worst case
+
+BFS: TC = O(V + E), SC = O(V)
+
+
+class Solution {
+public:
+    bool bfs(int src, vector<int>& vis,
+             vector<vector<int>>& graph)
+    {
+        queue<int> q;
+
+        q.push(src);
+        vis[src] = 1;
+
+        while(!q.empty())
+        {
+            int node = q.front();
+            q.pop();
+
+            for(auto it : graph[node])
+            {
+                // Not colored
+                if(vis[it] == -1)
+                {
+                    vis[it] = 3 - vis[node];
+                    q.push(it);
+                }
+
+                // Same color -> not bipartite
+                else if(vis[it] == vis[node])
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    bool isBipartite(vector<vector<int>>& graph)
+    {
+        int n = graph.size();
+
+        vector<int> vis(n, -1);
+
+        for(int i = 0; i < n; i++)
+        {
+            if(vis[i] == -1)
+            {
+                if(!bfs(i, vis, graph))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+};
+
