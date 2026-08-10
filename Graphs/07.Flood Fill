@@ -1,0 +1,129 @@
+Time Complexity
+
+O(N × M)
+
+Each cell is visited at most once.
+For each cell, we check 4 directions.
+So: 4 × N × M → O(N × M).
+Space Complexity
+
+O(N × M) in the worst case.
+
+There are two parts:
+
+ans = image creates a copy:
+O(N × M)
+DFS recursion stack:
+Worst case, all cells are connected → O(N × M)
+
+So overall:
+
+TC = O(N × M)
+SC = O(N × M)
+
+class Solution {
+public:
+    void dfs(int sr,int sc,int oldColor,int color,vector<vector<int>>&ans,int n,int m,vector<vector<int>>& image)
+    {
+        ans[sr][sc] = color;
+        int dx[4] = {-1,0,1,0};
+        int dy[4] = {0,1,0,-1};
+
+        for(int k = 0; k < 4; k++)
+        {
+            int nrow = dx[k] + sr;
+            int ncol = dy[k] + sc;
+
+            if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && image[nrow][ncol] == oldColor && ans[nrow][ncol] != color)
+            {
+                dfs(nrow,ncol,oldColor,color,ans,n,m,image);
+            }
+        }
+    }
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
+        int n = image.size();
+        int m = image[0].size();
+        int oldColor = image[sr][sc];
+        if(oldColor == color)
+        {
+            return image;
+        }
+        vector<vector<int>>ans = image;
+        dfs(sr,sc,oldColor,color,ans,n,m,image);
+        return ans;
+    }
+};
+
+
+
+//bfs
+Complexity
+
+Let N = number of rows and M = number of columns.
+
+Time Complexity: O(N × M)
+
+Every connected cell is pushed into the queue at most once.
+For each cell, we check 4 neighbors.
+Therefore: O(4 × N × M) → O(N × M).
+
+Space Complexity: O(N × M)
+
+There are two things:
+
+ans is a copy of the image → O(N × M)
+BFS queue can contain up to O(N × M) cells in the worst case.
+
+So:
+
+TC = O(N × M)
+SC = O(N × M)
+
+
+class Solution {
+public:
+    void bfs(int sr,int sc,int oldColor,int color,vector<vector<int>>&ans,int n,int m,vector<vector<int>>& image)
+    {
+        ans[sr][sc] = color;
+        queue<pair<int,int>>q;
+        q.push({sr,sc});
+
+        
+        int dx[4] = {-1,0,1,0};
+        int dy[4] = {0,1,0,-1};
+
+        while(!q.empty())
+        {
+            int u = q.front().first;
+            int v = q.front().second;
+            q.pop();
+
+            for(int k = 0; k < 4; k++)
+            {
+                int nrow = dx[k] + u;
+                int ncol = dy[k] + v;
+
+                if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && image[nrow][ncol] == oldColor && ans[nrow][ncol] != color)
+                {
+                    ans[nrow][ncol] = color;
+                    q.push({nrow,ncol});
+                }
+            }
+
+
+        }
+        
+    }
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
+        int n = image.size();
+        int m = image[0].size();
+        int oldColor = image[sr][sc];
+        if(oldColor == color)
+        {
+            return image;
+        }
+        vector<vector<int>>ans = image;
+        bfs(sr,sc,oldColor,color,ans,n,m,image);
+        return ans;
+    }
+};
