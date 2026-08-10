@@ -1,0 +1,173 @@
+Time Complexity: O(N × M)
+You scan the top/bottom boundaries → O(M)
+You scan the left/right boundaries → O(N)
+DFS can visit every cell at most once → O(N × M)
+Final traversal of the board → O(N × M)
+
+Therefore:
+
+TC = O(N × M)
+
+Space Complexity: O(N × M)
+vis matrix → O(N × M)
+DFS recursion stack → worst case O(N × M)
+
+Therefore:
+
+SC = O(N × M)
+
+Final
+Complexity	Value
+Time	O(N × M)
+Space
+
+
+//dfs
+class Solution {
+public:
+    void dfs(int r,int c,vector<vector<char>>& board,vector<vector<bool>>&vis)
+    {
+        int n = board.size();
+        int m = board[0].size();
+        vis[r][c] = true;
+
+        int dx[4] = {-1,0,1,0};
+        int dy[4] = {0,1,0,-1};
+
+        for(int k = 0; k < 4; k++)
+        {
+            int nrow = dx[k] + r;
+            int ncol = dy[k] + c;
+
+            if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && !vis[nrow][ncol] && board[nrow][ncol] == 'O')
+            {
+                dfs(nrow,ncol,board,vis);
+            }
+        }
+
+
+    }
+    void solve(vector<vector<char>>& board) {
+        int n = board.size();
+        int m = board[0].size();
+        vector<vector<bool>>vis(n,vector<bool>(m,false));
+        for(int j = 0; j < m; j++)
+        {
+            if(board[0][j] == 'O' && !vis[0][j])
+            {
+                dfs(0,j,board,vis);
+            }
+
+            if(board[n-1][j] == 'O' && !vis[n-1][j])
+            {
+                dfs(n-1,j,board,vis);
+            }
+
+        }
+
+        for(int i = 0; i < n; i++)
+        {
+            if(board[i][0] == 'O' && !vis[i][0])
+            {
+                dfs(i,0,board,vis);
+            }
+
+            if(board[i][m-1] == 'O' && !vis[i][m-1])
+            {
+                dfs(i,m-1,board,vis);
+            }
+
+        }
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = 0; j < m; j++)
+            {
+                if(!vis[i][j] && board[i][j] == 'O')
+                {
+                    board[i][j] = 'X';
+                }
+            }
+        }
+    }
+};
+
+
+
+//bfs
+class Solution {
+public:
+    void bfs(int r, int c, vector<vector<char>>& board,
+             vector<vector<bool>>& vis)
+    {
+        int n = board.size();
+        int m = board[0].size();
+
+        queue<pair<int,int>> q;
+        q.push({r, c});
+        vis[r][c] = true;
+
+        int dx[4] = {-1, 0, 1, 0};
+        int dy[4] = {0, 1, 0, -1};
+
+        while (!q.empty())
+        {
+            int row = q.front().first;
+            int col = q.front().second;
+            q.pop();
+
+            for (int k = 0; k < 4; k++)
+            {
+                int nrow = row + dx[k];
+                int ncol = col + dy[k];
+
+                if (nrow >= 0 && nrow < n &&
+                    ncol >= 0 && ncol < m &&
+                    !vis[nrow][ncol] &&
+                    board[nrow][ncol] == 'O')
+                {
+                    vis[nrow][ncol] = true;
+                    q.push({nrow, ncol});
+                }
+            }
+        }
+    }
+
+    void solve(vector<vector<char>>& board)
+    {
+        int n = board.size();
+        int m = board[0].size();
+
+        vector<vector<bool>> vis(n, vector<bool>(m, false));
+
+        // Top and bottom boundaries
+        for (int j = 0; j < m; j++)
+        {
+            if (board[0][j] == 'O' && !vis[0][j])
+                bfs(0, j, board, vis);
+
+            if (board[n-1][j] == 'O' && !vis[n-1][j])
+                bfs(n-1, j, board, vis);
+        }
+
+        // Left and right boundaries
+        for (int i = 0; i < n; i++)
+        {
+            if (board[i][0] == 'O' && !vis[i][0])
+                bfs(i, 0, board, vis);
+
+            if (board[i][m-1] == 'O' && !vis[i][m-1])
+                bfs(i, m-1, board, vis);
+        }
+
+        // Convert surrounded O -> X
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                if (!vis[i][j] && board[i][j] == 'O')
+                    board[i][j] = 'X';
+            }
+        }
+    }
+};
