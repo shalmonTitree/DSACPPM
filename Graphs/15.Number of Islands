@@ -1,0 +1,144 @@
+//dfs
+DFS
+Time Complexity
+
+You traverse the entire grid:
+
+for(int i = 0; i < n; i++)
+    for(int j = 0; j < m; j++)
+
+Each cell is visited by DFS at most once, and for each cell you check 4 directions.
+
+TC = O(N × M)
+
+Space Complexity
+
+You have:
+
+vis → O(N × M)
+DFS recursion stack → worst case O(N × M)
+
+SC = O(N × M)
+
+
+class Solution {
+public:
+    void dfs(int r,int c,vector<vector<char>>& grid,vector<vector<bool>>&vis)
+    {
+        int n = grid.size();
+        int m = grid[0].size();
+        vis[r][c] = true;
+        int dx[4] = {-1,0,1,0};
+        int dy[4] = {0,1,0,-1};
+
+        for(int k = 0; k < 4; k++)
+        {
+            int nrow = dx[k] + r;
+            int ncol = dy[k] + c;
+
+            if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && !vis[nrow][ncol] && grid[nrow][ncol] == '1')
+            {
+                dfs(nrow,ncol,grid,vis);
+            }
+        }
+    }
+    int numIslands(vector<vector<char>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+
+        int cnt = 0;
+        vector<vector<bool>>vis(n,vector<bool>(m,false));
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = 0; j < m; j++)
+            {
+                if(!vis[i][j] && grid[i][j] == '1')
+                {
+                    cnt++;
+                    dfs(i,j,grid,vis);
+                }
+            }
+        }
+        return cnt;
+    }
+};
+
+//bfs
+BFS
+Time Complexity
+
+Same reasoning:
+
+Every cell is visited at most once.
+Each visited cell checks 4 directions.
+
+TC = O(N × M)
+
+Space Complexity
+
+You have:
+
+vis → O(N × M)
+BFS queue → worst case O(N × M)
+
+SC = O(N × M)
+
+class Solution {
+public:
+    void bfs(int r,int c,vector<vector<char>>& grid,vector<vector<bool>>&vis)
+    {
+        int n = grid.size();
+        int m = grid[0].size();
+
+        
+        vis[r][c] = true;
+        queue<pair<int,int>>q;
+        q.push({r,c});
+
+        while(!q.empty())
+        {
+            int i = q.front().first;
+            int j = q.front().second;
+
+            q.pop();
+
+            int dx[4] = {-1,0,1,0};
+            int dy[4] = {0,1,0,-1};
+
+            for(int k = 0; k < 4; k++)
+            {
+                int nrow = dx[k] + i;
+                int ncol = dy[k] + j;
+
+                if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && !vis[nrow][ncol] && grid[nrow][ncol] == '1')
+                {
+                    vis[nrow][ncol] = true;
+                    q.push({nrow,ncol});
+                }
+            }
+
+        }
+        
+    }
+    int numIslands(vector<vector<char>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+
+        int cnt = 0;
+        vector<vector<bool>>vis(n,vector<bool>(m,false));
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = 0; j < m; j++)
+            {
+                if(!vis[i][j] && grid[i][j] == '1')
+                {
+                    cnt++;
+                    bfs(i,j,grid,vis);
+                }
+            }
+        }
+        return cnt;
+    }
+};
