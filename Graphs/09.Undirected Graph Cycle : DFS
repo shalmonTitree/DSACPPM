@@ -1,0 +1,83 @@
+Time Complexity
+
+O(V + E)
+
+Building the adjacency list: O(E)
+DFS visits each vertex once: O(V)
+Each edge is checked at most twice in an undirected graph: O(E)
+
+So:
+
+TC = O(V + E)
+
+Space Complexity
+
+O(V + E)
+
+Adjacency list: O(V + E)
+Visited array: O(V)
+DFS recursion stack: O(V) worst case
+
+So:
+
+SC = O(V + E)
+
+Final:
+TC → O(V + E)
+SC → O(V + E)
+
+class Solution {
+  public:
+    bool dfs(int src,int par,vector<vector<int>>&adj,vector<int>&vis,int V)
+    {
+        vis[src] = 1;
+        
+            
+            for(auto it : adj[src])
+            {
+                if(!vis[it])
+                {
+                    if(dfs(it,src,adj,vis,V) == true)
+                    {
+                        return true;
+                    }
+                    
+                }
+                else if(it != par)
+                {
+                    return true;
+                }
+            }
+        
+        return false;
+        
+    }
+    bool isCycle(int V, vector<vector<int>>& edges) {
+    
+        vector<int>vis(V,0);
+        vector<vector<int>>adj(V);
+        for(auto it : edges)
+        {
+            int u = it[0];
+            int v = it[1];
+            
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        
+        for(int i = 0; i < V;i++)
+        {
+            if(!vis[i])
+            {
+                if(dfs(i,-1,adj,vis,V))
+                {
+                    return true;
+                }
+                
+            }
+        }
+        return false;
+        
+        
+    }
+};
