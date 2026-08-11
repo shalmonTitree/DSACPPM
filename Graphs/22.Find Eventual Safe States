@@ -1,0 +1,107 @@
+For this Eventual Safe Nodes using Kahn's Algorithm, let:
+
+V = n = number of nodes
+E = total number of edges in graph
+Time Complexity: O(V + E)
+
+Breakdown:
+
+Reverse the graph
+
+for(int i = 0; i < n; i++)
+    for(auto it : graph[i])
+
+Every edge is processed once → O(E)
+
+Calculate indegree
+
+for(int i = 0; i < n; i++)
+    for(auto it : adj[i])
+
+Again, every edge is processed once → O(E)
+
+Initialize queue
+
+for(int i = 0; i < n; i++)
+
+→ O(V)
+
+Kahn's BFS
+Every node processed once → O(V)
+Every edge processed once → O(E)
+
+Sort answer
+
+sort(ans.begin(), ans.end());
+
+In the worst case, ans contains V nodes → O(V log V)
+
+Therefore:
+
+TC = O(V + E + V log V)
+
+or simply:
+
+TC = O(E + V log V)
+
+Space Complexity: O(V + E)
+adj (reverse graph) → O(V + E)
+indegree → O(V)
+queue → O(V)
+ans → O(V)
+
+Therefore:
+
+SC = O(V + E)
+
+class Solution {
+public:
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+        int n = graph.size();
+        vector<vector<int>>adj(n);
+        for(int i = 0; i < n; i++)
+        {
+            for(auto it : graph[i])
+            {
+                adj[it].push_back(i);
+            }
+        }
+
+        vector<int>indegree(n);
+        for(int i = 0; i < n; i++)
+        {
+            for(auto it : adj[i])
+            {
+                indegree[it]++;
+            }
+        }
+
+        queue<int>q;
+        vector<int>ans;
+        for(int i = 0; i < n; i++)
+        {
+            if(indegree[i] == 0)
+            {
+                q.push(i);
+            }
+        }
+
+        while(!q.empty())
+        {
+            int node = q.front();
+            q.pop();
+            ans.push_back(node);
+
+            for(auto it : adj[node])
+            {
+                indegree[it]--;
+                if(indegree[it] == 0)
+                {
+                    q.push(it);
+                }
+            }
+        }
+        sort(ans.begin(),ans.end());
+        return ans;
+    }
+};
