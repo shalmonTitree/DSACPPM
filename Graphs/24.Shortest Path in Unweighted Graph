@@ -1,0 +1,47 @@
+BFS Shortest Path
+TC: O(V + E)
+SC: O(V + E)
+Why? Each vertex and edge is processed at most once.
+
+class Solution {
+  public:
+    int shortestPath(int V, vector<vector<int>> &edges, int src, int dest) {
+        vector<vector<int>>adj(V);
+        vector<int>dist(V,1e9);
+        queue<int>q; //node
+        
+        for(auto it : edges)
+        {
+            int u = it[0];
+            int v = it[1];
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        
+        q.push(src);
+        dist[src] = 0;
+        
+        while(!q.empty())
+        {
+            int node = q.front();
+     
+            q.pop();
+            
+            for(auto it : adj[node])
+            {
+                if(dist[it] == 1e9) //currentnode + 1 <= neghibour node
+                {
+                    dist[it] = 1 + dist[node];
+                    q.push(it);
+                }
+            }
+        }
+        
+        if(dist[dest] == 1e9)
+        {
+            return -1;
+        }
+        return dist[dest];
+        
+    }
+};
