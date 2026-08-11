@@ -1,0 +1,80 @@
+//dfs
+Time Complexity: O(V + E)
+Building the adjacency list:
+You iterate through all E edges → O(E)
+DFS traversal:
+Every vertex is visited once → O(V)
+Every edge is explored once → O(E)
+
+So overall:
+
+TC = O(V + E)
+
+Space Complexity: O(V + E)
+
+Breakdown:
+
+adj adjacency list → O(V + E)
+vis array → O(V)
+pathVis array → O(V)
+DFS recursion stack → O(V) in the worst case
+
+Therefore:
+
+SC = O(V + E)
+
+If you exclude the input adjacency list and count only auxiliary space, then:
+
+Auxiliary SC = O(V)
+
+class Solution {
+  public:
+    bool dfs(int node,vector<bool>&pathVis,vector<bool>&vis,vector<vector<int>>&adj)
+    {
+        vis[node] = true;
+        pathVis[node] = true;
+        for(auto child : adj[node])
+        {
+            if(!vis[child])
+            {
+                if(dfs(child,pathVis,vis,adj) == true)
+                {
+                    return true;
+                }
+            }
+            else if(pathVis[child])
+            {
+                return true;
+            }
+        }
+        pathVis[node] = false;
+        return false;
+    }
+    bool isCyclic(int V, vector<vector<int>> &edges) {
+        vector<vector<int>>adj(V);
+        for(auto it : edges)
+        {
+            int u = it[0];
+            int v = it[1];
+            
+            adj[u].push_back(v);
+        }
+        
+        vector<bool>vis(V,false);
+        vector<bool>pathVis(V,false);
+        
+        for(int i = 0; i < V; i++)
+        {
+            if(!vis[i])
+            {
+                if(dfs(i,pathVis,vis,adj) == true)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+        
+    }
+};
+
