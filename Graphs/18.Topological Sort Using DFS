@@ -1,0 +1,90 @@
+Time Complexity: O(V + E)
+
+Breakdown:
+
+Building adjacency list
+
+for(auto it : edges)
+
+You process every edge once → O(E)
+
+DFS traversal
+Every vertex is visited once → O(V)
+Every edge is explored once → O(E)
+
+Popping from stack
+
+while(!st.empty())
+
+Every vertex is popped once → O(V)
+
+Therefore:
+
+TC = O(V + E)
+
+Space Complexity: O(V + E)
+
+Your data structures:
+
+adj → O(V + E)
+vis → O(V)
+stack → O(V)
+DFS recursion stack → O(V) worst case
+ans → O(V)
+
+So overall:
+
+SC = O(V + E)
+
+If the interviewer asks for auxiliary space, excluding the adjacency list and output:
+
+Auxiliary SC = O(V)
+
+
+class Solution {
+  public:
+    void dfs(int node,vector<int>&vis,stack<int>&st,vector<vector<int>>&adj)
+    {
+        vis[node] = 1;
+        
+        for(auto it : adj[node])
+        {
+            if(!vis[it])
+            {
+                dfs(it,vis,st,adj);
+            }
+        }
+        
+        st.push(node);
+    }
+    vector<int> topoSort(int V, vector<vector<int>>& edges) {
+       vector<vector<int>>adj(V);
+       
+       for(auto it : edges)
+       {
+           int u = it[0];
+           int v = it[1];
+           adj[u].push_back(v);
+       }
+       
+       vector<int>vis(V,0);
+       stack<int>st;
+       for(int i = 0; i < V; i++)
+       {
+           if(!vis[i])
+           {
+               dfs(i,vis,st,adj);
+           }
+       }
+       
+       vector<int>ans;
+       while(!st.empty())
+       {
+           ans.push_back(st.top());
+           st.pop();
+       }
+       
+       return ans;
+        
+    }
+};
