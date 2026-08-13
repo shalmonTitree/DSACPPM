@@ -1,0 +1,64 @@
+const int mod = 1e9 + 7;
+
+class Solution {
+public:
+    int countPaths(int n, vector<vector<int>>& roads) {
+
+        vector<vector<pair<int, int>>> adj(n);
+
+        for (auto it : roads) {
+            int from = it[0];
+            int to = it[1];
+            int time = it[2];
+
+            adj[from].push_back({to, time});
+            adj[to].push_back({from, time});
+        }
+
+        vector<long long> dist(n, LLONG_MAX);
+        vector<int> ways(n, 0);
+
+        priority_queue<
+            pair<long long, int>,
+            vector<pair<long long, int>>,
+            greater<pair<long long, int>>
+        > pq;
+
+        dist[0] = 0;
+        ways[0] = 1;
+
+        pq.push({0, 0});
+
+        while (!pq.empty()) {
+
+            auto [d, src] = pq.top();
+            pq.pop();
+
+            // Ignore outdated entry
+            if (d > dist[src])
+                continue;
+
+            for (auto it : adj[src]) {
+
+                int ngh = it.first;
+                int time = it.second;
+
+                if (d + time < dist[ngh]) {
+
+                    dist[ngh] = d + time;
+
+                    ways[ngh] = ways[src];
+
+                    pq.push({dist[ngh], ngh});
+                }
+                else if (d + time == dist[ngh]) {
+
+                    ways[ngh] =
+                        (ways[ngh] + ways[src]) % mod;
+                }
+            }
+        }
+
+        return ways[n - 1];
+    }
+};
