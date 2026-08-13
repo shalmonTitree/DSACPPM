@@ -1,0 +1,64 @@
+finds the shortest distance between EVERY pair of nodes in a graph.
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+
+    int n = 4;
+
+    vector<vector<int>> dist = {
+        {0, 5, 10, 1e9},
+        {5, 0, 3, 1e9},
+        {10, 3, 0, 2},
+        {1e9, 1e9, 2, 0}
+    };
+
+    // Floyd-Warshall
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+
+                dist[i][j] = min(
+                    dist[i][j],
+                    dist[i][k] + dist[k][j]
+                );
+            }
+        }
+    }
+
+    // Given two nodes
+    int src = 0;
+    int dest = 3;
+
+    if (dist[src][dest] == 1e9)
+        cout << -1;
+    else
+        cout << dist[src][dest];
+
+    return 0;
+}
+
+
+
+
+//if question says there exist negative cycle or not ?
+for (int k = 0; k < n; k++) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            dist[i][j] = min(
+                dist[i][j],
+                dist[i][k] + dist[k][j]
+            );
+        }
+    }
+}
+
+// Check negative cycle
+for (int i = 0; i < n; i++) {
+    if (dist[i][i] < 0) {
+        cout << "Negative cycle exists";
+        return 0;
+    }
+}
+
+cout << "No negative cycle";
