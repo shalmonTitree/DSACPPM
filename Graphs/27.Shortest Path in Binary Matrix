@@ -1,0 +1,65 @@
+Time Complexity: O(n² log n)
+
+Space Complexity: O(n²)
+
+Reason:
+
+There are n² cells.
+Each cell checks 8 directions, which is constant work.
+Priority queue operations take O(log n²) = O(log n).
+The dist array and priority queue use O(n²) space.
+
+
+class Solution {
+public:
+    int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+
+       
+        if(grid[0][0] == 1)
+        {
+            return -1;
+        }
+
+         if(n == 1)
+        {
+            return 1;
+        }
+        vector<vector<int>> dist(n, vector<int>(n, 1e9));
+
+        // dist, {row,col}
+        priority_queue<pair<int, pair<int, int>>,
+                       vector<pair<int, pair<int, int>>>,
+                       greater<pair<int, pair<int, int>>>>
+            pq;
+
+        dist[0][0] = 1;
+        pq.push({1, {0, 0}});
+
+        int dx[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+        int dy[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+        while (!pq.empty()) {
+            int d = pq.top().first;
+            int u = pq.top().second.first;
+            int v = pq.top().second.second;
+
+            pq.pop();
+
+            for (int k = 0; k < 8; k++) {
+                int nrow = u + dx[k];
+                int ncol = v + dy[k];
+
+                if (nrow >= 0 && nrow < n && ncol >= 0 && ncol < n &&
+                    grid[nrow][ncol] == 0 && d + 1 < dist[nrow][ncol]) {
+                    dist[nrow][ncol] = d + 1;
+                    if (nrow == n - 1 && ncol == n - 1) {
+                        return d + 1;
+                    }
+                    pq.push({d + 1, {nrow,ncol}});
+                }
+            }
+        }
+        return -1;
+    }
+};
