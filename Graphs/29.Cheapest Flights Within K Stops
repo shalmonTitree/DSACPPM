@@ -1,0 +1,78 @@
+For your code:
+
+Time Complexity: O(K × E)
+
+Space Complexity: O(V + E)
+
+Where:
+
+V = number of cities (n)
+E = number of flights
+
+Reason:
+
+Building the adjacency list takes O(E).
+BFS processes up to K + 1 levels.
+Each level can process the flights/edges, giving O(K × E).
+adj takes O(V + E).
+dist and temp take O(V).
+The queue can take O(E) in the worst case.
+
+So overall:
+
+TC: O(E × K)
+
+SC: O(V + E)
+
+class Solution {
+public:
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst,
+                          int k) {
+        vector<pair<int, int>> adj[n];
+
+        for (auto it : flights) {
+            int from = it[0];
+            int to = it[1];
+            int price = it[2];
+
+            adj[from].push_back({to, price});
+        }
+        // question says chepest so use max heap so min dist will be at top
+        queue<pair<int, pair<int, int>>> pq;
+        vector<int> dist(n, 1e9);
+        // stops,src,distance
+        pq.push({0, {src, 0}});
+        dist[src] = 0;
+
+        while (!pq.empty()) {
+            int stops = pq.front().first;
+            int source = pq.front().second.first;
+            int d = pq.front().second.second;
+            pq.pop();
+
+            if (stops > k) {
+                continue;
+            }
+
+            vector<int> temp = dist;
+
+            for (auto it : adj[source]) {
+                int ngh = it.first;
+                int distance = it.second;
+
+                if (d + distance < temp[ngh]) {
+                    temp[ngh] = d + distance;
+                    pq.push({stops + 1, {ngh, d + distance}});
+                }
+            }
+
+            dist = temp;
+        }
+
+        if (dist[dst] == 1e9) {
+            return -1;
+        }
+
+        return dist[dst];
+    }
+};
