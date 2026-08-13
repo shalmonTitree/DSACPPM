@@ -1,0 +1,42 @@
+const int mod = 1000;
+class Solution {
+  public:
+    int minSteps(vector<int>& arr, int start, int end) {
+        vector<int>dist(1000,1e9);
+        queue<pair<int,int>> q;
+        if (start == end)
+            return 0;
+
+        
+        //number o steps, starting number
+        q.push({0,start});
+        
+        dist[start] = 0;
+        while(!q.empty())
+        {
+        
+            int steps = q.front().first;
+            int node = q.front().second;
+            q.pop();
+            
+            for(int i = 0; i < arr.size(); i++)
+            {
+                int val = ((node * arr[i])%mod);
+                if(steps + 1 < dist[val])
+                {
+                    dist[val] = steps+1;
+                    
+                    if(val == end)
+                    {
+                        return steps + 1;
+                    }
+                    q.push({steps+1,val});
+                }
+                
+            }
+        }
+        return -1;
+        
+        
+    }
+};
