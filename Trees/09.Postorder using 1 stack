@@ -1,0 +1,28 @@
+void postorder(TreeNode* root) {
+    stack<TreeNode*> st;
+    TreeNode* curr = root;
+    TreeNode* lastVisited = nullptr;
+
+    while (curr != nullptr || !st.empty()) {
+
+        // Go to the leftmost node
+        if (curr != nullptr) {
+            st.push(curr);
+            curr = curr->left;
+        }
+        else {
+            TreeNode* top = st.top();
+
+            // If right subtree exists and is not processed
+            if (top->right != nullptr && lastVisited != top->right) {
+                curr = top->right;
+            }
+            else {
+                // Process node
+                cout << top->data << " ";
+                lastVisited = top;
+                st.pop();
+            }
+        }
+    }
+}
