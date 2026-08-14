@@ -1,0 +1,42 @@
+/*
+===============================================================================
+Approach 1: Recursive DFS (Most Expected)
+===============================================================================
+
+Idea:
+- If both nodes are NULL, they are identical.
+- If one node is NULL and the other isn't, they are different.
+- If values are different, return false.
+- Recursively compare left and right subtrees.
+
+Time Complexity : O(N)
+Space Complexity: O(H)
+
+where
+N = Number of nodes
+H = Height of the tree
+
+Worst Case : O(N)
+Balanced Tree : O(log N)
+*/
+
+class Solution1 {
+public:
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+
+        if (!p && !q)
+            return true;
+
+        if (!p || !q)
+            return false;
+
+        if (p->val != q->val)
+            return false;
+
+        return isSameTree(p->left, q->left) &&
+               isSameTree(p->right, q->right);
+    }
+};
+
+
+
