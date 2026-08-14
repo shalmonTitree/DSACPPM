@@ -1,0 +1,26 @@
+class Solution {
+public:
+    int ans = INT_MIN;
+
+    int maxGain(TreeNode* root) {
+        if (root == nullptr)
+            return 0;
+
+        // Postorder: LEFT -> RIGHT -> ROOT
+        int left = max(0, maxGain(root->left));
+        int right = max(0, maxGain(root->right));
+
+        // Best path passing through current node
+        int currentPath = left + root->val + right;
+
+        ans = max(ans, currentPath);
+
+        // Return only one side to parent
+        return root->val + max(left, right);
+    }
+
+    int maxPathSum(TreeNode* root) {
+        maxGain(root);
+        return ans;
+    }
+};
