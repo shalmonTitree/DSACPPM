@@ -1,0 +1,101 @@
+class DisjointSet {
+    vector<int> parent, size;
+
+public:
+    DisjointSet(int n) {
+        parent.resize(n);
+        size.resize(n, 1);
+
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+        }
+    }
+
+    int findUPar(int node) {
+        if (node == parent[node])
+            return node;
+
+        return parent[node] = findUPar(parent[node]);
+    }
+
+    void unionBySize(int u, int v) {
+        int ulp_u = findUPar(u);
+        int ulp_v = findUPar(v);
+
+        if (ulp_u == ulp_v)
+            return;
+
+        if (size[ulp_u] < size[ulp_v]) {
+            parent[ulp_u] = ulp_v;
+            size[ulp_v] += size[ulp_u];
+        }
+        else {
+            parent[ulp_v] = ulp_u;
+            size[ulp_u] += size[ulp_v];
+        }
+    }
+
+    bool connected(int u, int v) {
+        return findUPar(u) == findUPar(v);
+    }
+};
+
+class Solution {
+public:
+    int swimInWater(vector<vector<int>>& grid) {
+
+        int n = grid.size();
+        int total = n * n;
+
+        DisjointSet ds(total);
+
+        // elevation -> {row, col}
+        vector<pair<int, int>> cells(total);
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                cells[grid[i][j]] = {i, j};
+            }
+        }
+
+        vector<vector<int>> active(n, vector<int>(n, 0));
+
+        int dx[] = {-1, 0, 1, 0};
+        int dy[] = {0, 1, 0, -1};
+
+        for (int t = 0; t < total; t++) {
+
+            int x = cells[t].first;
+            int y = cells[t].second;
+
+            active[x][y] = 1;
+
+            int node = x * n + y;
+
+            // Connect with already active neighbors
+            for (int k = 0; k < 4; k++) {
+
+                int nx = x + dx[k];
+                int ny = y + dy[k];
+
+                if (nx < 0 || nx >= n ||
+                    ny < 0 || ny >= n)
+                    continue;
+
+                if (!active[nx][ny])
+                    continue;
+
+                int adjNode = nx * n + ny;
+
+                ds.unionBySize(node, adjNode);
+            }
+
+            // Check if start and destination are connected
+            if (ds.connected(0, total - 1)) {
+                return t;
+            }
+        }
+
+        return -1;
+    }
+};
