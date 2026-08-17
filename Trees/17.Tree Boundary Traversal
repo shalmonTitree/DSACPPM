@@ -1,0 +1,76 @@
+class Solution {
+public:
+    bool isLeaf(Node* root) {
+        return root && root->left == nullptr && root->right == nullptr;
+    }
+
+    void addLeftBoundary(Node* root, vector<int>& ans) {
+        Node* curr = root->left;
+
+        while (curr) {
+            if (!isLeaf(curr))
+                ans.push_back(curr->data);
+
+            if (curr->left)
+                curr = curr->left;
+            else
+                curr = curr->right;
+        }
+    }
+
+    void addLeaves(Node* root, vector<int>& ans) {
+        if (!root)
+            return;
+
+        if (isLeaf(root)) {
+            ans.push_back(root->data);
+            return;
+        }
+
+        addLeaves(root->left, ans);
+        addLeaves(root->right, ans);
+    }
+
+    void addRightBoundary(Node* root, vector<int>& ans) {
+        Node* curr = root->right;
+        vector<int> temp;
+
+        while (curr) {
+            if (!isLeaf(curr))
+                temp.push_back(curr->data);
+
+            if (curr->right)
+                curr = curr->right;
+            else
+                curr = curr->left;
+        }
+
+        // Right boundary must be added in reverse order
+        reverse(temp.begin(), temp.end());
+
+        for (int x : temp)
+            ans.push_back(x);
+    }
+
+    vector<int> boundaryTraversal(Node *root) {
+        vector<int> ans;
+
+        if (!root)
+            return ans;
+
+        // If root itself is a leaf
+        if (!isLeaf(root))
+            ans.push_back(root->data);
+
+        // Left boundary
+        addLeftBoundary(root, ans);
+
+        // All leaf nodes
+        addLeaves(root, ans);
+
+        // Right boundary
+        addRightBoundary(root, ans);
+
+        return ans;
+    }
+};
