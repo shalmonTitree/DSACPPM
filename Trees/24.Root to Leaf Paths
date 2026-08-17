@@ -1,0 +1,37 @@
+class Solution {
+public:
+
+    void solve(Node* root, vector<int>& path,
+               vector<vector<int>>& ans) {
+
+        if (root == NULL)
+            return;
+
+        // Add current node
+        path.push_back(root->data);
+
+        // Leaf node
+        if (root->left == NULL && root->right == NULL) {
+            ans.push_back(path);
+        }
+        else {
+            // Left subtree first
+            solve(root->left, path, ans);
+
+            // Right subtree
+            solve(root->right, path, ans);
+        }
+
+        // Backtrack
+        path.pop_back();
+    }
+
+    vector<vector<int>> Paths(Node* root) {
+        vector<vector<int>> ans;
+        vector<int> path;
+
+        solve(root, path, ans);
+
+        return ans;
+    }
+};
