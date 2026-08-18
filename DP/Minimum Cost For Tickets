@@ -1,0 +1,130 @@
+//rec
+class Solution {
+public:
+    int solve(int idx,vector<int>& days, vector<int>& costs)
+    {
+        if(idx >= days.size())
+        {
+            return 0;
+        }
+        
+        int i = idx;
+        while(i < days.size() && days[i] < days[idx] + 1)
+        {
+            i++;
+        }
+
+        int oneday = costs[0] + solve(i,days,costs);
+
+         i = idx;
+        while(i < days.size() && days[i] < days[idx] + 7)
+        {
+            i++;
+        }
+
+        int sevenday = costs[1] + solve(i,days,costs);
+
+         i = idx;
+        while(i < days.size() && days[i] < days[idx] + 30)
+        {
+            i++;
+        }
+
+        int thirtyday = costs[2] + solve(i,days,costs);
+
+
+
+        return min({oneday,sevenday,thirtyday});
+        
+    }
+    int mincostTickets(vector<int>& days, vector<int>& costs) {
+        int n = days.size();
+        return solve(0,days,costs);
+    }
+};
+
+//memo
+class Solution {
+public:
+    int solve(int idx,vector<int>& days, vector<int>& costs,vector<int>&dp)
+    {
+        if(idx >= days.size())
+        {
+            return 0;
+        }
+        if(dp[idx] != -1) return dp[idx];
+
+        int i = idx;
+        while(i < days.size() && days[i] < days[idx] + 1)
+        {
+            i++;
+        }
+
+        int oneday = costs[0] + solve(i,days,costs,dp);
+
+         i = idx;
+        while(i < days.size() && days[i] < days[idx] + 7)
+        {
+            i++;
+        }
+
+        int sevenday = costs[1] + solve(i,days,costs,dp);
+
+         i = idx;
+        while(i < days.size() && days[i] < days[idx] + 30)
+        {
+            i++;
+        }
+
+        int thirtyday = costs[2] + solve(i,days,costs,dp);
+
+
+
+        return dp[idx] = min({oneday,sevenday,thirtyday});
+        
+    }
+    int mincostTickets(vector<int>& days, vector<int>& costs) {
+        int n = days.size();
+        vector<int>dp(n+1,-1);
+
+        return solve(0,days,costs,dp);
+    }
+};
+
+//tabu
+class Solution {
+public:
+    
+    int mincostTickets(vector<int>& days, vector<int>& costs) {
+        int n = days.size();
+        vector<int> dp(n + 1, 0);
+
+        dp[n] = 0;
+        for (int idx = n - 1; idx >= 0; idx--) {
+
+            int next = idx;
+            while (next < days.size() && days[next] < days[idx] + 1) {
+                next++;
+            }
+
+            int oneday = costs[0] + dp[next];
+
+            next = idx;
+            while (next < days.size() && days[next] < days[idx] + 7) {
+                next++;
+            }
+
+            int sevenday = costs[1] + dp[next];
+
+            next = idx;
+            while (next < days.size() && days[next] < days[idx] + 30) {
+                next++;
+            }
+
+            int thirtyday = costs[2] + dp[next];
+
+            dp[idx] = min({oneday,sevenday,thirtyday});
+        }
+        return dp[0];
+    }
+};
