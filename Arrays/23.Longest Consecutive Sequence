@@ -1,1 +1,69 @@
+//bruteforce
+Sorting - O(n*log n) Time and O(1) Space
 
+int longestConsecutive(vector<int> &arr)
+{
+    if (arr.empty())
+        return 0;
+
+    sort(arr.begin(), arr.end());
+
+    int res = 1, cnt = 1;
+
+    for (int i = 1; i < arr.size(); i++)
+    {
+
+        if (arr[i] == arr[i - 1])
+            continue;
+
+        if (arr[i] == arr[i - 1] + 1)
+        {
+            cnt++;
+        }
+        else
+        {
+            cnt = 1;
+        }
+
+        res = max(res, cnt);
+    }
+    return res;
+}
+
+int main()
+{
+    vector<int> arr = {2, 6, 1, 9, 4, 5, 3};
+    cout << longestConsecutive(arr);
+    return 0;
+}
+
+//optmial
+Using Hashing - O(n) Time and O(n) Space
+
+int longestConsecutive(vector<int> &arr) {
+    unordered_set<int> st;
+    int res = 0;
+
+    for (int val: arr)
+        st.insert(val);
+
+    for (int val: arr) {
+      
+        if (st.find(val) != st.end() && st.find(val-1) == st.end()) {
+          
+            int cur = val, cnt = 0;
+            while (st.find(cur) != st.end()) {
+                cur++;
+              	cnt++;
+            }
+            res = max(res, cnt);
+        }
+    }
+    return res;
+}
+
+int main() {
+    vector<int> arr = {2, 6, 1, 9, 4, 5, 3};
+    cout << longestConsecutive(arr);
+    return 0;
+}
