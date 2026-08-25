@@ -1,0 +1,106 @@
+//rec
+class Solution {
+public:
+    int solve(int screen,int clipboard,int n)
+    {
+        if(screen == n)
+        {
+            return 0;
+        }
+
+        int paste = 1e9;
+        if(clipboard > 0 && screen + clipboard <= n)
+        {
+             paste = 1 + solve(screen + clipboard,clipboard,n);
+        }  
+
+        int copy = 1e9;
+        if(screen != clipboard)
+        {
+            copy = 1 + solve(screen,screen,n);
+        }
+        
+
+
+        return min(paste,copy);
+    }
+    int minSteps(int n) {
+        int screen = 1;
+        int clipboard = 0;
+        return solve(screen,clipboard,n);
+    }
+};
+
+//memo
+class Solution {
+public:
+    int solve(int screen,int clipboard,int n,vector<vector<int>>&dp)
+    {
+        if(screen == n)
+        {
+            return 0;
+        }
+
+        if(dp[screen][clipboard] != -1)
+        {
+            return dp[screen][clipboard];
+        }
+
+        int paste = 1e9;
+        if(clipboard > 0 && screen + clipboard <= n)
+        {
+             paste = 1 + solve(screen + clipboard,clipboard,n,dp);
+        }  
+
+        int copy = 1e9;
+        if(screen != clipboard)
+        {
+            copy = 1 + solve(screen,screen,n,dp);
+        }
+        
+
+
+        return dp[screen][clipboard] = min(paste,copy);
+    }
+    int minSteps(int n) {
+        int screen = 1;
+        int clipboard = 0;
+        vector<vector<int>>dp(n+1,vector<int>(n+1,-1));
+        return solve(screen,clipboard,n,dp);
+    }
+};
+
+//tabu
+class Solution {
+public:
+    int minSteps(int n) {
+        vector<vector<int>> dp(n + 1, vector<int>(n + 1, 1e9));
+
+        // Base case:
+        // If screen == n, no more operations are needed.
+        for (int clipboard = 0; clipboard <= n; clipboard++) {
+            dp[n][clipboard] = 0;
+        }
+
+        for (int screen = n - 1; screen >= 1; screen--) {
+            for (int clipboard = 0; clipboard <= n; clipboard++) {
+
+                // Paste
+                if (clipboard > 0 && screen + clipboard <= n) {
+                    dp[screen][clipboard] =
+                        min(dp[screen][clipboard],
+                            1 + dp[screen + clipboard][clipboard]);
+                }
+
+                // Copy
+                if (screen != clipboard) {
+                    dp[screen][clipboard] =
+                        min(dp[screen][clipboard],
+                            1 + dp[screen][screen]);
+                }
+            }
+        }
+
+        return dp[1][0];
+    }
+};
