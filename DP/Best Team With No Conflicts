@@ -1,0 +1,136 @@
+//rec
+class Solution {
+public:
+    static bool cmp(pair<int,int>a,pair<int,int>b)
+    {
+        if(a.first == b.first)
+        {
+            return a.second < b.second;
+        }
+        return a.first < b.first;
+    }
+
+    int solve(int idx,int prev, vector<pair<int,int>>&mp,int n)
+    {
+
+        if(idx == n)
+        {
+            return 0;
+        }
+        int nottake = solve(idx+1,prev,mp,n);
+        int take = 0;
+        if(prev == -1 || mp[idx].second >=  mp[prev].second)
+        {
+            take = mp[idx].second + solve(idx+1,idx,mp,n);
+        }
+
+        return max(take,nottake);
+    }
+    int bestTeamScore(vector<int>& scores, vector<int>& ages) {
+        int n = scores.size();
+        vector<pair<int,int>>mp;//age,score
+        for(int i = 0; i < n; i++)
+        {
+            mp.push_back({ages[i],scores[i]});
+        }
+
+        sort(mp.begin(),mp.end(),cmp);
+
+        return solve(0,-1,mp,n);
+
+    }
+};
+
+
+//memo
+class Solution {
+public:
+    static bool cmp(pair<int,int>a,pair<int,int>b)
+    {
+        if(a.first == b.first)
+        {
+            return a.second < b.second;
+        }
+        return a.first < b.first;
+    }
+
+    int solve(int idx,int prev, vector<pair<int,int>>&mp,int n,vector<vector<int>>&dp)
+    {
+
+        if(idx == n)
+        {
+            return 0;
+        }
+        if(dp[idx][prev+1] != -1)
+        {
+            return dp[idx][prev+1];
+        }
+
+        int nottake = solve(idx+1,prev,mp,n,dp);
+        int take = 0;
+        if(prev == -1 || mp[idx].second >=  mp[prev].second)
+        {
+            take = mp[idx].second + solve(idx+1,idx,mp,n,dp);
+        }
+
+        return dp[idx][prev+1] = max(take,nottake);
+    }
+    int bestTeamScore(vector<int>& scores, vector<int>& ages) {
+        int n = scores.size();
+        vector<pair<int,int>>mp;//age,score
+        
+        vector<vector<int>>dp(n+1,vector<int>(n+1,-1));
+
+        for(int i = 0; i < n; i++)
+        {
+            mp.push_back({ages[i],scores[i]});
+        }
+
+        sort(mp.begin(),mp.end(),cmp);
+
+        return solve(0,-1,mp,n,dp);
+
+    }
+};
+
+//tabu
+class Solution {
+public:
+    static bool cmp(pair<int, int> a, pair<int, int> b) {
+        if (a.first == b.first) {
+            return a.second < b.second;
+        }
+        return a.first < b.first;
+    }
+
+    
+    int bestTeamScore(vector<int>& scores, vector<int>& ages) {
+        int n = scores.size();
+        vector<pair<int, int>> mp; // age,score
+
+        vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
+
+        for (int i = 0; i < n; i++) {
+            mp.push_back({ages[i], scores[i]});
+        }
+
+        sort(mp.begin(), mp.end(), cmp);
+
+
+        for (int idx = n - 1; idx >= 0; idx--) {
+            for (int prev = -1; prev < idx; prev++) {
+
+                int nottake = dp[idx + 1][prev + 1];
+
+                int take = 0;
+
+                if (prev == -1 || mp[idx].second >= mp[prev].second) {
+                    take = mp[idx].second + dp[idx + 1][idx + 1];
+                }
+
+                dp[idx][prev + 1] = max(take, nottake);
+            }
+        }
+        return dp[0][0];
+    }
+};
