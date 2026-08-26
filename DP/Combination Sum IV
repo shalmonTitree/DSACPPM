@@ -1,0 +1,77 @@
+//rec
+class Solution {
+public:
+    int solve(int target,vector<int>& nums)
+    {
+        if(target == 0)
+        {
+            return 1;
+        }
+
+        int ans = 0;
+        
+        for(int i = 0; i < nums.size();i++)
+        {
+            if(nums[i] <= target)
+            {
+                ans += solve(target - nums[i],nums);
+            }
+        }
+        
+        return ans;
+    }
+    int combinationSum4(vector<int>& nums, int target) {
+        int n = nums.size();
+        return solve(target,nums);
+    }
+};
+
+//memo
+class Solution {
+public:
+    int solve(int target, vector<int>& nums, vector<int>& dp) {
+        if (target == 0)
+            return 1;
+
+        if (dp[target] != -1)
+            return dp[target];
+
+        int ans = 0;
+
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] <= target) {
+                ans += solve(target - nums[i], nums, dp);
+            }
+        }
+
+        return dp[target] = ans;
+    }
+
+    int combinationSum4(vector<int>& nums, int target) {
+        vector<int> dp(target + 1, -1);
+
+        return solve(target, nums, dp);
+    }
+};
+
+
+
+//tabu
+class Solution {
+public:
+    int combinationSum4(vector<int>& nums, int target) {
+        vector<int> dp(target + 1, 0);
+
+        dp[0] = 1;
+
+        for (int t = 1; t <= target; t++) {
+            for (int i = 0; i < nums.size(); i++) {
+                if (nums[i] <= t) {
+                    dp[t] += dp[t - nums[i]];
+                }
+            }
+        }
+
+        return dp[target];
+    }
+};
