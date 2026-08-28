@@ -1,54 +1,62 @@
-//bfs
+```cpp
 class Solution {
 public:
-    void bfs(int n, int m,
-             vector<vector<int>>& grid,
-             int& time,
-             vector<vector<bool>>& vis) {
 
-        queue<pair<pair<int, int>, int>> q;
-        // {{row, col}, time}
+    int bfs(queue<pair<int, int>>& q,
+            vector<vector<int>>& grid,
+            int fresh) {
 
-        // Put ALL rotten oranges into the queue
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
+        int n = grid.size();
+        int m = grid[0].size();
 
-                if (grid[i][j] == 2) {
-                    q.push({{i, j}, 0});
-                    vis[i][j] = true;
-                }
-            }
-        }
+        int time = 0;
 
-        int drow[] = {-1, 0, 1, 0};
-        int dcol[] = {0, 1, 0, -1};
+        int dx[4] = {-1, 0, 1, 0};
+        int dy[4] = {0, 1, 0, -1};
 
         while (!q.empty()) {
 
-            int u = q.front().first.first;
-            int v = q.front().first.second;
-            int t = q.front().second;
+            int sz = q.size();
+            bool rot = false;
 
-            q.pop();
+            // One level = one minute
+            while (sz--) {
 
-            time = max(time, t);
+                int r = q.front().first;
+                int c = q.front().second;
+                q.pop();
 
-            for (int k = 0; k < 4; k++) {
+                for (int k = 0; k < 4; k++) {
 
-                int nrow = u + drow[k];
-                int ncol = v + dcol[k];
+                    int nrow = r + dx[k];
+                    int ncol = c + dy[k];
 
-                if (nrow >= 0 && nrow < n &&
-                    ncol >= 0 && ncol < m &&
-                    grid[nrow][ncol] == 1 &&
-                    !vis[nrow][ncol]) {
+                    if (nrow >= 0 && nrow < n &&
+                        ncol >= 0 && ncol < m &&
+                        grid[nrow][ncol] == 1) {
 
-                    vis[nrow][ncol] = true;
+                        grid[nrow][ncol] = 2;
+                        fresh--;
 
-                    q.push({{nrow, ncol}, t + 1});
+                        rot = true;
+
+                        q.push({nrow, ncol});
+                    }
                 }
             }
+
+            // At least one orange became rotten
+            if (rot) {
+                time++;
+            }
         }
+
+        // Fresh oranges are still remaining
+        if (fresh > 0) {
+            return -1;
+        }
+
+        return time;
     }
 
     int orangesRotting(vector<vector<int>>& grid) {
@@ -56,23 +64,24 @@ public:
         int n = grid.size();
         int m = grid[0].size();
 
-        int time = 0;
+        queue<pair<int, int>> q;
 
-        vector<vector<bool>> vis(n, vector<bool>(m, false));
+        int fresh = 0;
 
-        // Call BFS only ONCE
-        bfs(n, m, grid, time, vis);
-
-        // Check if any fresh orange remains
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
 
-                if (grid[i][j] == 1 && !vis[i][j]) {
-                    return -1;
+                if (grid[i][j] == 2) {
+                    q.push({i, j});
+                }
+
+                if (grid[i][j] == 1) {
+                    fresh++;
                 }
             }
         }
 
-        return time;
+        return bfs(q, grid, fresh);
     }
 };
+```
