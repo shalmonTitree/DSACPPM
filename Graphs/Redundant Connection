@@ -1,0 +1,59 @@
+
+class Solution {
+public:
+
+    bool dfs(int node, int target,
+             vector<vector<int>>& adj,
+             vector<bool>& vis) {
+
+        if (node == target)
+            return true;
+
+        vis[node] = true;
+
+        for (auto it : adj[node]) {
+
+            if (!vis[it]) {
+
+                if (dfs(it, target, adj, vis))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+
+        int n = edges.size();
+
+        vector<vector<int>> adj(n + 1);
+
+        vector<int> ans;
+
+        for (auto edge : edges) {
+
+            int u = edge[0];
+            int v = edge[1];
+
+            vector<bool> vis(n + 1, false);
+
+      
+            if (dfs(u, v, adj, vis)) {
+
+                // This edge creates a cycle
+                // Keep it because a later edge may also be redundant
+                ans = edge;
+            }
+            else {
+
+                // No cycle, so add this edge
+                adj[u].push_back(v);
+                adj[v].push_back(u);
+            }
+        }
+
+        return ans;
+    }
+};
+=
