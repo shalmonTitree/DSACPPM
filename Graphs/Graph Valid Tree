@@ -1,195 +1,62 @@
-/*
-===============================================================================
-Approach 1: Brute Force
-===============================================================================
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
 
-Idea:
-- Build the graph.
-- For every edge:
-    - Remove the edge.
-    - Check if the graph is still connected.
-- If removing any edge keeps the graph connected,
-  the removed edge belonged to a cycle.
-- Also ensure all nodes are connected.
+bool dfs(int node, int parent,
+         vector<vector<int>>& adj,
+         vector<bool>& vis)
+{
+    vis[node] = true;
 
-Time Complexity : O(E * (V + E))
-Space Complexity: O(V + E)
-
-V = Number of Nodes
-E = Number of Edges
-*/
-
-class Solution1 {
-public:
-    void dfs(int node,
-             vector<vector<int>>& adj,
-             vector<int>& vis) {
-
-        vis[node] = 1;
-
-        for (int nei : adj[node]) {
-            if (!vis[nei])
-                dfs(nei, adj, vis);
-        }
-    }
-
-    bool validTree(int n, vector<vector<int>>& edges) {
-
-        if (edges.size() != n - 1)
-            return false;
-
-        vector<vector<int>> adj(n);
-
-        for (auto &e : edges) {
-            adj[e[0]].push_back(e[1]);
-            adj[e[1]].push_back(e[0]);
-        }
-
-        vector<int> vis(n, 0);
-        dfs(0, adj, vis);
-
-        for (int x : vis) {
-            if (!x)
-                return false;
-        }
-
-        return true;
-    }
-};
-
-
-
-/*
-===============================================================================
-Approach 2: Better (DFS Cycle Detection)
-===============================================================================
-
-Idea:
-- Build adjacency list.
-- DFS while keeping track of parent.
-- If a visited neighbor is not the parent,
-  a cycle exists.
-- Finally, ensure every node is visited.
-
-Time Complexity : O(V + E)
-Space Complexity: O(V + E)
-*/
-
-class Solution2 {
-public:
-    bool dfs(int node, int parent,
-             vector<vector<int>>& adj,
-             vector<int>& vis) {
-
-        vis[node] = 1;
-
-        for (int nei : adj[node]) {
-
-            if (!vis[nei]) {
-
-                if (dfs(nei, node, adj, vis))
-                    return true;
-            }
-            else if (nei != parent) {
+    for (auto neighbor : adj[node])
+    {
+        // If neighbor is not visited, visit it
+        if (!vis[neighbor])
+        {
+            if (dfs(neighbor, node, adj, vis))
                 return true;
-            }
         }
+        // Already visited and not our parent -> cycle
+        else if (neighbor != parent)
+        {
+            return true;
+        }
+    }
 
+    return false;
+}
+
+bool graphValidTree(int n, vector<vector<int>>& edges)
+{
+    // A tree with n nodes must have n - 1 edges
+    if (edges.size() != n - 1)
         return false;
+
+    vector<vector<int>> adj(n);
+
+    // Build adjacency list
+    for (auto edge : edges)
+    {
+        int u = edge[0];
+        int v = edge[1];
+
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
 
-    bool validTree(int n, vector<vector<int>>& edges) {
+    vector<bool> vis(n, false);
 
-        vector<vector<int>> adj(n);
+    // Check cycle
+    if (dfs(0, -1, adj, vis))
+        return false;
 
-        for (auto &e : edges) {
-            adj[e[0]].push_back(e[1]);
-            adj[e[1]].push_back(e[0]);
-        }
-
-        vector<int> vis(n, 0);
-
-        if (dfs(0, -1, adj, vis))
+    // Check connected
+    for (int i = 0; i < n; i++)
+    {
+        if (!vis[i])
             return false;
-
-        for (int x : vis) {
-            if (!x)
-                return false;
-        }
-
-        return true;
-    }
-};
-
-
-
-/*
-===============================================================================
-Approach 3: Optimal (Union Find / DSU) ⭐ Most Expected
-===============================================================================
-
-Idea:
-- Initially every node is its own parent.
-- For every edge:
-    - If both nodes already belong to the same set,
-      a cycle exists.
-    - Otherwise union them.
-- A valid tree must:
-    1. Have exactly (n - 1) edges.
-    2. Contain no cycle.
-
-Time Complexity : O(E * α(V))
-Space Complexity: O(V)
-*/
-
-class Solution3 {
-public:
-    vector<int> parent, rank;
-
-    int find(int x) {
-
-        if (parent[x] == x)
-            return x;
-
-        return parent[x] = find(parent[x]);
     }
 
-    bool unite(int u, int v) {
-
-        int pu = find(u);
-        int pv = find(v);
-
-        if (pu == pv)
-            return false;
-
-        if (rank[pu] < rank[pv])
-            swap(pu, pv);
-
-        parent[pv] = pu;
-
-        if (rank[pu] == rank[pv])
-            rank[pu]++;
-
-        return true;
-    }
-
-    bool validTree(int n, vector<vector<int>>& edges) {
-
-        if (edges.size() != n - 1)
-            return false;
-
-        parent.resize(n);
-        rank.assign(n, 0);
-
-        for (int i = 0; i < n; i++)
-            parent[i] = i;
-
-        for (auto &e : edges) {
-
-            if (!unite(e[0], e[1]))
-                return false;
-        }
-
-        return true;
-    }
-};
+    return true;
+}
+```
