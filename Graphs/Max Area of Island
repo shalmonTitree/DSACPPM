@@ -1,0 +1,135 @@
+//dfs
+```cpp
+class Solution {
+public:
+
+    int dfs(int r, int c,
+            vector<vector<int>>& grid,
+            vector<vector<bool>>& vis) {
+
+        int n = grid.size();
+        int m = grid[0].size();
+
+        vis[r][c] = true;
+
+        int dx[4] = {-1, 0, 1, 0};
+        int dy[4] = {0, 1, 0, -1};
+
+        int area = 1;  // current land cell
+
+        for (int k = 0; k < 4; k++) {
+
+            int nrow = r + dx[k];
+            int ncol = c + dy[k];
+
+            if (nrow >= 0 && nrow < n &&
+                ncol >= 0 && ncol < m &&
+                !vis[nrow][ncol] &&
+                grid[nrow][ncol] == 1) {
+
+                area += dfs(nrow, ncol, grid, vis);
+            }
+        }
+
+        return area;
+    }
+
+    int maxAreaOfIsland(vector<vector<int>>& grid) {
+
+        int n = grid.size();
+        int m = grid[0].size();
+
+        vector<vector<bool>> vis(n, vector<bool>(m, false));
+
+        int maxArea = 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+
+                if (grid[i][j] == 1 && !vis[i][j]) {
+
+                    int area = dfs(i, j, grid, vis);
+
+                    maxArea = max(maxArea, area);
+                }
+            }
+        }
+
+        return maxArea;
+    }
+};
+
+
+//bfs
+```cpp
+class Solution {
+public:
+
+    int bfs(int r, int c,
+            vector<vector<int>>& grid,
+            vector<vector<bool>>& vis) {
+
+        int n = grid.size();
+        int m = grid[0].size();
+
+        queue<pair<int, int>> q;
+        q.push({r, c});
+        vis[r][c] = true;
+
+        int dx[4] = {-1, 0, 1, 0};
+        int dy[4] = {0, 1, 0, -1};
+
+        int area = 0;
+
+        while (!q.empty()) {
+
+            auto [row, col] = q.front();
+            q.pop();
+
+            area++;
+
+            for (int k = 0; k < 4; k++) {
+
+                int nrow = row + dx[k];
+                int ncol = col + dy[k];
+
+                if (nrow >= 0 && nrow < n &&
+                    ncol >= 0 && ncol < m &&
+                    !vis[nrow][ncol] &&
+                    grid[nrow][ncol] == 1) {
+
+                    vis[nrow][ncol] = true;
+                    q.push({nrow, ncol});
+                }
+            }
+        }
+
+        return area;
+    }
+
+    int maxAreaOfIsland(vector<vector<int>>& grid) {
+
+        int n = grid.size();
+        int m = grid[0].size();
+
+        vector<vector<bool>> vis(n, vector<bool>(m, false));
+
+        int maxArea = 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+
+                if (grid[i][j] == 1 && !vis[i][j]) {
+
+                    int area = bfs(i, j, grid, vis);
+
+                    maxArea = max(maxArea, area);
+                }
+            }
+        }
+
+        return maxArea;
+    }
+};
+```
+
