@@ -1,0 +1,112 @@
+//dfs
+
+class Solution {
+public:
+    int dfs(vector<vector<int>>& grid, int r, int c) {
+        int m = grid.size();
+        int n = grid[0].size();
+
+        // Outside the grid -> perimeter
+        if (r < 0 || r >= m || c < 0 || c >= n) {
+            return 1;
+        }
+
+        // Water -> perimeter
+        if (grid[r][c] == 0) {
+            return 1;
+        }
+
+        // Already visited land
+        if (grid[r][c] == -1) {
+            return 0;
+        }
+
+        // Mark as visited
+        grid[r][c] = -1;
+
+        int perimeter = 0;
+
+        perimeter += dfs(grid, r - 1, c); // up
+        perimeter += dfs(grid, r + 1, c); // down
+        perimeter += dfs(grid, r, c - 1); // left
+        perimeter += dfs(grid, r, c + 1); // right
+
+        return perimeter;
+    }
+
+    int islandPerimeter(vector<vector<int>>& grid) {
+        int m = grid.size();
+        int n = grid[0].size();
+
+        // Find the first land cell
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1) {
+                    return dfs(grid, i, j);
+                }
+            }
+        }
+
+        return 0;
+    }
+};
+
+
+//bfs
+```cpp
+class Solution {
+public:
+    int islandPerimeter(vector<vector<int>>& grid) {
+        int m = grid.size();
+        int n = grid[0].size();
+
+        queue<pair<int, int>> q;
+        vector<vector<bool>> visited(m, vector<bool>(n, false));
+
+        // Find the first land cell
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1) {
+                    q.push({i, j});
+                    visited[i][j] = true;
+                    break;
+                }
+            }
+
+            if (!q.empty())
+                break;
+        }
+
+        int perimeter = 0;
+
+        int dr[] = {-1, 1, 0, 0};
+        int dc[] = {0, 0, -1, 1};
+
+        while (!q.empty()) {
+            auto [r, c] = q.front();
+            q.pop();
+
+            // Check all 4 directions
+            for (int k = 0; k < 4; k++) {
+                int nr = r + dr[k];
+                int nc = c + dc[k];
+
+                // Outside grid -> contributes to perimeter
+                if (nr < 0 || nr >= m || nc < 0 || nc >= n) {
+                    perimeter++;
+                }
+                // Water -> contributes to perimeter
+                else if (grid[nr][nc] == 0) {
+                    perimeter++;
+                }
+                // Unvisited land -> add to BFS
+                else if (!visited[nr][nc]) {
+                    visited[nr][nc] = true;
+                    q.push({nr, nc});
+                }
+            }
+        }
+
+        return perimeter;
+    }
+};
