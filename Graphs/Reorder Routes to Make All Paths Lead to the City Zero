@@ -1,0 +1,40 @@
+class Solution {
+public:
+    void dfs(int node,vector<vector<pair<int,int>>>&adj,int &count,vector<bool>&vis)
+    {
+        vis[node] = true;
+
+        for(auto it : adj[node])
+        {
+            int next = it.first;
+            int dir = it.second;
+
+            if(!vis[next])
+            {
+                if(dir == 1)
+                {
+                    count++;
+                }
+
+                dfs(next,adj,count,vis);
+            }
+        }
+    } 
+    int minReorder(int n, vector<vector<int>>& connections) {
+        vector<vector<pair<int,int>>>adj(n);
+        vector<bool>vis(n,false);
+        int count = 0 ;
+        for(auto it : connections)
+        {
+            int u = it[0];
+            int v = it[1];
+
+            adj[u].push_back({v,1});
+            adj[v].push_back({u,0});
+        }
+
+        dfs(0,adj,count,vis);
+        return count;
+
+    }
+};
