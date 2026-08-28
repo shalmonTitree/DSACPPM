@@ -1,0 +1,64 @@
+```cpp class Solution {
+public:
+    void bfs(int src, vector<vector<int>>& adj, vector<vector<bool>>& vis) {
+
+        int n = adj.size();
+
+        queue<int> q;
+        vector<bool> visited(n, false);
+
+        q.push(src);
+        visited[src] = true;
+
+        while (!q.empty()) {
+
+            int node = q.front();
+            q.pop();
+
+            for (auto it : adj[node]) {
+
+                if (!visited[it]) {
+
+                    visited[it] = true;
+
+                    // src is a prerequisite of it
+                    vis[src][it] = true;
+
+                    q.push(it);
+                }
+            }
+        }
+    }
+
+    vector<bool> checkIfPrerequisite(int numCourses,vector<vector<int>>& prerequisites,vector<vector<int>>& queries) {
+
+        vector<vector<int>> adj(numCourses);
+        for (auto it : prerequisites) {
+
+            int u = it[0];
+            int v = it[1];
+
+            adj[u].push_back(v);
+        }
+
+       
+        vector<vector<bool>> vis(numCourses, vector<bool>(numCourses, false));
+
+        for (int i = 0; i < numCourses; i++) {
+            bfs(i, adj, vis);
+        }
+
+        vector<bool> ans;
+
+        for (auto it : queries) {
+
+            int u = it[0];
+            int v = it[1];
+
+            ans.push_back(vis[u][v]);
+        }
+
+        return ans;
+    }
+};
+```
