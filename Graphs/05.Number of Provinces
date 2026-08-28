@@ -1,100 +1,115 @@
-//dfs
-class Solution {
-public:
-    void dfs(int node,vector<vector<int>>&graph,vector<int>&vis)
-    {
-        vis[node] = 1;
-        for(auto it : graph[node])
-        {
-            if(!vis[it])
-            {
-                dfs(it,graph,vis);
-            }
-        }
-    }
-    int findCircleNum(vector<vector<int>>& isConnected) {
-        int n = isConnected.size();
-        vector<vector<int>>graph(n);
-        vector<int>vis(n,0);
-        int cnt = 0;
-       for(int i = 0; i < n; i++)
-       {
-        for(int j = 0; j < n; j++)
-        {
-            if(isConnected[i][j] == 1 && i != j)
-            {
-                graph[i].push_back(j);
-                graph[j].push_back(i);
-            }
-        }
-       }
-
-
-        for(int i = 0; i < n; i++)
-        {
-            if(!vis[i])
-            {
-                cnt++;
-                dfs(i,graph,vis);
-            }
-        }
-
-        return cnt;
-    }
-};
-
-
 //bfs
+
 class Solution {
 public:
-    void bfs(int node,vector<vector<int>>&graph,vector<int>&vis)
-    {
-        vis[node] = 1;
-        queue<int>q;
-        q.push(node);
 
-        while(!q.empty())
-        {
-            int ngh = q.front();
+    void bfs(int node,
+             vector<vector<int>>& adj,
+             vector<bool>& vis) {
+
+        queue<int> q;
+        q.push(node);
+        vis[node] = true;
+
+        while (!q.empty()) {
+
+            int curr = q.front();
             q.pop();
-            
-            for(auto it : graph[ngh])
-            {
-                if(!vis[it])
-                {
-                    vis[it] = 1;
+
+            for (auto it : adj[curr]) {
+
+                if (!vis[it]) {
+                    vis[it] = true;
                     q.push(it);
                 }
             }
         }
     }
-    int findCircleNum(vector<vector<int>>& isConnected) {
-        int n = isConnected.size();
-        vector<vector<int>>graph(n);
-        vector<int>vis(n,0);
-        int cnt = 0;
-       for(int i = 0; i < n; i++)
-       {
-        for(int j = 0; j < n; j++)
-        {
-            if(isConnected[i][j] == 1 && i != j)
-            {
-                graph[i].push_back(j);
-                graph[j].push_back(i);
-            }
-        }
-       }
 
+    int countConnected(int V, vector<vector<int>>& edges) {
 
-        for(int i = 0; i < n; i++)
-        {
-            if(!vis[i])
-            {
-                cnt++;
-                bfs(i,graph,vis);
-            }
+        // Build adjacency list
+        vector<vector<int>> adj(V);
+
+        for (auto it : edges) {
+
+            int u = it[0];
+            int v = it[1];
+
+            adj[u].push_back(v);
+            adj[v].push_back(u);
         }
 
-        return cnt;
+        vector<bool> vis(V, false);
+
+        int count = 0;
+
+        // Count connected components
+        for (int i = 0; i < V; i++) {
+
+            if (!vis[i]) {
+
+                count++;
+
+                bfs(i, adj, vis);
+            }
+        }
+
+        return count;
     }
 };
+
+
+
+//dfs
+```cpp
+class Solution {
+public:
+
+    void dfs(int node,
+             vector<vector<int>>& adj,
+             vector<bool>& vis) {
+
+        vis[node] = true;
+
+        for (auto it : adj[node]) {
+
+            if (!vis[it]) {
+                dfs(it, adj, vis);
+            }
+        }
+    }
+
+    int countConnected(int V, vector<vector<int>>& edges) {
+
+        // Build adjacency list
+        vector<vector<int>> adj(V);
+
+        for (auto it : edges) {
+
+            int u = it[0];
+            int v = it[1];
+
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+
+        vector<bool> vis(V, false);
+
+        int count = 0;
+
+        // Count connected components
+        for (int i = 0; i < V; i++) {
+
+            if (!vis[i]) {
+
+                count++;
+
+                dfs(i, adj, vis);
+            }
+        }
+
+        return count;
+    }
+};
+
