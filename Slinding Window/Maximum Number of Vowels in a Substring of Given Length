@@ -1,0 +1,63 @@
+//bruteforce
+class Solution {
+public:
+    int maxVowels(string s, int k) {
+        int n = s.size();
+
+        int ans = 0;
+        for(int i = 0; i <= n - k; i++)
+        {
+            int cnt = 0;
+            for(int j = i; j < i + k; j++)
+            {
+                if(s[j] == 'a' || s[j] == 'e' ||s[j] == 'i' ||s[j] == 'o' ||s[j] == 'u')
+                {
+                    cnt++;
+                }
+            }
+            ans = max(ans,cnt);
+        }
+        return ans;
+    }
+};
+
+//optimal
+class Solution {
+public:
+    int maxVowels(string s, int k) {
+        int n = s.size();
+
+        int ans = 0;
+        int head = -1;
+        int tail = 0;
+        int cnt = 0;
+        while(tail < n)
+        {
+            while(head + 1 < n && ((head+1) - tail + 1) <= k)
+            {
+                head++;
+                if(s[head] == 'a' || s[head] == 'e' ||s[head] == 'i' ||s[head] == 'o' ||s[head] == 'u')
+                {
+                    cnt++;
+                }
+            }
+            ans = max(ans,cnt);
+
+            if(tail <= head)
+            {
+                if(s[tail] == 'a' || s[tail] == 'e' ||s[tail] == 'i' ||s[tail] == 'o' ||s[tail] == 'u')
+                {
+                    cnt--;
+                }
+                tail++;
+            }
+            else
+            {
+                tail++;
+                head = tail - 1;
+            }
+        }
+        
+        return ans;
+    }
+};
