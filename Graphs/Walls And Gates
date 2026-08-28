@@ -1,0 +1,46 @@
+#include <bits/stdc++.h> 
+
+void bfs(queue<pair<int,int>>&pq,vector<vector<int>>&ans)
+{
+    int n = ans.size();
+    int m = ans[0].size();
+
+    int dx[4] = {-1, 0, 1, 0};
+    int dy[4] = {0, 1, 0, -1};
+
+    while(!pq.empty())
+    {
+        int r = pq.front().first;
+        int c = pq.front().second;
+        pq.pop();
+
+        for(int i = 0; i < 4; i++)
+        {
+            int nrow = r + dx[i];
+            int ncol = c + dy[i];
+
+            if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && ans[nrow][ncol] == INT_MAX)
+            {
+                ans[nrow][ncol] = ans[r][c] + 1;
+                pq.push({nrow,ncol});
+            }
+        }
+    }
+}
+vector<vector<int>> wallsAndGates(vector<vector<int>> &a, int n, int m) {
+    vector<vector<int>>ans = a;
+    
+    queue<pair<int,int>>pq;
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < m; j++)
+        {
+            if(a[i][j] == 0)
+            {
+                pq.push({i,j});
+            }
+        }
+    }
+    bfs(pq,ans);
+    return ans;
+}
