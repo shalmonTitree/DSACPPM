@@ -1,0 +1,32 @@
+```cpp
+class Solution {
+public:
+
+    TreeNode* dfs(TreeNode* node, int target)
+    {
+        if(node == NULL)
+        {
+            return NULL;
+        }
+
+        // First delete from left and right
+        node->left = dfs(node->left, target);
+        node->right = dfs(node->right, target);
+
+        // Now check if current node is a leaf
+        if(node->left == NULL &&
+           node->right == NULL &&
+           node->val == target)
+        {
+            return NULL;
+        }
+
+        return node;
+    }
+
+    TreeNode* removeLeafNodes(TreeNode* root, int target)
+    {
+        return dfs(root, target);
+    }
+};
+```
