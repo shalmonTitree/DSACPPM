@@ -1,0 +1,48 @@
+
+class Solution {
+public:
+
+    int cnt = 0;
+
+    void dfs(TreeNode* node, long long sum, int targetSum)
+    {
+        if(node == NULL)
+        {
+            return;
+        }
+
+        sum += node->val;
+
+        if(sum == targetSum)
+        {
+            cnt++;
+        }
+
+        dfs(node->left, sum, targetSum);
+        dfs(node->right, sum, targetSum);
+    }
+
+    void traverse(TreeNode* node, int targetSum)
+    {
+        if(node == NULL)
+        {
+            return;
+        }
+
+        // Start a path from this node
+        dfs(node, 0, targetSum);
+
+        // Try every node as starting point
+        traverse(node->left, targetSum);
+        traverse(node->right, targetSum);
+    }
+
+    int pathSum(TreeNode* root, int targetSum)
+    {
+        cnt = 0;
+
+        traverse(root, targetSum);
+
+        return cnt;
+    }
+};
