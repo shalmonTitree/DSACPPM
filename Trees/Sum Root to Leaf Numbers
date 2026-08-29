@@ -1,0 +1,34 @@
+
+class Solution {
+public:
+
+    void dfs(TreeNode* node, int sum, int& ans)
+    {
+        if(node == NULL)
+        {
+            return;
+        }
+
+        sum = sum * 10 + node->val;
+
+        // Leaf node
+        if(node->left == NULL && node->right == NULL)
+        {
+            ans += sum;
+            return;
+        }
+
+        dfs(node->left, sum, ans);
+        dfs(node->right, sum, ans);
+    }
+
+    int sumNumbers(TreeNode* root)
+    {
+        int ans = 0;
+
+        dfs(root, 0, ans);
+
+        return ans;
+    }
+};
+
