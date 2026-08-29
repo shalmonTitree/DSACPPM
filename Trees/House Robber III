@@ -1,0 +1,32 @@
+```cpp
+class Solution {
+public:
+
+    vector<int> dfs(TreeNode* node)
+    {
+        if(node == NULL)
+        {
+            return {0, 0};
+        }
+
+        vector<int> left = dfs(node->left);
+        vector<int> right = dfs(node->right);
+
+        // Rob current node
+        int rob = node->val + left[1] + right[1];
+
+        // Don't rob current node
+        int notRob = max(left[0], left[1])
+                   + max(right[0], right[1]);
+
+        return {rob, notRob};
+    }
+
+    int rob(TreeNode* root)
+    {
+        vector<int> ans = dfs(root);
+
+        return max(ans[0], ans[1]);
+    }
+};
+```
