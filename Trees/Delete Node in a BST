@@ -1,0 +1,63 @@
+```cpp
+class Solution {
+public:
+
+    TreeNode* dfs(TreeNode* root, int key)
+    {
+        if(root == NULL)
+        {
+            return NULL;
+        }
+
+        // Search in left subtree
+        if(key < root->val)
+        {
+            root->left = dfs(root->left, key);
+        }
+
+        // Search in right subtree
+        else if(key > root->val)
+        {
+            root->right = dfs(root->right, key);
+        }
+
+        // Node found
+        else
+        {
+            // No left child
+            if(root->left == NULL)
+            {
+                return root->right;
+            }
+
+            // No right child
+            if(root->right == NULL)
+            {
+                return root->left;
+            }
+
+            // Both children exist
+            TreeNode* temp = root->right;
+
+            // Find inorder successor
+            while(temp->left != NULL)
+            {
+                temp = temp->left;
+            }
+
+            // Copy successor value
+            root->val = temp->val;
+
+            // Delete successor
+            root->right = dfs(root->right, temp->val);
+        }
+
+        return root;
+    }
+
+    TreeNode* deleteNode(TreeNode* root, int key)
+    {
+        return dfs(root, key);
+    }
+};
+```
