@@ -1,0 +1,38 @@
+```cpp
+class BSTIterator {
+public:
+
+    stack<TreeNode*> st;
+
+    BSTIterator(TreeNode* root) {
+
+        while(root != NULL)
+        {
+            st.push(root);
+            root = root->left;
+        }
+    }
+
+    int next() {
+
+        TreeNode* node = st.top();
+        st.pop();
+
+        // Go to right subtree
+        TreeNode* temp = node->right;
+
+        while(temp != NULL)
+        {
+            st.push(temp);
+            temp = temp->left;
+        }
+
+        return node->val;
+    }
+
+    bool hasNext() {
+
+        return !st.empty();
+    }
+};
+```
