@@ -1,0 +1,146 @@
+//rec
+```cpp
+class Solution {
+public:
+    int solve(int idx, int buy, int cap, vector<int>& prices)
+    {
+        // base case
+        if(idx == prices.size() || cap == 0)
+        {
+            return 0;
+        }
+
+        // if you want to buy
+        if(buy)
+        {
+            return max(
+                -prices[idx] + solve(idx + 1, 0, cap, prices), // buy
+                solve(idx + 1, 1, cap, prices)                 // skip
+            );
+        }
+
+        // if you want to sell
+        return max(
+            prices[idx] + solve(idx + 1, 1, cap - 1, prices), // sell
+            solve(idx + 1, 0, cap, prices)                    // hold
+        );
+    }
+
+    int maxProfit(vector<int>& prices)
+    {
+        return solve(0, 1, 2, prices);
+    }
+};
+```
+
+**Time:** `O(2^n)`
+**Space:** `O(n)` recursion stack
+
+
+
+//memo
+```cpp
+class Solution {
+public:
+    int solve(int idx, int buy, int cap,
+              vector<int>& prices,
+              vector<vector<vector<int>>>& dp)
+    {
+        // base case
+        if(idx == prices.size() || cap == 0)
+        {
+            return 0;
+        }
+
+        // already calculated
+        if(dp[idx][buy][cap] != -1)
+        {
+            return dp[idx][buy][cap];
+        }
+
+        // if you want to buy
+        if(buy)
+        {
+            return dp[idx][buy][cap] = max(
+                -prices[idx] + solve(idx + 1, 0, cap, prices, dp), // buy
+                solve(idx + 1, 1, cap, prices, dp)                 // skip
+            );
+        }
+
+        // if you want to sell
+        return dp[idx][buy][cap] = max(
+            prices[idx] + solve(idx + 1, 1, cap - 1, prices, dp), // sell
+            solve(idx + 1, 0, cap, prices, dp)                    // hold
+        );
+    }
+
+    int maxProfit(vector<int>& prices)
+    {
+        int n = prices.size();
+
+        vector<vector<vector<int>>> dp(
+            n,
+            vector<vector<int>>(2, vector<int>(3, -1))
+        );
+
+        return solve(0, 1, 2, prices, dp);
+    }
+};
+```
+
+**Time:** `O(n × 2 × 2) = O(n)`
+**Space:** `O(n × 2 × 2) = O(n)` + recursion stack
+
+
+
+//tabu
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices)
+    {
+        int n = prices.size();
+
+        // dp[idx][buy][cap]
+        vector<vector<vector<int>>> dp(
+            n + 1,
+            vector<vector<int>>(2, vector<int>(3, 0))
+        );
+
+        // idx = n is already 0
+        // cap = 0 is already 0
+
+        for(int idx = n - 1; idx >= 0; idx--)
+        {
+            for(int buy = 0; buy <= 1; buy++)
+            {
+                for(int cap = 1; cap <= 2; cap++)
+                {
+                    // if you want to buy
+                    if(buy)
+                    {
+                        dp[idx][buy][cap] = max(
+                            -prices[idx] + dp[idx + 1][0][cap], // buy
+                            dp[idx + 1][1][cap]                 // skip
+                        );
+                    }
+
+                    // if you want to sell
+                    else
+                    {
+                        dp[idx][buy][cap] = max(
+                            prices[idx] + dp[idx + 1][1][cap - 1], // sell
+                            dp[idx + 1][0][cap]                    // hold
+                        );
+                    }
+                }
+            }
+        }
+
+        return dp[0][1][2];
+    }
+};
+```
+
+**Time:** `O(n × 2 × 2) = O(n)`
+**Space:** `O(n × 2 × 2) = O(n)`
