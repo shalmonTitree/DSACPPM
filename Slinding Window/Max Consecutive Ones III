@@ -69,3 +69,47 @@ public:
         return ans;
     }
 };
+
+
+class Solution {
+public:
+    int longestOnes(vector<int>& nums, int k) {
+        int n = nums.size();
+        int ans = INT_MIN;
+
+        int head = -1;
+        int tail = 0;
+   
+        int zerocnt = 0;
+        while(tail < n)
+        {
+            while(head + 1 < n && (zerocnt < k || zerocnt == k && nums[head + 1] == 1))
+            {
+                head++;
+                if(nums[head] == 0)
+                {
+                    zerocnt++;
+                }
+            }
+             ans = max(ans,head - tail + 1);
+            
+
+            if(tail <= head)
+            {
+                if(nums[tail] == 0)
+                {
+                    zerocnt--;
+                   
+                }
+                 tail++;
+                
+            }
+            else
+            {
+                tail++;
+                head = tail - 1;
+            }
+        }
+        return ans;
+    }
+};
