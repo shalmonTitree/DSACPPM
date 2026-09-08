@@ -1,0 +1,169 @@
+Description
+
+You are given an undirected graph with N nodes and M edges. Each node has a unit weight.
+
+You need to calculate the Connected Sum of the graph.
+
+For each connected component:
+
+1. Find the number of nodes in that component.
+2. Calculate the square root of the number of nodes.
+3. Apply the ceil operation.
+4. Add this value to the answer.
+
+The final sum over all connected components is called the Connected Sum.
+
+Input Format
+
+The first line contains an integer T, denoting the number of test cases.
+
+For each test case:
+
+* The first line contains two space-separated integers N and M.
+* The next M lines contain two space-separated integers u and v, representing an edge between nodes u and v.
+
+Output Format
+
+For each test case, print the Connected Sum on a new line.
+
+Constraints
+
+1 <= T <= 100
+1 <= N <= 10^5
+1 <= M <= 10^5
+
+It is guaranteed that the sum of N and M across all test cases does not exceed 10^6.
+
+Sample Input 1
+
+1
+10 5
+1 2
+1 3
+2 4
+3 5
+7 8
+
+Sample Output 1
+
+8
+
+Explanation
+
+The connected components are:
+
+{1, 2, 3, 4, 5} -> size = 5
+ceil(sqrt(5)) = 3
+
+{7, 8} -> size = 2
+ceil(sqrt(2)) = 2
+
+{6} -> size = 1
+ceil(sqrt(1)) = 1
+
+{9} -> size = 1
+ceil(sqrt(1)) = 1
+
+{10} -> size = 1
+ceil(sqrt(1)) = 1
+
+Therefore, Connected Sum = 3 + 2 + 1 + 1 + 1 = 8.
+
+Sample Input 2
+
+1
+4 2
+1 2
+1 4
+
+Sample Output 2
+
+3
+
+Explanation
+
+The connected components are:
+
+{1, 2, 4} -> size = 3
+ceil(sqrt(3)) = 2
+
+{3} -> size = 1
+ceil(sqrt(1)) = 1
+
+Therefore, Connected Sum = 2 + 1 = 3.
+
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+
+int dfs(int node,vector<vector<int>>&adj,vector<bool>&vis,int &count)
+{
+    vis[node] = true;
+    count++;
+
+    for(auto it : adj[node])
+    {
+        if(!vis[it])
+        {
+            dfs(it,adj,vis,count);
+        }
+    }
+    return count;
+}
+void solve() {
+    int n,m;
+    cin>>n>>m;
+    vector<pair<int,int>>edges;
+    vector<vector<int>>adj(n+1);
+    vector<bool>vis(n+1,false);
+    int ans = 0;
+   
+
+    for(int i = 0; i < m; i++)
+    {
+        int u,v;
+        cin>>u>>v;
+        edges.push_back({u,v});
+    }
+
+    
+    for(auto it : edges)
+    {
+        int u = it.first;
+        int v = it.second;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+
+    for(int i = 1; i <= n; i++)
+    {
+        int count = 0;
+        if(!vis[i])
+        {
+            int sum = dfs(i,adj,vis,count);
+            ans += ceil(sqrt(sum));
+        }
+    }
+
+    cout<<ans<<endl;
+    
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
