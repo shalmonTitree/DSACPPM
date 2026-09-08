@@ -1,0 +1,201 @@
+Time Limit: 1 secMemory: 256 MB
+
+Description
+
+Given a 2×N array of integers A, choose the numbers such that their sum is maximum, and none of them are adjacent horizontally, vertically or diagonally.
+
+Input Format
+
+The first line contains a single integer N.
+
+2 lines follow each containing N integers - the elements of the array A.
+
+Output Format
+
+Print the maximum sum possible.
+
+Constraints
+
+1 ≤ N ≤ 100000
+
+1 ≤ A[i] ≤ 2000
+
+Sample Input 1
+
+4 1 2 3 4 2 3 4 5
+
+Sample Output 1
+
+8
+
+Note
+
+We will choose A[2][2] and A[2][4].
+
+
+//rec
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int func(int idx,vector<int>&c)
+{
+    if(idx < 0)
+    {
+        return 0;
+    }
+
+
+    int nottake = func(idx-1,c);
+    int take = c[idx] + func(idx-2,c);
+
+    return max(take,nottake);
+}
+int solve(vector<vector<int>> &A)
+{
+    int m = A[0].size();
+
+    vector<int>c(m);
+
+    for(int i = 0; i < m; i++)
+    {
+        c[i] = max(A[0][i],A[1][i]);
+    }
+
+    int sum = func(m-1,c);
+    return sum;
+}
+
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int n;
+    cin >> n;
+    vector<vector<int>> v(2, vector<int>(n));
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            cin >> v[i][j];
+        }
+    }
+    cout << solve(v) << '\n';
+}
+
+
+
+//memo
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int func(int idx,vector<int>&c,vector<int>&dp)
+{
+    if(idx < 0)
+    {
+        return 0;
+    }
+
+    if(dp[idx] != -1)
+    {
+        return dp[idx];
+    }
+
+
+    int nottake = func(idx-1,c,dp);
+    int take = c[idx] + func(idx-2,c,dp);
+
+    return dp[idx] = max(take,nottake);
+}
+int solve(vector<vector<int>> &A)
+{
+    int m = A[0].size();
+
+    vector<int>c(m);
+
+    for(int i = 0; i < m; i++)
+    {
+        c[i] = max(A[0][i],A[1][i]);
+    }
+
+    vector<int>dp(m+1,-1);
+    int sum = func(m-1,c,dp);
+    
+    return sum;
+}
+
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int n;
+    cin >> n;
+    vector<vector<int>> v(2, vector<int>(n));
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            cin >> v[i][j];
+        }
+    }
+    cout << solve(v) << '\n';
+}
+
+
+//tabu
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int solve(vector<vector<int>> &A)
+{
+    int m = A[0].size();
+
+    vector<int>c(m);
+
+    for(int i = 0; i < m; i++)
+    {
+        c[i] = max(A[0][i],A[1][i]);
+    }
+
+    vector<int>dp(m,0);
+    dp[0] = c[0];
+    if(m >= 2)
+    {
+        dp[1] = max(c[0],c[1]);
+    }
+
+    for(int i = 2; i < m; i++)
+    {
+        int nottake = dp[i - 1]; 
+        int take = c[i] + dp[i - 2]; 
+        dp[i] = max(take, nottake);
+    }
+
+    return dp[m-1];
+}
+
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int n;
+    cin >> n;
+    vector<vector<int>> v(2, vector<int>(n));
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            cin >> v[i][j];
+        }
+    }
+    cout << solve(v) << '\n';
+}
+
