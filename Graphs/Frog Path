@@ -1,0 +1,84 @@
+Time Limit: 2 sec
+Memory: 256 MB
+Description
+John is playing on a flight of stairs, and he has invented a game. He is currently at stair number P and wants to go to stair number F, and he can do so by using only two operations, either jump up U stairs or go down D stairs at a time. He can neither go beyond the topmost stair and nor can he go below the lowermost stair i.e. he will only play on the stairs. He defines these up and down goings as an operation.
+
+You are given the number of stairs on the staircase as N along with the values of F, P, U, and D as input, you have to find the minimum number of operations he has to perform to reach the final stair F.
+
+If John cannot reach the stair anyway, return -1.
+
+Input Format
+The only line of input contains five space-separated integers - N, P, F, U and D as input.
+
+Output Format
+1 ≤ N, U, D ≤ 105
+1 ≤ P, F ≤ 105
+
+Constraints
+Sample Input 1
+8 1 6 2 1
+Sample Output 1
+4
+Note
+As he has to go to stair number 6 and there are a total of 8 stairs. One of the possible paths with the minimum number of operations is that he can first jump two stairs to go to stair number 3 then to 5 in the second jump, then he goes one stair down to number 4, and finally, in the last step, he goes to stair number 6 totalling to 4 operations.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+
+void bfs(int start, int end,int totalnode,int upcost,int downcost,vector<int>&dist,int &steps)
+{
+    queue<int>q;
+    q.push(start);
+    dist[start] = 0;
+    while(!q.empty())
+    {
+        int curr = q.front();
+        q.pop();
+        
+        if(curr == end)
+        {
+            return;
+        }
+
+        if((curr+upcost) <= totalnode && dist[curr + upcost] == -1)
+        {
+            dist[curr + upcost] = dist[curr] + 1;
+            q.push(curr + upcost);
+        }
+
+        if((curr-downcost) >= 1 && dist[curr-downcost] == -1)
+        {
+            dist[curr - downcost] = dist[curr] + 1;
+            q.push(curr - downcost);
+        }
+    }
+
+}
+void solve() {
+    int n,p,f,u,d;
+    cin>>n>>p>>f>>u>>d;
+    vector<int>dist(n+1,-1);
+    int steps = 0;
+    // p:start node; f:destiantion node; n:numberofnode; u : upcost; d : downcost
+    bfs(p,f,n,u,d,dist,steps);
+    cout<<dist[f]<<endl;
+}
+
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
