@@ -60,119 +60,93 @@ In the first test case, there are 8 ways:
 2 + 3 + 2 + 2
 3 + 2 + 2 + 2
 
-//Recursion
-Time Complexity: O(n^x) (exponential)
-Space Complexity: O(x) (recursion stack)
-
+//rec
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
-#define endl "\n" // optional, better to avoid redefining endl
-const int MOD = 1000000007;
+#define endl "\n"   // optional, better to avoid redefining endl
+const int MOD = 1e9 + 7;
 
-int solve(vector<int> &v, int tar)
+ll func(const vector<int>&v,int tar)
 {
-    if(tar == 0)
-    {
-        return 1;
-    }
+    if(tar == 0) return 1;
 
-    int cnt = 0;
-    for(int i = 0; i < v.size(); i++)
+    ll ans = 0;
+    for(auto it : v)
     {
-        if(v[i] <= tar)
+        if(tar >= it)
         {
-            cnt = (cnt + solve(v,tar-v[i]))%MOD;
+            ans =  (ans + func(v,tar - it)) % MOD;
         }
+        
     }
 
-    return cnt;
-
-
-}
-void solve()
-{
-    int n, m;
-    cin >> n >> m;
-    vector<int> v(n);
-    for (int i = 0; i < n; i++)
-    {
-        cin >> v[i];
-    }
-
-    cout << solve(v, m) << endl;
+    return ans;
 }
 
-int main()
-{
+void solve() {
+    int n,tar;
+    cin>>n>>tar;
+    vector<int>v(n);
+    for(int i = 0; i < n; i++)cin>>v[i];
+    cout<<func(v,tar)<<endl;
+}
+
+int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
     int t = 1;
-    // cin >> t;
-    while (t--)
-    {
+   // cin >> t;
+    while (t--) {
         solve();
     }
 
     return 0;
 }
 
-//memo
-TC: O(n × m)
-SC: O(m) 
 
+//memo
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
-#define endl "\n" // optional, better to avoid redefining endl
-const int MOD = 1000000007;
+#define endl "\n"   // optional, better to avoid redefining endl
+const int MOD = 1e9 + 7;
 
-int solve(vector<int> &v, int tar,vector<int>&dp)
+ll func(const vector<int>&v,int tar,vector<int>&dp)
 {
-    if(tar == 0)
-    {
-        return 1;
-    }
-
+    if(tar == 0) return 1;
     if(dp[tar] != -1) return dp[tar];
 
-    int cnt = 0;
-    for(int i = 0; i < v.size(); i++)
+    ll ans = 0;
+    for(auto it : v)
     {
-        if(v[i] <= tar)
+        if(tar >= it)
         {
-            cnt = (cnt + solve(v,tar-v[i],dp))%MOD;
+            ans =  (ans + func(v,tar - it,dp)) % MOD;
         }
+        
     }
 
-    return dp[tar] = cnt;
-
-
-}
-void solve()
-{
-    int n, m;
-    cin >> n >> m;
-    vector<int> v(n);
-    for (int i = 0; i < n; i++)
-    {
-        cin >> v[i];
-    }
-    vector<int>dp(m+1,-1);
-
-    cout << solve(v, m, dp) << endl;
+    return dp[tar] = ans;
 }
 
-int main()
-{
+void solve() {
+    int n,tar;
+    cin>>n>>tar;
+    vector<int>v(n);
+    for(int i = 0; i < n; i++)cin>>v[i];
+    vector<int>dp(tar+1,-1);
+    cout<<func(v,tar,dp)<<endl;
+}
+
+int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
     int t = 1;
-    // cin >> t;
-    while (t--)
-    {
+    //cin >> t;
+    while (t--) {
         solve();
     }
 
@@ -180,55 +154,43 @@ int main()
 }
 
 //tabu
-Time Complexity: O(n × m)
-Space Complexity: O(m)
-
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
-#define endl "\n" // optional, better to avoid redefining endl
-const int MOD = 1000000007;
+#define endl "\n"   // optional, better to avoid redefining endl
+const int MOD = 1e9 + 7;
 
-void solve()
-{
-    int n, m;
-    cin >> n >> m;
-    vector<int> v(n);
-    for (int i = 0; i < n; i++)
-    {
-        cin >> v[i];
-    }
-    vector<int>dp(m+1,0);
+void solve() {
+    int n,tar;
+    cin>>n>>tar;
+    vector<int>v(n);
+    for(int i = 0; i < n; i++)cin>>v[i];
+    vector<int>dp(tar+1,0);
 
     dp[0] = 1;
 
-    for(int sum = 1; sum <= m; sum++)
+    for(int sum = 1; sum <= tar; sum++)
     {
-        for(int i = 0; i < n; i++)
+        for(auto it : v)
         {
-            if(v[i] <= sum)
+            if(sum >= it)
             {
-                dp[sum] = (dp[sum] + dp[sum - v[i]])%MOD;
+                dp[sum] = (dp[sum] + dp[sum - it]) % MOD;
             }
         }
     }
-
-    cout << dp[m] << endl;
+    cout<<dp[tar]<<endl;
 }
 
-int main()
-{
+int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
     int t = 1;
-    // cin >> t;
-    while (t--)
-    {
+    //cin >> t;
+    while (t--) {
         solve();
     }
 
     return 0;
 }
-
-
