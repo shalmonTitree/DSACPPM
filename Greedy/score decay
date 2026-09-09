@@ -1,0 +1,57 @@
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+bool cmp(const pair<pair<int, int>, int>& a,
+         const pair<pair<int, int>, int>& b) {
+    long long t1 = a.first.first;
+    long long d1 = a.first.second;
+    long long t2 = b.first.first;
+    long long d2 = b.first.second;
+
+    return t1 * d2 < t2 * d1;
+}
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<int> score(n), solveTime(n), decayRate(n);
+
+    for (int i = 0; i < n; i++)
+        cin >> score[i];
+
+    for (int i = 0; i < n; i++)
+        cin >> solveTime[i];
+
+    for (int i = 0; i < n; i++)
+        cin >> decayRate[i];
+
+    vector<pair<pair<int, int>, int>> questions;
+
+    for (int i = 0; i < n; i++) {
+        questions.push_back({
+            {solveTime[i], decayRate[i]},
+            score[i]
+        });
+    }
+
+    sort(questions.begin(), questions.end(), cmp);
+
+    long long currentTime = 0;
+    long long totalScore = 0;
+
+    for (auto q : questions) {
+        int time = q.first.first;
+        int decay = q.first.second;
+        int initialScore = q.second;
+
+        currentTime += time;
+        totalScore += initialScore - 1LL * decay * currentTime;
+    }
+
+    cout << totalScore << endl;
+
+    return 0;
+}
+```
