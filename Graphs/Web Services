@@ -1,0 +1,137 @@
+Time Limit: 2 sec
+Memory: 256 MB
+Description
+A web application has been built using multiple web services. Some of the web services in this application run independently, while some are dependent on other services to execute successfully. However, depending on network speed etc., some web services occasionally fail. When a service fails, all the other services dependent on it also fail and show an error message after waiting for some time.
+
+For a web service to work, all the services it depends on should work without fail. Not all web services are interdependent, and no web service depends on itself directly. However, an indirect dependency on itself is possible through other web services.
+
+Web services are denoted using integers (1 to N) for simplicity. Dependencies between services are expressed as "X Y T" where service X is dependent on service Y, and X waits for T seconds to get a response from Y before showing an error message.
+
+Write a program to find the number of web services that would show an error if a particular web service fails. Also, find how much time it takes for the last dependent web service to show an error.
+
+Read the input from STDIN and print the output to STDOUT. Do not write arbitrary strings anywhere in the program, as these contribute to the standard output, and test cases will fail.
+
+Input Format
+The first input line contains a single integer t, denoting the number of test cases. Next t test cases continue. Description of each test case:
+
+The first input line contains three integers - N, D and A, each separated by a single white space, where N is the number of web services, D is the number of dependencies, and A is the service which fails.
+
+Next, D lines show the dependencies in the system, shown as 3 integers, X, Y and T, each separated by a single white space, where X depends on Y and will show an error message after T time if Y fails.
+
+Output Format
+For each test case print, a single line of output contains two integers separated by a single white space; the number of services that would fail if A fails and the time for the last dependent service to show an error.
+
+Constraints
+1 ≤ t ≤ 1000
+1 ≤ N ≤ 5000 (the number of web services)
+1 ≤ D ≤ 50 (the dependencies)
+1 ≤ Xi, Yi ≤ N
+1 ≤ Ti ≤ 10^5
+All the dependencies are unique.
+
+Sample Input 1
+1
+3 2 2
+2 1 5
+3 2 5
+
+Sample Output 1
+2 5
+
+Sample Input 2
+1
+3 3 1
+2 1 2
+3 1 8
+3 2 4
+
+Sample Output 2
+3 6
+
+Sample Input 3
+1
+5 4 1
+2 1 2
+3 1 3
+4 1 4
+5 2 5
+
+Sample Output 3
+5 7
+
+Note
+Explanation 1:
+
+N = 3,
+D = 2,
+A = 2
+
+Since 1 does not depend on 2 or 3, it continues to run. If 2 fails, 3 will wait for 5 seconds, after which B fails & shows an error message. Therefore we can say that 2 out of 3 services fail, and the last service shows an error of 5 seconds after 2 fails.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n,d,a;
+    cin>>n>>d>>a;
+    vector<vector<pair<int,int>>>adj(n+1);
+    for(int i = 0; i < d; i++)
+    {
+        int u,v,t;
+        cin>>u>>v>>t;
+        adj[v].push_back({u,t});
+    }
+
+    vector<int>dist(n+1,1e9);
+    //distance node
+    priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;
+
+    dist[a] = 0;
+    pq.push({0,a});
+
+    while(!pq.empty())
+    {
+        auto [d,u] = pq.top();
+        pq.pop();
+
+        if (d != dist[u]) continue;
+
+        for(auto [v,t] : adj[u])
+        {
+            if(dist[v] > d + t)
+            {
+                dist[v] = d + t;
+                pq.push({dist[v],v});
+            }
+        }
+    }
+
+    int cnt = 0;
+    int mxtime = 0;
+    for(int i = 1; i <= n; i++)
+    {
+        if(dist[i] != 1e9)
+        {
+            cnt++;
+            mxtime = max(mxtime,dist[i]);
+        }
+    }
+    cout<<cnt<<" "<<mxtime<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
