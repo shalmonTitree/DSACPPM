@@ -1,0 +1,101 @@
+Time Limit: **2 sec**Memory: **256 MB**
+Description
+
+You are given a map of a building, and your task is to count the number of its rooms. The size of the map is `n×m` squares, and each square is either floor or wall. You can walk left, right, up, and down through the floor squares. Each character in the map is either `′.′` (floor) or '`#`' (wall).
+
+**Defination of Room** : A maximal connected group of floor cells (.), where connectivity is only through up, down, left, or right moves.
+
+Input Format
+
+The first input line has two integers `n` and `m`: the height and width of the map. Then there are `n` lines of `m` characters describing the map.
+
+##### Output Format
+
+Print one integer: the number of rooms.
+
+##### Constraints
+
+`1≤n,m≤1000`
+
+Sample Input 1
+
+5 8 
+######## 
+#..#...# 
+####.#.# 
+#..#...# 
+########
+
+Sample Output 1
+
+3
+
+Note
+
+The map contains three connected components of floor cells (cells with `′.′`) that are reachable by moving only up, down, left, or right. Therefore the number of rooms is `3`.
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void dfs(int r,int c,vector<vector<char>>&grid,vector<vector<bool>>&vis,int n,int m)
+{
+    vis[r][c] = true;
+    int dx[4] = {-1,0,1,0};
+    int dy[4] = {0,1,0,-1};
+
+    for(int i = 0; i < 4; i++)
+    {
+        int nrow = r + dx[i];
+        int ncol = c + dy[i];
+
+        if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && grid[nrow][ncol] == '.' && !vis[nrow][ncol])
+        {
+            dfs(nrow,ncol,grid,vis,n,m);
+        }
+    }
+}
+void solve() {
+    int n,m;
+    cin>>n>>m;
+
+    vector<vector<char>>grid(n,vector<char>(m,'.'));
+    vector<vector<bool>>vis(n,vector<bool>(m,false));
+    int cnt = 0;
+
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < m; j++)
+        {
+            cin>>grid[i][j];
+        }
+    }
+
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < m; j++)
+        {
+            if(grid[i][j] == '.' && !vis[i][j])
+            {
+                cnt++;
+                dfs(i,j,grid,vis,n,m);
+            }
+        }
+    }
+    cout<<cnt<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    // cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
