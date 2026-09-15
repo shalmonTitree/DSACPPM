@@ -1,0 +1,195 @@
+Time Limit: **1 sec**Memory: **256 MB**
+
+##### Description
+
+Given a **N x N** grid, you have to walk across the grid from left to right. Each square of the grid has a non-zero number of gold coins in it.
+Find the maximum amount of coins that can be collected if you can start from any point in the first (leftmost) column and end your journey at any point in the last (rightmost) column.
+Remember, you can only move to the right cell or the right diagonal top cell or the right diagonal bottom cell but you can not move out of the grid.
+
+##### Input Format
+
+The first line contains a single integer **N**, the size of the rows or the columns and then there are **N** lines containing **N** values, representing a **N** x **N** matrix.
+
+##### Output Format
+
+Print the maximum amount of gold coins that can be collected.
+
+##### Constraints
+
+1 ≤ N ≤ 2500
+0 < aij ≤ 104
+
+##### Sample Input 1
+
+6 
+1 2 4 2 5 6 
+6 1 4 1 7 1 
+1 2 3 3 5 6 
+6 5 4 3 8 1 
+1 2 5 4 6 1 
+5 5 1 3 2 2
+
+##### Sample Output 1
+
+34
+
+##### Note
+
+In the given grid, You have to follow the path (4, 1) → (4, 2) → (5, 3) → (5, 4) → (4, 5) → (3, 6). So, the total number of coins would be (6 + 5 + 5 + 4 + 8 + 6) or 34.
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+int check(int row,int col,int n,vector<vector<int>>&mat,vector<vector<int>>&dp)
+{
+    //basecase
+    if(col == n - 1)
+    {
+        return mat[row][col];
+    }
+
+    if(dp[row][col]  != -1)
+    {
+        return dp[row][col];
+    }
+
+    int rightupdiag = 0;
+    if(row - 1 >= 0 && col + 1 < n)
+    {
+        rightupdiag = check(row-1,col+1,n,mat,dp);
+    }
+
+    int right = 0;
+    if(col+1 < n)
+    {
+        right = check(row,col+1,n,mat,dp);
+    }
+
+    int rightdowndiag = 0;
+    if(row + 1 < n && col+1 < n)
+    {
+        rightdowndiag = check(row+1,col+1,n,mat,dp);
+    }
+
+    return dp[row][col] =  mat[row][col] + max({rightupdiag,right,rightdowndiag});
+}
+void solve() {
+    int n;
+    cin>>n;
+    vector<vector<int>>mat(n,vector<int>(n,0));
+    vector<vector<int>>dp(n+1,vector<int>(n+1,-1));
+
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            cin>>mat[i][j];
+        }
+    }
+
+    int ans = INT_MIN;
+    for(int i = 0; i < n; i++)
+    {
+        ans = max(ans,check(i,0,n,mat,dp));
+    }
+    cout<<ans<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    // cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+
+//tabu
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n" // optional, better to avoid redefining endl
+
+void solve()
+{
+    int n;
+    cin >> n;
+    vector<vector<int>> mat(n, vector<int>(n, 0));
+    vector<vector<int>> dp(n, vector<int>(n, 0));
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            cin >> mat[i][j];
+        }
+    }
+
+    int ans = INT_MIN;
+
+    // fill first column of dp[i][0] with mat[i][0];
+    for (int i = 0; i < n; i++)
+    {
+        dp[i][0] = mat[i][0];
+    }
+
+
+    //we are moving from left to right 
+    for (int j = 1; j < n; j++)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            //left upper diagonal value
+            int rightupdiag = 0;
+            if (i - 1 >= 0 && j - 1 >= 0)
+            {
+                rightupdiag = dp[i-1][j-1];
+            }
+            
+            //left value
+            int right = 0;
+            if (j-1 >= 0)
+            {
+                right = dp[i][j-1];
+            }
+
+            //left lower diagonal value
+            int rightdowndiag = 0;
+            if (i + 1 < n && j - 1 >= 0)
+            {
+                rightdowndiag = dp[i+1][j-1];
+            }
+
+            dp[i][j] = mat[i][j] + max({rightupdiag,right,rightdowndiag});
+        }
+    }
+
+    //take the maximum value from last column of dp table
+    for (int i = 0; i < n; i++)
+    {
+        ans = max(ans,dp[i][n-1]);
+    }
+    cout << ans << endl;
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    // cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+
+    return 0;
+}
