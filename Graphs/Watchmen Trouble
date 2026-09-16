@@ -1,0 +1,117 @@
+Time Limit: **1 sec**Memory: **256 MB**
+
+##### Description
+
+A river has `N` checkpoints on its left side and `M` checkpoints on its right side. `E` bridges are built connecting checkpoints across the river. Guards needs to be placed on checkpoints and a guard can protect all the bridges on which this checkpoint is present. There can be more than one guard to protect a single bridge.
+
+Find the minimum number of guards required to protect all the bridges over the river.
+
+##### Input Format
+
+The first line of input contains a single integer `T` - the number of testcases.
+`T` testcases follows, where,
+
+The first line of each testcase consists of 3 space separated integers `N`, `M` and `E` − the number of checkpoints on the left and right side of the river respectively and the total number of bridges across the river.
+
+Next `E` lines contain two integers `ui` and `vi`, representing the checkpoint number on the left and right side of the river which is connected by the `ith` bridge.
+
+##### Output Format
+
+For each testcase, output a single line containing an integer representing the minimum number of guards required to protect all the bridges over the river.
+
+##### Constraints
+
+* `1≤T≤10`
+* `1≤N,M,E≤102`
+* `1≤ui≤N`
+* `1≤vi≤M`
+* Every bridge is unique.
+
+##### Sample Input 1
+
+2 4 3 4 1 3 1 2 2 2 4 1 3 2 3 1 1 2 1 3 1
+
+##### Sample Output 1
+
+3 1
+
+##### Note
+
+For the first test case, we can place the guards on checkpoint number `1,2and4` of the left side of the river. This way we can protect all `4` bridges.
+
+For the second test case, we can protect all the bridges by just placing a single guard at checkpoint `1` of the right side of the river.
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+bool dfs(int node, vector<vector<int>>& adj,
+         vector<int>& match, vector<int>& visited)
+{
+    for (auto it : adj[node])
+    {
+        if (visited[it])
+            continue;
+
+        visited[it] = 1;
+
+        // Right node is free OR
+        // we can move the left node currently matched to it
+        if (match[it] == -1 || dfs(match[it], adj, match, visited))
+        {
+            match[it] = node;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void solve()
+{
+    int n, m, e;
+    cin >> n >> m >> e;
+
+    vector<vector<int>> adj(n + 1);
+    vector<int> match(m + 1, -1);
+    vector<int> visited(m + 1, 0);
+
+    while (e--)
+    {
+        int u, v;
+        cin >> u >> v;
+
+        // u = left checkpoint
+        // v = right checkpoint
+        adj[u].push_back(v);
+    }
+
+    int cnt = 0;
+
+    for (int i = 1; i <= n; i++)
+    {
+        // New DFS attempt
+        fill(visited.begin(), visited.end(), 0);
+
+        if (dfs(i, adj, match, visited))
+            cnt++;
+    }
+
+    cout << cnt << '\n';
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+
+    while (t--)
+    {
+        solve();
+    }
+
+    return 0;
+}
