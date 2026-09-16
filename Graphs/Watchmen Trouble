@@ -115,3 +115,80 @@ int main()
 
     return 0;
 }
+
+
+
+
+
+The problem at hand involves `N` checkpoints on the left side of a river and `M` checkpoints on the right side, connected by `P` bridges. The bridges connect checkpoints on opposite sides of the river, with no bridges connecting checkpoints on the same side. This arrangement creates a Bipartite graph, where vertices can be divided into two disjoint sets, `u` and `v`, with edges connecting vertices in `u` to vertices in `v`. The task is to determine the minimum number of guards needed to protect all the bridges, where each guard at a checkpoint can protect all bridges with an endpoint at that checkpoint. This is equivalent to finding the minimum vertex cover of the Bipartite graph, which is a set of vertices that cover at least one endpoint of each edge in the graph. Konig's Theorem can be used to calculate the minimum vertex cover, which states that the size of the minimum vertex cover is equal to the size of the Maximum Bipartite Matching. A Maximum Bipartite Matching is a set of edges where no two edges share a vertex and it has the maximum possible number of edges. Since the graph is Bipartite, the size of the minimum vertex cover can be calculated in polynomial time.
+
+Briefly, this is how we can find the maximum bipartite matching:-
+
+1. We first create a boolean bipartite graph(say `matches`), where the `matches[i][j]` is true if there is a bridge between `i` th bridge on the left side and `j` th bridge on the right side of the river.
+2. Then we create an array to keep track of the left checkpoints that are connected to the right ones. Initially we assume all are disconnected.
+3. We take the left checkpoints one by one and for that we check all the right checkpoints that has an edge with it. If any checkpoint is free then we can assign it, else we will recursively check whether that occupied right checkpoint can be freed by assigning it to some other checkpoints.
+   This way we can count the maximum matching and get the answer.
+
+Time Complexity per test case: `O(E×V)`.
+
+//maang site slution
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int n, m;
+
+bool bipartite_matching(vector<vector<bool>> &graph, int u, vector<bool> check, vector<int> &matching)
+{
+    for (int v = 0; v < m; v++)
+    {
+        if (graph[u][v] && !check[v])
+        {
+            check[v] = true;
+
+            if (matching[v] < 0 || bipartite_matching(graph, matching[v], check, matching))
+            {
+                matching[v] = u;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main()
+{
+    int t;
+    cin>>t;
+    while (t--)
+    {
+        cin >> n >> m;
+        int e;
+        cin >> e;
+
+        vector<vector<bool>> graph(n, vector<bool>(m, 0));
+        for (int i = 0; i < e; i++)
+        {
+            int a, b;
+            cin >> a >> b;
+            graph[a - 1][b - 1] = true;
+        }
+
+        vector<int> matching(m, -1);
+
+        int ans = 0;
+
+        for (int i = 0; i < n; i++)
+        {
+            vector<bool> check(m, false);
+
+            if (bipartite_matching(graph, i, check, matching))
+            {
+                ans++;
+            }
+        }
+        cout << ans << endl;
+    }
+
+    return 0;
+}
