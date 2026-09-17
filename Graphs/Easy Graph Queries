@@ -1,0 +1,166 @@
+Time Limit: 1 sec
+Memory Limit: 256 MB
+
+Description
+
+You are given an undirected graph G with N nodes and M edges. You have to answer Q queries. Each query is one of the following two types.
+
+Type 1: 1 X
+Print the size of the connected component containing node X.
+
+Type 2: 2 X Y
+Print YES if nodes X and Y are in the same connected component, otherwise print NO.
+
+Note: Use Fast I/O for Java code.
+
+Input Format
+
+The first line contains three space-separated integers N, M, Q.
+
+The next M lines each contain two integers u, v denoting an undirected edge between u and v.
+
+Each of the next Q lines contains a single query in one of the formats:
+
+1 X
+
+2 X Y
+
+Output Format
+
+Print Q lines containing the answers to the queries. Each answer should be printed on a new line.
+
+Constraints
+
+1 <= N, M, Q <= 10^5
+
+Sample Input 1
+
+6 5 5
+1 2
+2 3
+1 3
+4 4
+5 6
+1 2
+1 4
+2 3 4
+1 5
+2 5 6
+
+Sample Output 1
+
+3
+1
+NO
+2
+YES
+
+Note
+
+Connected components:
+
+{1, 2, 3} — size = 3
+
+{4} — size = 1 (self-loop keeps it isolated)
+
+{5, 6} — size = 2
+
+Queries and answers:
+
+1. Size of component containing 2 -> 3
+
+2. Size of component containing 4 -> 1
+
+3. Are 3 and 4 connected? -> NO
+
+4. Size of component containing 5 -> 2
+
+5. Are 5 and 6 connected? -> YES
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void dfs(int node,int cnt,vector<int>&vis,vector<vector<int>>&adj)
+{
+    vis[node] = cnt;
+    for(auto it : adj[node])
+    {
+        if(!vis[it])
+        {
+            dfs(it,cnt,vis,adj);
+        }
+    }
+}
+void solve() {
+    int n,m,q;
+    cin>>n>>m>>q;
+    vector<vector<int>>adj(n+1);
+    vector<int>vis(n+1,0);
+    
+    while(m--)
+    {
+        int u,v;
+        cin>>u>>v;
+
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    int cnt = 0;
+    for(int i = 1; i <= n; i++)
+    {
+        if(!vis[i])
+        {
+            cnt++;
+            dfs(i,cnt,vis,adj);
+        }
+    }
+
+    vector<int>cmp(cnt+1,0);
+    for(int i = 1; i <= n; i++)
+    {
+        cmp[vis[i]]++;
+    }
+
+    while(q--)
+    {
+        int type;
+        cin>>type;
+        if(type == 1)
+        {
+            int x;
+            cin>>x;
+            cout<<cmp[vis[x]]<<endl;
+        }
+        else if(type == 2)
+        {
+            int x,y;
+            cin>>x>>y;
+            if(vis[x] == vis[y])
+            {
+                cout<<"YES"<<endl;
+            }
+            else
+            {
+                cout<<"NO"<<endl;
+            }
+        }
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    // cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
