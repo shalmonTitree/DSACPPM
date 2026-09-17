@@ -1,0 +1,262 @@
+Description
+
+An investor has saved some money and wants to invest in the stock market. There are N stocks to choose from, and he does not want to buy more than 1 share from the same company. The total amount invested cannot exceed the available savings.
+
+A friend who is a stock market expert has predicted the value of each stock after 1 year. Determine the maximum profit that can be earned after 1 year, assuming the predictions come true.
+
+Input Format
+
+The first line contains two positive integers N and S, where:
+
+N = number of stocks
+
+S = savings available to the investor
+
+The second line contains N space-separated integers representing the current values of the stocks.
+
+The third line contains N space-separated integers representing the predicted values of the stocks after 1 year.
+
+Output Format
+
+Print the maximum profit that can be earned after 1 year.
+
+Constraints
+
+1 <= N <= 100
+
+1 <= S <= 30000
+
+1 <= current value, future value <= 300
+
+Sample Input 1
+
+5 250
+175 133 109 210 97
+200 125 128 228 133
+
+Sample Output 1
+
+55
+
+Explanation
+
+Savings = 250
+
+Current values:
+
+[175, 133, 109, 210, 97]
+
+Future values:
+
+[200, 125, 128, 228, 133]
+
+Profit for each stock:
+
+Stock 1: 200 - 175 = 25
+
+Stock 2: 125 - 133 = -8
+
+Stock 3: 128 - 109 = 19
+
+Stock 4: 228 - 210 = 18
+
+Stock 5: 133 - 97 = 36
+
+To maximize profit, the investor should buy stock 3 and stock 5.
+
+Total investment:
+
+109 + 97 = 206
+
+Since 206 <= 250, the investment is valid.
+
+Total selling value after 1 year:
+
+128 + 133 = 261
+
+Profit:
+
+261 - 206 = 55
+
+Therefore, the maximum possible profit is:
+
+55
+
+
+
+//rec
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+int fun(int idx,int tar,vector<int>&curr,vector<int>&future,vector<int>&diff)
+{
+    //basecase
+
+    if(idx == curr.size())
+    {
+        return 0;
+    }
+    //workdone
+    int nottake = fun(idx+1,tar,curr,future,diff);
+
+    int take = 0;
+    if(curr[idx] <= tar)
+    {
+        take = diff[idx] + fun(idx+1,tar - curr[idx],curr,future,diff);
+    }
+
+    //return
+    return max(take,nottake);
+}
+void solve() {
+    int n,tar;
+    cin>>n>>tar;
+    vector<int>curr(n);
+    vector<int>future(n);
+    vector<int>diff(n);
+
+    for(int i = 0; i < n; i++) cin>>curr[i];
+    for(int i = 0; i < n; i++) cin>>future[i];
+    for(int i = 0; i < n; i++)
+    {
+        int val = future[i] - curr[i];
+        diff[i] = val;
+    }
+
+    int ans = fun(0,tar,curr,future,diff);
+    cout<<ans<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+//memo
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+int fun(int idx,int tar,vector<int>&curr,vector<int>&future,vector<int>&diff,vector<vector<int>>&dp)
+{
+    //basecase
+
+    if(idx == curr.size())
+    {
+        return 0;
+    }
+
+    if(dp[idx][tar] != -1)
+    {
+        return dp[idx][tar];
+    }
+    //workdone
+    int nottake = fun(idx+1,tar,curr,future,diff,dp);
+
+    int take = 0;
+    if(curr[idx] <= tar)
+    {
+        take = diff[idx] + fun(idx+1,tar - curr[idx],curr,future,diff,dp);
+    }
+
+    //return
+    return dp[idx][tar] = max(take,nottake);
+}
+void solve() {
+    int n,tar;
+    cin>>n>>tar;
+    vector<int>curr(n);
+    vector<int>future(n);
+    vector<int>diff(n);
+    vector<vector<int>>dp(n+1,vector<int>(tar+1,-1));
+
+    for(int i = 0; i < n; i++) cin>>curr[i];
+    for(int i = 0; i < n; i++) cin>>future[i];
+    for(int i = 0; i < n; i++)
+    {
+        int val = future[i] - curr[i];
+        diff[i] = val;
+    }
+
+    int ans = fun(0,tar,curr,future,diff,dp);
+    cout<<ans<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+
+//tabu
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n,tar;
+    cin>>n>>tar;
+    vector<int>curr(n);
+    vector<int>future(n);
+    vector<int>diff(n);
+    vector<vector<int>>dp(n+1,vector<int>(tar+1,0));
+
+    for(int i = 0; i < n; i++) cin>>curr[i];
+    for(int i = 0; i < n; i++) cin>>future[i];
+    for(int i = 0; i < n; i++)
+    {
+        int val = future[i] - curr[i];
+        diff[i] = val;
+    }
+
+
+    for(int idx = 1; idx <= n; idx++)
+    {
+        for(int target = 1; target <= tar; target++)
+        {
+            int nottake = dp[idx-1][target];
+
+            int take = 0;
+            if(curr[idx-1] <= target)
+            {
+                take = diff[idx-1] + dp[idx-1][target - curr[idx-1]];
+            }
+
+            dp[idx][target] = max(take,nottake);
+        }
+    }
+    cout<<dp[n][tar]<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
