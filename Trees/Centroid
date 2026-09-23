@@ -1,0 +1,104 @@
+Time Limit: 1 sec
+Memory Limit: 256 MB
+
+Description
+
+Given a tree of n nodes, your task is to find a centroid, i.e., a node such that when it is appointed the root of the tree, each subtree has at most floor(n/2) nodes.
+
+Input Format
+
+The first input line contains an integer n: the number of nodes. The nodes are numbered 1,2,...,n.
+
+Then there are n-1 lines describing the edges. Each line contains two integers a and b: there is an edge between nodes a and b.
+
+Output Format
+
+Print one integer: a centroid node. If there are several possibilities, print the smallest one.
+
+Constraints
+
+1 <= n <= 2 * 10^5
+1 <= a,b <= n
+
+Sample Input 1
+
+5
+1 2
+2 3
+3 4
+3 5
+
+Sample Output 1
+
+3
+
+Note
+
+For the sample, node 3 is a centroid: when rooted at 3, all subtrees have sizes at most floor(5/2) = 2.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+int res = 0;
+void generatesubtre(int node,int par,vector<int>&subtreesize,vector<vector<int>>&adj)
+{
+    subtreesize[node] = 1;
+    for(auto it : adj[node])
+    {
+        if(it != par)
+        {
+            generatesubtre(it,node,subtreesize,adj);
+            subtreesize[node] += subtreesize[it];
+        }
+    }
+}
+
+void centroid(int u,int par,int n,vector<vector<int>>&adj,vector<int>&subtreesize)
+{
+    for(auto v : adj[u])
+    {
+        int s = (v == par ? n - subtreesize[u] : subtreesize[v]);
+        if(s > n/2)
+        {
+            centroid(v,u,n,adj,subtreesize);
+            return;
+        }
+    }
+    res = u;
+}
+void solve() {
+    int n;
+    cin>>n;
+    vector<vector<int>>adj(n+1);
+    vector<int>subtreesize(n+1,0);
+    for(int i = 1; i < n; i++)
+    {
+        int u,v;
+        cin>>u>>v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    generatesubtre(1,-1,subtreesize,adj);
+    centroid(1,-1,n,adj,subtreesize);
+
+    cout<<res<<endl;
+    return;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    // cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
