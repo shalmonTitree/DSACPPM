@@ -1,0 +1,95 @@
+class Node
+{
+public:
+    int key;
+    int val;
+    Node* next;
+
+    Node(int k, int v)
+    {
+        key = k;
+        val = v;
+        next = NULL;
+    }
+};
+
+class MyHashMap {
+private:
+    vector<Node*> map;
+
+public:
+    MyHashMap() {
+        map.resize(1000);
+
+        for(int i = 0; i < 1000; i++)
+        {
+            map[i] = new Node(-1, -1);
+        }
+    }
+
+    int hash(int key)
+    {
+        return key % 1000;
+    }
+    
+    void put(int key, int value) {
+        int hash_key = hash(key);
+
+        Node* curr = map[hash_key];
+
+        while(curr->next)
+        {
+            //if alraedy present then update with new value
+            if(curr->next->key == key)
+            {
+                curr->next->val = value;
+                return;
+            }
+
+            curr = curr->next;
+        }
+
+        //below line means we are putting for the first time
+        curr->next = new Node(key, value);
+    }
+    
+    int get(int key) {
+        int hash_key = hash(key);
+
+        Node* curr = map[hash_key];
+
+        while(curr->next)
+        {
+            if(curr->next->key == key)
+            {
+                return curr->next->val;
+            }
+
+            curr = curr->next;
+        }
+
+        return -1;
+    }
+    
+    void remove(int key) {
+        int hash_key = hash(key);
+
+        Node* curr = map[hash_key];
+
+        while(curr->next)
+        {
+            if(curr->next->key == key)
+            {
+                Node* temp = curr->next;
+
+                curr->next = curr->next->next;
+
+                delete temp;
+
+                return;
+            }
+
+            curr = curr->next;
+        }
+    }
+};
