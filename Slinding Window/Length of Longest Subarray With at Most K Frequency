@@ -1,0 +1,72 @@
+Time Complexity  : O(n³) average
+Space Complexity : O(n)
+
+class Solution {
+public:
+    int maxSubarrayLength(vector<int>& nums, int k) {
+        int n = nums.size();
+        int ans = INT_MIN;
+
+        for(int i = 0; i < n; i++)
+        {
+            unordered_map<int,int>mp;
+            
+            for(int j = i; j < n; j++)
+            {
+                mp[nums[j]]++;
+                bool f = false;
+                for(auto it : mp)
+                {
+                    if(it.second > k)
+                    {
+                        f = true;
+                        break;
+                    }
+                }
+                if(!f)
+                {
+                    ans = max(ans,j-i+1);
+                }
+            }
+        }
+        return ans;
+    }
+};
+
+
+//optimal
+Time Complexity  : O(n) average
+Space Complexity : O(n)
+
+class Solution {
+public:
+    int maxSubarrayLength(vector<int>& nums, int k) {
+        int n = nums.size();
+
+        int head = -1;
+        int tail = 0;
+        unordered_map<int, int> mp;
+        int ans = INT_MIN;
+
+        while (tail < n) {
+            while (head + 1 < n && mp[nums[head + 1]] < k) {
+                head++;
+                mp[nums[head]]++;
+            }
+
+            ans = max(ans, head - tail + 1);
+
+            if (tail <= head) {
+
+                mp[nums[tail]]--;
+
+                tail++;
+
+            } else {
+                tail++;
+                head = tail - 1;
+            }
+        }
+        return ans;
+    }
+};
