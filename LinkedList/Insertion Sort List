@@ -1,0 +1,78 @@
+//bruteforce
+
+Time Complexity
+Copy linked list → vector
+while(temp != NULL) → O(n)
+Insertion sort on vector
+Worst case: O(n²)
+Best case: O(n) (already sorted)
+Copy sorted values back to linked list
+while(temp != NULL) → O(n)
+
+So overall:
+
+Worst case: O(n²)
+Best case: O(n)
+Space Complexity
+
+You create a vector<int> nodes containing all n values.
+
+Extra space = O(n)
+
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    void insertionSort(vector<int>&nodes)
+    {
+        int n = nodes.size();
+
+        for(int i = 1; i < n; i++)
+        {
+           int key = nodes[i];
+           int j = i - 1;
+           while(j >= 0 && nodes[j] > key)
+           {
+                nodes[j+1] = nodes[j];
+                j--;
+           }
+           nodes[j+1] = key;
+        }
+
+        
+    }
+    ListNode* insertionSortList(ListNode* head) {
+        vector<int>nodes;
+        ListNode* temp = head;
+        while(temp != NULL)
+        {
+            nodes.push_back(temp->val);
+            temp = temp->next;
+        }
+        insertionSort(nodes);
+        
+        temp = head;
+        int idx = 0;
+        while(temp != NULL)
+        {
+            temp->val = nodes[idx];
+            temp = temp->next;
+            idx++;
+        }
+
+        return head;
+    }
+};
+
+
+//optimal
+
