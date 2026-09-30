@@ -1,0 +1,28 @@
+class Solution {
+public:
+    string reverseParentheses(string s) {
+        int n = s.size();
+        stack<string>st;
+        string curr = "";
+
+        for(auto it : s)
+        {
+            if(it == '(')
+            {
+                st.push(curr);
+                curr = "";
+            }
+            else if(it == ')')
+            {
+                reverse(curr.begin(),curr.end());
+                string prev = st.top();
+                st.pop();
+                curr = prev + curr;
+            }
+            else{
+                curr += it;
+            }
+        } 
+        return curr;
+    }
+};
