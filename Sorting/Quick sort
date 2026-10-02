@@ -1,3 +1,13 @@
+Complexity
+Average:
+Time  = O(n log n)
+Space = O(log n)
+
+Worst case:
+Time = O(n²)
+
+For example, choosing the last element as pivot on an already sorted array can produce the worst case.
+
 class Solution {
 public:
 
