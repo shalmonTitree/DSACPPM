@@ -1,0 +1,58 @@
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& nums) {
+        int n = nums.size();
+        int cnt = 0;
+
+        for(int i = 0; i < n - 2; i++) //note we want 3 or greater so go till n - 2
+        {
+            int diff = nums[i+1] - nums[i];
+
+            for(int j = i + 2; j < n; j++)
+            {
+                if(diff == nums[j] - nums[j-1])
+                {
+                    cnt++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        return cnt;
+    }
+};
+
+
+//optimal
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& nums) {
+        int n = nums.size();
+       
+
+        if(n < 3) return 0;
+        
+        int len = 2;
+         int cnt = 0;
+
+        int diff = nums[1] - nums[0];
+
+        for(int i = 2; i < n; i++)
+        {
+            if(nums[i] - nums[i-1] == diff)
+            {
+                len++;
+                cnt += len - 2;
+            }
+            else
+            {
+                len = 2;
+                diff = nums[i] - nums[i-1];
+            }
+        }
+        return cnt;
+
+    }
+};
