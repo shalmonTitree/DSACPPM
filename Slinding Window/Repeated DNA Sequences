@@ -1,0 +1,97 @@
+//bruteforce
+class Solution {
+public:
+    vector<string> findRepeatedDnaSequences(string s) {
+        int Length = s.size();
+        vector<string>answer;
+        unordered_map<string,int>map;
+
+        for(int idx_i = 0; idx_i < Length; idx_i++)
+        {
+            string current = "";
+            for(int idx_j = idx_i; idx_j < Length; idx_j++)
+            {
+                current += s[idx_j];
+                if(current.size() == 10)
+                {
+                    map[current]++;
+                    break;
+                }
+            }
+        }
+
+        for(auto it : map)
+        {
+            if(it.second > 1)
+            {
+                answer.push_back(it.first);
+            }
+        }
+        return answer;
+    }
+};
+
+//bruteforce
+// use unordered_map to store string,int
+// use 2 for loops and when we encouter string of length 10 we store in map
+// now we iterate over map and check for string occuring mulplte times if it is occuring multipe time we will store it in our ans vector
+// and retunr 
+
+// lengthn of string is 10^5 so bruteforce time complexity can go up to 10^10 which is not optimal
+//O^n2 can get submitted but we can still do better
+
+
+
+
+//opimal
+Complexity	Your code
+Time	O(n)
+Space	O(n)
+
+
+class Solution {
+public:
+    vector<string> findRepeatedDnaSequences(string s) {
+        int length = s.size();
+        unordered_map<string,int>mp;
+        vector<string>answer;
+
+        int head = -1;
+        int tail = 0;
+        string current = "";
+
+        while(tail < length)
+        {
+            while(head + 1 < length && (head + 1) - tail < 10) //see how you checked length
+            {
+                head++;
+                current += s[head];
+            }
+
+            if((head - tail + 1) == 10)
+            {
+                mp[current]++;
+            }
+
+            if(tail <= head)
+            {
+                if(current.size() > 0) current.erase(0,1);
+                tail++;
+            }
+            else
+            {
+                tail++;
+                head = tail - 1;
+            }
+        }
+
+        for(auto it : mp)
+        {
+            if(it.second > 1)
+            {
+                answer.push_back(it.first);
+            }
+        }
+        return answer;
+    }
+};
