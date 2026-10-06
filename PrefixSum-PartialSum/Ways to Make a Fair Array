@@ -1,0 +1,105 @@
+//bruteforce
+class Solution {
+public:
+    int waysToMakeFair(vector<int>& nums) {
+        int n = nums.size();
+        int cnt = 0;
+
+        for(int i = 0; i < n; i++)
+        {
+            int es = 0;
+            int os = 0;
+            int ni = 0;
+            for(int j = 0; j < n; j++)
+            {
+                if(i == j)
+                {
+                    continue;
+                }
+
+                    if(ni % 2 == 0)
+                    {
+                        es += nums[j];
+                    }
+                    else
+                    {
+                        os += nums[j];
+                    }
+                
+                ni++;
+            }
+            if(es == os) cnt++;
+        }
+        return cnt;
+
+    }
+};
+
+
+
+//optimal 
+Time:  O(n)
+Space: O(1)
+
+class Solution {
+public:
+    int waysToMakeFair(vector<int>& nums) {
+        int n = nums.size();
+
+
+
+        //first calulate total odd and even index sum
+        int tesum = 0;
+        int todsum = 0;
+
+        for(int i = 0; i < n; i++)
+        {
+            if(i % 2 == 0)
+            {
+                tesum += nums[i];
+            }
+            else
+            {
+                todsum += nums[i];
+            }
+        }
+
+
+        int lefteven = 0;
+        int leftodd = 0;
+        int cnt = 0;
+
+        for(int i = 0; i < n; i++)
+        {
+            if(i % 2 == 0)
+            {
+                tesum -= nums[i];
+            }
+            else
+            {
+                todsum -= nums[i];
+            }
+
+
+            int neweven = lefteven + todsum;
+            int newodd = leftodd + tesum;
+
+
+            if(neweven == newodd)
+            {
+                cnt++;
+            }
+
+            if(i % 2 == 0)
+            {
+                lefteven += nums[i];
+            }
+            else
+            {
+                leftodd += nums[i];
+            }
+        }
+        return cnt;
+
+    }
+};
