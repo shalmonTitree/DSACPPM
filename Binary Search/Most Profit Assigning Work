@@ -1,0 +1,102 @@
+//bruteforce
+TC: O(n × m)
+SC: O(n)
+Where:
+n = number of jobs
+m = number of workers
+
+class Solution {
+public:
+    int maxProfitAssignment(vector<int>& difficulty, vector<int>& profit, vector<int>& worker) {
+        int n = difficulty.size();
+        vector<pair<int,int>>store;
+
+        //store : diffcutly,profit
+        for(int i = 0; i < n; i++)
+        {   
+            store.push_back({difficulty[i],profit[i]});
+        }
+
+        int totalprofit = 0;
+
+        for(int i = 0; i < worker.size(); i++)
+        {
+            int cap = worker[i];
+            int maxi = 0;
+            for(auto it : store)
+            {
+                if(it.first <= cap)
+                {
+                    maxi = max(maxi,it.second);
+                }
+            }
+
+            totalprofit += maxi;
+        }
+        return totalprofit;
+        
+    }
+};
+
+
+//optimal
+Time Complexity: O(n log n + m log n)
+- Creating jobs: O(n)
+- Sorting jobs: O(n log n)
+- Prefix maximum profit: O(n)
+- Binary search for each worker: O(m log n)
+Space Complexity: O(n)
+- jobs vector stores n pairs.
+
+
+class Solution {
+public:
+    int BinarySearch(int cap,vector<pair<int,int>>&jobs)
+    {
+        int l = 0;
+        int h = jobs.size()-1;
+        int ans = 0;
+        while(l <= h)
+        {
+            int mid = l + (h - l)/2;
+
+            if(jobs[mid].first <= cap)
+            {
+                ans = max(ans,jobs[mid].second);
+                l = mid + 1;
+            }
+            else
+            {
+                h = mid - 1;
+            }
+        }
+        return ans;
+    }
+    int maxProfitAssignment(vector<int>& difficulty, vector<int>& profit, vector<int>& worker) {
+        
+        int totalprofit = 0;
+        int n = difficulty.size();
+        int m = worker.size();
+        vector<pair<int,int>>jobs;
+
+        for(int i = 0; i < n; i++)
+        {
+            jobs.push_back({difficulty[i],profit[i]});
+        }
+
+        sort(jobs.begin(),jobs.end());
+
+
+        for(int i = 1; i < n; i++)
+        {
+            jobs[i].second = max(jobs[i].second, jobs[i-1].second);
+        }
+
+        for(int i = 0; i < m; i++)
+        {
+            totalprofit += BinarySearch(worker[i],jobs);
+        }
+
+        return totalprofit;
+    }
+};
