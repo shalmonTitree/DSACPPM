@@ -1,0 +1,117 @@
+class Node
+{
+    public:
+    int key;
+    int value;
+    Node* prev;
+    Node* next;
+
+    Node(int key,int value)
+    {
+        this->key = key;
+        this->value = value;
+        prev = NULL;
+        next = NULL;
+    }
+};
+class LRUCache {
+public:
+
+    //create two node head and tail and all the elements will be in between this two
+    Node* head = new Node(-1,-1);
+    Node* tail = new Node(-1,-1);
+
+    //map for storing key, and addres of node in DLL
+    unordered_map<int,Node*>mp;
+
+    //capacity
+    int cap;
+
+    LRUCache(int capacity) {
+        cap = capacity;
+        head->next = tail;
+        tail->prev = head;
+    }
+    
+    void addNode(Node* newNode)
+    {
+        newNode->next = head->next;
+        newNode->prev = head;
+
+        head->next->prev = newNode;
+        head->next = newNode;
+    }
+
+    void deleteNode(Node* newNode)
+    {
+        Node* delPrev = newNode->prev;
+        Node* delNext = newNode->next;
+
+        delPrev->next = delNext;
+        delNext->prev = delPrev;
+    }
+
+    int get(int key) {
+        //1.If key is not present then return -1
+        //2. If key is present first remove from its place and move it next to head and then return its value
+
+        //you have key in your map
+        if(mp.find(key) != mp.end())
+        {
+            Node* currNode = mp[key];
+            int value = currNode->value;
+
+            mp.erase(key);
+
+            deleteNode(currNode);
+            addNode(currNode);
+
+            mp[key] = head->next;
+
+            return value;
+        }
+
+
+        //if key is not found
+        return -1;
+    }
+    
+    void put(int key, int value) {
+        
+        //if value is present move it to front then update the value
+        //if value is not present add new node after head;
+
+
+        if(mp.find(key) != mp.end())
+        {
+            Node* currNode = mp[key];
+            mp.erase(key);
+            deleteNode(currNode);
+        }
+        
+        if(mp.size() == cap)
+        {
+            Node* temp = tail->prev;
+            mp.erase(temp->key);
+            deleteNode(temp);
+            delete temp;
+        }
+        addNode(new Node(key, value));
+        mp[key] = head->next;
+    }
+};
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache* obj = new LRUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
+
+// //  to solve this we need DLL and map<key,node>
+// //  before adding check capaity then if emelent not present then add if present move it to front of DLL and then update
+//   if you want to remove element do it from back
+//   intitally you will be having head pointing to tail and in between you will be adding elements 
+//in map it will be having key , address of node of LL 
+  
+
