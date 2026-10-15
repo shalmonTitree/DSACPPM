@@ -1,0 +1,195 @@
+```cpp
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* prev;
+    Node* next;
+
+    Node(int x) {
+        data = x;
+        prev = nullptr;
+        next = nullptr;
+    }
+};
+
+// 1. Insert at beginning
+Node* insertAtBeginning(Node* head, int x) {
+    Node* newNode = new Node(x);
+
+    newNode->next = head;
+
+    if (head != nullptr) {
+        head->prev = newNode;
+    }
+
+    return newNode;
+}
+
+// 2. Insert at end
+Node* insertAtEnd(Node* head, int x) {
+    Node* newNode = new Node(x);
+
+    if (head == nullptr) {
+        return newNode;
+    }
+
+    Node* temp = head;
+
+    while (temp->next != nullptr) {
+        temp = temp->next;
+    }
+
+    temp->next = newNode;
+    newNode->prev = temp;
+
+    return head;
+}
+
+// 3. Insert at a given position (1-based)
+Node* insertAtPosition(Node* head, int pos, int x) {
+    if (pos < 1) {
+        cout << "Invalid position\n";
+        return head;
+    }
+
+    if (pos == 1) {
+        return insertAtBeginning(head, x);
+    }
+
+    Node* temp = head;
+
+    for (int i = 1; temp != nullptr && i < pos - 1; i++) {
+        temp = temp->next;
+    }
+
+    if (temp == nullptr) {
+        cout << "Invalid position\n";
+        return head;
+    }
+
+    Node* newNode = new Node(x);
+
+    newNode->next = temp->next;
+    newNode->prev = temp;
+
+    if (temp->next != nullptr) {
+        temp->next->prev = newNode;
+    }
+
+    temp->next = newNode;
+
+    return head;
+}
+
+// 4. Insert after a given value (first occurrence)
+Node* insertAfterValue(Node* head, int value, int x) {
+    Node* temp = head;
+
+    while (temp != nullptr && temp->data != value) {
+        temp = temp->next;
+    }
+
+    if (temp == nullptr) {
+        cout << "Value not found\n";
+        return head;
+    }
+
+    Node* newNode = new Node(x);
+
+    newNode->next = temp->next;
+    newNode->prev = temp;
+
+    if (temp->next != nullptr) {
+        temp->next->prev = newNode;
+    }
+
+    temp->next = newNode;
+
+    return head;
+}
+
+// 5. Insert before a given value (first occurrence)
+Node* insertBeforeValue(Node* head, int value, int x) {
+    Node* temp = head;
+
+    while (temp != nullptr && temp->data != value) {
+        temp = temp->next;
+    }
+
+    if (temp == nullptr) {
+        cout << "Value not found\n";
+        return head;
+    }
+
+    if (temp == head) {
+        return insertAtBeginning(head, x);
+    }
+
+    Node* newNode = new Node(x);
+
+    newNode->prev = temp->prev;
+    newNode->next = temp;
+
+    temp->prev->next = newNode;
+    temp->prev = newNode;
+
+    return head;
+}
+
+// 6. Display forward
+void displayForward(Node* head) {
+    Node* temp = head;
+
+    cout << "Forward: ";
+
+    while (temp != nullptr) {
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+
+    cout << '\n';
+}
+
+// 7. Display backward
+void displayBackward(Node* head) {
+    if (head == nullptr) {
+        cout << "Backward: \n";
+        return;
+    }
+
+    Node* temp = head;
+
+    while (temp->next != nullptr) {
+        temp = temp->next;
+    }
+
+    cout << "Backward: ";
+
+    while (temp != nullptr) {
+        cout << temp->data << " ";
+        temp = temp->prev;
+    }
+
+    cout << '\n';
+}
+
+// Main function
+int main() {
+    Node* head = nullptr;
+
+    head = insertAtBeginning(head, 20);
+    head = insertAtBeginning(head, 10);
+    head = insertAtEnd(head, 40);
+    head = insertAtPosition(head, 3, 30);
+
+    head = insertAfterValue(head, 30, 35);
+    head = insertBeforeValue(head, 40, 38);
+
+    displayForward(head);
+    displayBackward(head);
+
+    return 0;
+}
+```
