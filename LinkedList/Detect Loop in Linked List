@@ -1,0 +1,106 @@
+
+#include <iostream>
+#include <unordered_set>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+
+    Node(int x) {
+        data = x;
+        next = nullptr;
+    }
+};
+
+// Solution 1: Hash Set
+// TC: O(n) average
+// SC: O(n)
+bool detectLoopHashing(Node* head) {
+    unordered_set<Node*> visited;
+
+    Node* temp = head;
+
+    while (temp != nullptr) {
+        if (visited.find(temp) != visited.end()) {
+            return true;
+        }
+
+        visited.insert(temp);
+        temp = temp->next;
+    }
+
+    return false;
+}
+
+// Solution 2: Floyd's Cycle Detection
+// Slow and Fast Pointers
+// TC: O(n)
+// SC: O(1)
+bool detectLoopFloyd(Node* head) {
+    Node* slow = head;
+    Node* fast = head;
+
+    while (fast != nullptr && fast->next != nullptr) {
+        slow = slow->next;
+        fast = fast->next->next;
+
+        if (slow == fast) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// Solution 3: Mark visited nodes by modifying data
+// Not recommended: changes original list data.
+// TC: O(n)
+// SC: O(1) auxiliary space
+// Assumes -1 is not valid data and the list is not reused.
+bool detectLoopMarking(Node* head) {
+    Node* temp = head;
+
+    while (temp != nullptr) {
+        if (temp->data == -1) {
+            return true;
+        }
+
+        temp->data = -1;
+        temp = temp->next;
+    }
+
+    return false;
+}
+
+// Utility: Display list (only use on an acyclic list)
+void display(Node* head) {
+    while (head != nullptr) {
+        cout << head->data << " ";
+        head = head->next;
+    }
+    cout << '\n';
+}
+
+int main() {
+    // Create: 1 -> 2 -> 3 -> 4
+    Node* head = new Node(1);
+    head->next = new Node(2);
+    head->next->next = new Node(3);
+    head->next->next->next = new Node(4);
+
+    // Create a loop: 4 -> 2
+    head->next->next->next->next = head->next;
+
+    cout << boolalpha;
+
+    cout << "Hashing: "
+         << detectLoopHashing(head) << '\n';
+
+    cout << "Floyd's Algorithm: "
+         << detectLoopFloyd(head) << '\n';
+
+    // Do not call display() on a cyclic list.
+
+    return 0;
+}
