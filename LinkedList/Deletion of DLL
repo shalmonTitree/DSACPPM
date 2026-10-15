@@ -1,0 +1,239 @@
+```cpp
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* prev;
+    Node* next;
+
+    Node(int x) {
+        data = x;
+        prev = nullptr;
+        next = nullptr;
+    }
+};
+
+// 1. Delete at beginning
+Node* deleteAtBeginning(Node* head) {
+    if (head == nullptr) {
+        cout << "List is empty\n";
+        return nullptr;
+    }
+
+    Node* temp = head;
+    head = head->next;
+
+    if (head != nullptr) {
+        head->prev = nullptr;
+    }
+
+    delete temp;
+    return head;
+}
+
+// 2. Delete at end
+Node* deleteAtEnd(Node* head) {
+    if (head == nullptr) {
+        cout << "List is empty\n";
+        return nullptr;
+    }
+
+    Node* temp = head;
+
+    if (temp->next == nullptr) {
+        delete temp;
+        return nullptr;
+    }
+
+    while (temp->next != nullptr) {
+        temp = temp->next;
+    }
+
+    temp->prev->next = nullptr;
+
+    delete temp;
+    return head;
+}
+
+// 3. Delete at a given position (1-based)
+Node* deleteAtPosition(Node* head, int pos) {
+    if (pos < 1 || head == nullptr) {
+        cout << "Invalid position or empty list\n";
+        return head;
+    }
+
+    if (pos == 1) {
+        return deleteAtBeginning(head);
+    }
+
+    Node* temp = head;
+
+    for (int i = 1; temp != nullptr && i < pos; i++) {
+        temp = temp->next;
+    }
+
+    if (temp == nullptr) {
+        cout << "Invalid position\n";
+        return head;
+    }
+
+    if (temp->next != nullptr) {
+        temp->next->prev = temp->prev;
+    }
+
+    temp->prev->next = temp->next;
+
+    delete temp;
+    return head;
+}
+
+// 4. Delete node with a given value (first occurrence)
+Node* deleteByValue(Node* head, int value) {
+    Node* temp = head;
+
+    while (temp != nullptr && temp->data != value) {
+        temp = temp->next;
+    }
+
+    if (temp == nullptr) {
+        cout << "Value not found\n";
+        return head;
+    }
+
+    if (temp == head) {
+        return deleteAtBeginning(head);
+    }
+
+    if (temp->next != nullptr) {
+        temp->next->prev = temp->prev;
+    }
+
+    temp->prev->next = temp->next;
+
+    delete temp;
+    return head;
+}
+
+// 5. Delete node before a given value
+Node* deleteBeforeValue(Node* head, int value) {
+    Node* temp = head;
+
+    while (temp != nullptr && temp->data != value) {
+        temp = temp->next;
+    }
+
+    if (temp == nullptr || temp->prev == nullptr) {
+        cout << "No node exists before the given value\n";
+        return head;
+    }
+
+    Node* target = temp->prev;
+
+    if (target->prev != nullptr) {
+        target->prev->next = temp;
+        temp->prev = target->prev;
+    } else {
+        head = temp;
+        temp->prev = nullptr;
+    }
+
+    delete target;
+    return head;
+}
+
+// 6. Delete node after a given value
+Node* deleteAfterValue(Node* head, int value) {
+    Node* temp = head;
+
+    while (temp != nullptr && temp->data != value) {
+        temp = temp->next;
+    }
+
+    if (temp == nullptr || temp->next == nullptr) {
+        cout << "No node exists after the given value\n";
+        return head;
+    }
+
+    Node* target = temp->next;
+    temp->next = target->next;
+
+    if (target->next != nullptr) {
+        target->next->prev = temp;
+    }
+
+    delete target;
+    return head;
+}
+
+// 7. Display forward
+void displayForward(Node* head) {
+    cout << "Forward: ";
+
+    while (head != nullptr) {
+        cout << head->data << " ";
+        head = head->next;
+    }
+
+    cout << '\n';
+}
+
+// 8. Display backward
+void displayBackward(Node* head) {
+    if (head == nullptr) {
+        cout << "Backward: \n";
+        return;
+    }
+
+    Node* temp = head;
+
+    while (temp->next != nullptr) {
+        temp = temp->next;
+    }
+
+    cout << "Backward: ";
+
+    while (temp != nullptr) {
+        cout << temp->data << " ";
+        temp = temp->prev;
+    }
+
+    cout << '\n';
+}
+
+// Main function
+int main() {
+    Node* head = nullptr;
+
+    // Create: 10 <-> 20 <-> 30 <-> 40 <-> 50
+    head = insertAtBeginning(head, 10);
+    head = insertAtEnd(head, 20);
+    head = insertAtEnd(head, 30);
+    head = insertAtEnd(head, 40);
+    head = insertAtEnd(head, 50);
+
+    displayForward(head);
+
+    head = deleteAtBeginning(head);
+    displayForward(head);
+
+    head = deleteAtEnd(head);
+    displayForward(head);
+
+    head = deleteAtPosition(head, 2);
+    displayForward(head);
+
+    head = deleteByValue(head, 20);
+    displayForward(head);
+
+    head = deleteBeforeValue(head, 50);
+    displayForward(head);
+
+    head = deleteAfterValue(head, 10);
+    displayForward(head);
+
+    displayBackward(head);
+
+    return 0;
+}
+```
