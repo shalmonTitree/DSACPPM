@@ -1,0 +1,79 @@
+Why isn't it \(O(n^2)\)?
+
+Normally, nested loops can take \(O(n^2)\) time. But here, i jumps forward by cnt, so each group is processed only once.
+Final complexity:
+- TC: \(O(n)\)
+- SC: \(O(n)\), because of ans.
+
+
+class Solution {
+public:
+    int compress(vector<char>& chars) {
+      string ans = "";
+      int n = chars.size();
+      for(int i = 0; i < n;)
+      {
+        char ch = chars[i];
+        int cnt = 0;
+        for(int j = i; j < n; j++)
+        {
+            if(ch == chars[j])
+            {
+                cnt++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        ans += ch;
+        if(cnt > 1)
+        {
+            
+            ans += to_string(cnt);
+        }
+        i += cnt;
+      }
+      int idx = 0;
+      for(int i = 0; i < ans.size(); i++)
+      {
+        chars[idx] = ans[i];
+        idx++;
+      }  
+      return idx;
+    }
+};
+
+//optimal
+Interview answer: TC = \(O(n)\), SC = \(O(1)\) if you write the count digits directly into chars without using a temporary string.
+class Solution {
+public:
+    int compress(vector<char>& chars) {
+        int n = chars.size();
+        int idx = 0;
+
+        for (int i = 0; i < n; ) {
+            char ch = chars[i];
+            int cnt = 0;
+
+            while (i < n && chars[i] == ch) {
+                cnt++;
+                i++;
+            }
+
+            chars[idx++] = ch;
+
+            if (cnt > 1) {
+                string s = to_string(cnt);
+
+                for (char c : s) {
+                    chars[idx++] = c;
+                }
+            }
+        }
+
+        return idx;
+    }
+};
+
