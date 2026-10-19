@@ -1,45 +1,70 @@
-Complexity
-Average:
-Time  = O(n log n)
-Space = O(log n)
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
 
-Worst case:
-Time = O(n²)
+int partitionarray(int s,int e,vector<int>&arr)
+{
+   int pivot = arr[s];
+   int i = s + 1;
+   int j = e;
 
-For example, choosing the last element as pivot on an already sorted array can produce the worst case.
-
-class Solution {
-public:
-
-    int partition(vector<int>& nums, int low, int high) {
-        int pivot = nums[high];
-
-        int i = low;
-
-        for (int j = low; j < high; j++) {
-            if (nums[j] <= pivot) {
-                swap(nums[i], nums[j]);
-                i++;
-            }
+   while(i <= j)
+   {
+        while(i <= e && arr[i] <= pivot)
+        {
+            i++;
         }
 
-        swap(nums[i], nums[high]);
+        while(j > s && arr[j] > pivot)
+        {
+            j--;
+        }
 
-        return i;
+        if(i < j)
+        {
+            swap(arr[i],arr[j]);
+        }
+   }
+   swap(arr[s],arr[j]);
+   return j;
+}
+void quicksort(int s,int e,vector<int>&arr)
+{
+   if(s < e)
+   {
+        int p = partitionarray(s,e,arr);
+
+        quicksort(s,p-1,arr);
+        quicksort(p+1,e,arr);
+   }
+}
+void solve() {
+    int n;
+    cin>>n;
+    vector<int>arr(n);
+    for(int i = 0; i < n; i++)
+    {
+        cin>>arr[i];
     }
 
-    void quickSort(vector<int>& nums, int low, int high) {
-        if (low >= high)
-            return;
+    quicksort(0,n-1,arr);
 
-        int pivotIndex = partition(nums, low, high);
+    for(int i = 0; i < n; i++)
+    {
+        cout<<arr[i]<<" ";
+    }
+}
 
-        quickSort(nums, low, pivotIndex - 1);
-        quickSort(nums, pivotIndex + 1, high);
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
     }
 
-    vector<int> sortArray(vector<int>& nums) {
-        quickSort(nums, 0, nums.size() - 1);
-        return nums;
-    }
-};
+    return 0;
+}
