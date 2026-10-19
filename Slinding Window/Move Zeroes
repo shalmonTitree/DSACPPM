@@ -1,23 +1,93 @@
+Approaches: Brute Force, Better, and Optimal
+
+1. BRUTE FORCE APPROACH
+
+Idea:
+Create a temporary array containing all non-zero elements, then copy them back into the original array and fill the remaining positions with zeroes.
+
+Time Complexity: O(n)
+Space Complexity: O(n)
 class Solution {
 public:
     void moveZeroes(vector<int>& nums) {
-        int n = nums.size();
-        int idx = 0;
-        for(int i = 0; i < n; i++)
-        {
-            if(nums[i] != 0)
-            {
-                nums[idx] = nums[i];
-                idx++;
+        vector<int> temp;
+
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] != 0) {
+                temp.push_back(nums[i]);
             }
         }
 
-        for(int i = idx; i < n; i++)
-        {
-            nums[idx] = 0;
-            idx++;
+        int j = 0;
+
+        for (int i = 0; i < temp.size(); i++) {
+            nums[j++] = temp[i];
         }
 
+        while (j < nums.size()) {
+            nums[j++] = 0;
+        }
     }
 };
 
+
+2. BETTER APPROACH
+
+Idea:
+Move all non-zero elements to the beginning of the original array using a pointer. Then fill the remaining positions with zeroes. This avoids using an extra array.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+class Solution {
+public:
+    void moveZeroes(vector<int>& nums) {
+        int j = 0;
+
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] != 0) {
+                nums[j] = nums[i];
+                j++;
+            }
+        }
+
+        while (j < nums.size()) {
+            nums[j] = 0;
+            j++;
+        }
+    }
+};
+
+
+3. OPTIMAL APPROACH
+
+Idea:
+Use two pointers. The first pointer j tracks the position where the next non-zero element should be placed. The second pointer i traverses the array. Whenever a non-zero element is found, swap it with nums[j] and increment j.
+
+This moves zeroes to the end while preserving the relative order of non-zero elements and minimizing unnecessary operations.
+
+Time Complexity: O(n)
+Space Complexity: O(1)
+class Solution {
+public:
+    void moveZeroes(vector<int>& nums) {
+        int j = 0;
+
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] != 0) {
+                if (i != j) {
+                    swap(nums[i], nums[j]);
+                }
+                j++;
+            }
+        }
+    }
+};
+
+
+
+COMPLEXITY SUMMARY
+Approach       Time Complexity    Space Complexity
+
+Brute Force    O(n)               O(n)
+Better         O(n)               O(1)
+Optimal        O(n)               O(1)
