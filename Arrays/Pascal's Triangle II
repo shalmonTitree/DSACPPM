@@ -1,0 +1,49 @@
+Approach 1: Brute force — generate the entire triangle
+Generate all rows from 0 to rowIndex, then return the last row.
+class Solution {
+public:
+    vector<int> getRow(int rowIndex) {
+        vector<vector<int>> triangle;
+
+        for (int i = 0; i <= rowIndex; i++) {
+            vector<int> row(i + 1, 1);
+
+            for (int j = 1; j < i; j++) {
+                row[j] = triangle[i - 1][j - 1]
+                       + triangle[i - 1][j];
+            }
+
+            triangle.push_back(row);
+        }
+
+        return triangle[rowIndex];
+    }
+};
+
+
+Time Complexity: O(n²)
+
+Space Complexity: O(n²), where n = rowIndex + 1.
+
+
+
+
+//optimal : using only part of formula 
+class Solution {
+public:
+    vector<int> getRow(int rowIndex) {
+        vector<int> ans;
+        long long val = 1;
+
+        for (int col = 0; col <= rowIndex; col++) {
+            ans.push_back((int)val);
+
+            if (col < rowIndex) {
+                val = val * (rowIndex - col) / (col + 1);
+            }
+        }
+
+        return ans;
+    }
+};
+
