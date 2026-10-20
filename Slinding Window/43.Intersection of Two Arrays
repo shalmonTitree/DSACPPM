@@ -1,43 +1,99 @@
-//bruteforce
+1. Brute Force — Nested Loops
+Idea: For every element in the first array, search the second array for a match. Use a visited array to avoid adding the same element more than once.
 class Solution {
-public:
-    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
-        vector<int>ans;
-        set<int>st;
-        for(int i = 0; i < nums1.size(); i++)
-        {
-            for(int j = 0; j < nums2.size(); j++)
-            {
-                if(nums1[i] == nums2[j])
-                {
-                    st.insert(nums2[j]);
+  public:
+    vector<int> intersection(vector<int>& a, vector<int>& b) {
+        vector<int> ans;
+        vector<int> visited(b.size(), 0);
+
+        for (int i = 0; i < a.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                if (a[i] == b[j] && visited[j] == 0) {
+                    ans.push_back(a[i]);
+                    visited[j] = 1;
                     break;
                 }
             }
+
+            if (!ans.empty() && ans.back() == a[i])
+                continue;
         }
-        for(auto it: st)
-        {
-            ans.push_back(it);
-        }
+
         return ans;
     }
 };
 
 
-//optimal
+TC: O(n * m)
+
+SC: O(m) auxiliary space.
+
+Note: This version can still add duplicates from a in some cases. For a distinct intersection, skip duplicate elements in a:
+if (i > 0 && a[i] == a[i - 1])
+    continue;
+
+
+Add this at the beginning of the outer loop.
+2. Better — Binary Search
+Idea: Since both arrays are sorted, use binary search to find each distinct element of the first array in the second array.
 class Solution {
-public:
-    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
-        unordered_set<int> st(nums1.begin(), nums1.end());
+  public:
+    vector<int> intersection(vector<int>& a, vector<int>& b) {
         vector<int> ans;
 
-        for (int x : nums2) {
-            if (st.count(x)) {
-                ans.push_back(x);
-                st.erase(x);   // avoid duplicates
+        for (int i = 0; i < a.size(); i++) {
+            if (i > 0 && a[i] == a[i - 1])
+                continue;
+
+            if (binary_search(b.begin(), b.end(), a[i])) {
+                ans.push_back(a[i]);
             }
         }
 
         return ans;
     }
 };
+
+
+TC: O(n log m)
+
+SC: O(1) auxiliary space, excluding the output array.
+3. Optimal — Two Pointers
+Idea: Since both arrays are sorted, compare their current elements and move the pointer pointing to the smaller element. When they match, add the element once and move both pointers forward.
+class Solution {
+  public:
+    vector<int> intersection(vector<int>& a, vector<int>& b) {
+        vector<int> ans;
+        int i = 0, j = 0;
+
+        while (i < a.size() && j < b.size()) {
+            if (a[i] < b[j]) {
+                i++;
+            }
+            else if (a[i] > b[j]) {
+                j++;
+            }
+            else {
+                if (ans.empty() || ans.back() != a[i]) {
+                    ans.push_back(a[i]);
+                }
+
+                i++;
+                j++;
+            }
+        }
+
+        return ans;
+    }
+};
+
+
+TC: O(n + m)
+
+SC: O(1) auxiliary space, excluding the output array.
+
+Quick comparison for interviews
+Approach	Time Complexity	Auxiliary Space
+Brute Force	O(n * m)	O(m)
+Better (Binary Search)	O(n log m)	O(1)
+Optimal (Two Pointers)	O(n + m)	O(1)
