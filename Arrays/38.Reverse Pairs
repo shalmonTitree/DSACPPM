@@ -17,3 +17,80 @@ public:
         return cnt;
     }
 };
+//optimal using mergesort
+class Solution {
+public:
+     int cnt = 0;
+    void merge(int s,int e,int mid,vector<int>&arr)
+    {
+        vector<int>temp;
+        int l = s;
+        int r = mid + 1;
+
+        while(l <= mid && r <= e)
+        {
+            if(arr[l] <= arr[r])
+            {
+                temp.push_back(arr[l]);
+                l++;
+            }
+            else
+            {
+                temp.push_back(arr[r]);
+                r++;
+            }
+        }
+
+        while(l <= mid)
+        {
+            temp.push_back(arr[l]);
+            l++;
+        }
+
+        while(r <= e)
+        {
+            temp.push_back(arr[r]);
+            r++;
+        }
+
+
+        for(int i = s; i <= e; i++)
+        {
+            arr[i] = temp[i-s];
+        }
+    }
+    
+    void countpairs(int s,int mid,int e,vector<int>&arr)
+    {
+        int right = mid + 1;
+        for(int i = s; i <= mid; i++)
+        {
+            while(right <= e && (long long)arr[i] > 2LL * arr[right])
+            {
+                right++;
+            }
+            cnt += (right - (mid + 1));
+        }
+    }
+    void mergesort(int s,int e,vector<int>&arr)
+    {
+        if(s >= e)
+        {
+            return;
+        }
+
+        int mid = s + (e - s)/2;
+
+        mergesort(s,mid,arr);
+        mergesort(mid+1,e,arr);
+
+        //new fncution
+        countpairs(s,mid,e,arr);
+        merge(s,e,mid,arr);
+    }
+    int reversePairs(vector<int>& nums) {
+        int n = nums.size();
+        mergesort(0,n-1,nums);
+        return cnt;
+    }
+};
