@@ -1,0 +1,64 @@
+//bruteforce : using pow
+Time Complexity (TC): \(O(n)\) — if the loop iterates through all \(n\) elements.
+Space Complexity (SC): \(O(1)\) — if you use only a fixed number of variables and no extra data structures.
+
+class Solution {
+public:
+    int mySqrt(int x) {
+        if(x == 0) return 0;
+
+        for(int i = 1; i <= x; i++)
+        {
+            //i^2 i.e base,exponent
+            if(pow(i,2) > x)
+            {
+                return i - 1;
+            }
+        }
+        return -1;
+    }
+};
+
+//another bruteforce
+class Solution {
+public:
+    int mySqrt(int x) {
+        if (x == 0) return 0;
+
+        for (int i = 1; i <= x; i++) {
+            if (i * i == x) {
+                return i;
+            }
+            if (i * i > x) {
+                return i - 1;
+            }
+        }
+        return -1;
+    }
+};
+
+//binaryseach
+Time Complexity: (O(log x))
+Space Complexity: (O(1))
+class Solution {
+public:
+    int mySqrt(int x) {
+        int l = 1;
+        int h = x;
+        int ans = 0;
+        while(l <= h)
+        {
+            int mid = l + (h - l)/2;
+            if((1LL * mid * mid) <= x)
+            {
+                ans = mid;
+                l = mid + 1;
+            }
+            else
+            {
+                h = mid - 1;
+            }
+        }
+        return ans;
+    }
+};
