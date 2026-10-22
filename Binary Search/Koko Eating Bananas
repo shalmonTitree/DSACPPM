@@ -1,0 +1,83 @@
+//bruteforce : tle
+class Solution {
+public:
+    int minEatingSpeed(vector<int>& piles, int h) {
+        int n = piles.size();
+        long long  maxi = *max_element(piles.begin(),piles.end());
+        long long  ans = INT_MAX;
+        for(long long  i = 1; i <= maxi; i++)
+        {
+            long long  cnt = 0;
+
+            for(int j = 0; j < n; j++)
+            {
+                cnt += piles[j] / i;
+
+                if(piles[j] % i != 0)
+                {
+                    cnt++;
+                }
+
+                if(cnt > h) break;
+            }
+            if(cnt <= h)
+            {
+                ans = min(ans,i);
+            }
+        }
+        return ans;
+    }
+};
+
+
+//optimal
+TC: O(n log m)
+
+SC: O(1)
+
+Where:
+- n = number of piles
+- m = maximum pile size
+Time complexity: Binary search takes O(log m) iterations, and each call to check() takes O(n).
+
+Space complexity: Only a constant number of extra variables are used.
+
+class Solution {
+public:
+    long long check(vector<int>& piles,long long mid)
+    {
+        long long cnt = 0;
+        for(int i = 0; i < piles.size(); i++)
+        {
+            cnt += piles[i]/mid;
+            if(piles[i] % mid != 0)
+            {
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+    int minEatingSpeed(vector<int>& piles, int h) {
+        int n = piles.size();
+        long long l = 1;
+        long long maxi = *max_element(piles.begin(),piles.end());
+        long long  ans = INT_MAX;
+
+        while(l <= maxi)
+        {
+            long long mid = l + (maxi - l)/2;
+
+            if(check(piles,mid) <= h)
+            {
+                ans = min(ans,mid);
+                maxi = mid - 1;
+            }
+            else
+            {
+                l = mid + 1;
+            }
+
+        }
+        return ans;
+    }
+};
