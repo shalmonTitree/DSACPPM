@@ -1,0 +1,80 @@
+TC: O(n * max(arr))
+
+SC: O(1)
+
+//bruteforce
+class Solution {
+  public:
+    int smallestDivisor(vector<int>& arr, int k) {
+        int n = arr.size();
+        int cnt = 0;
+        int l = 1;
+        int h = *max_element(arr.begin(),arr.end());
+        int ans = h;
+        for(int i = l; i <= h; i++)
+        {
+            int sum = 0;
+            for(int j = 0; j < n; j++)
+            {
+                sum += ceil((double)arr[j]/i);
+            }
+            if(sum <= k)
+            {
+                ans = min(ans,i);
+            }
+        }
+        return ans;
+        
+    }
+};
+
+
+//optimal : bruteforce
+TC: O(n * log(max(arr)))
+
+SC: O(1)
+
+Where:
+- n = size of arr
+- max(arr) = maximum element in the array
+The check() function takes O(n) time, and binary search runs in O(log(max(arr))) iterations.
+
+class Solution {
+  public:
+    int check(vector<int>& arr,int mid)
+    {
+        int sum = 0;
+            for(int j = 0; j < arr.size(); j++)
+            {
+                sum += ceil((double)arr[j]/mid);
+            }
+            
+        return sum;
+    }
+    int smallestDivisor(vector<int>& arr, int k) {
+        int n = arr.size();
+        int cnt = 0;
+        int l = 1;
+        int h = *max_element(arr.begin(),arr.end());
+        int ans = h;
+        
+        while(l <= h)
+        {
+            int mid = l + (h - l)/2;
+            
+            if(check(arr,mid) <= k)
+            {
+                ans = min(ans,mid);
+                h = mid - 1;
+            }
+            else
+            {
+                l = mid + 1;
+            }
+        }
+
+        return ans;
+        
+    }
+};
+
