@@ -1,0 +1,84 @@
+//bruteforce
+
+TC: O(n²) — Nested loops compare each pair of elements.
+
+SC: O(1) — Uses only a constant amount of extra space.
+
+
+
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) {
+        int n = nums.size();
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = i + 1; j < n; j++)
+            {
+                if(nums[i] == nums[j])
+                {
+                    return nums[i];
+                }
+            }
+        }
+        return 0;
+    }
+};
+
+
+//better
+TC: O(n) — The loops take O(n) time on average using an unordered_map.
+
+SC: O(n) — The unordered_map can store up to n distinct elements.
+
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) {
+        int n = nums.size();
+        unordered_map<int,int>mp;
+        for(int i = 0; i < n; i++)
+        {
+            mp[nums[i]]++;
+        }
+        for(auto it : mp)
+        {
+            if(it.second > 1)
+            {
+                return it.first;
+            }
+        }
+        return 0;
+    }
+};
+
+//optimal
+TC: O(n log n)
+
+SC: O(1)
+
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) {
+        int low = 1, high = nums.size() - 1;
+        int ans = -1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            int count = 0;
+
+            for (int num : nums) {
+                if (num <= mid) {
+                    count++;
+                }
+            }
+
+            if (count > mid) {
+                ans = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return ans;
+    }
+};
