@@ -1,0 +1,97 @@
+TC: O(n * S)
+
+SC: O(1)
+
+Where:
+- n = size of weights
+- S = sum of all weights (high - low range is bounded by S)
+
+class Solution {
+public:
+    int shipWithinDays(vector<int>& weights, int days) {
+        int n = weights.size();
+        int low = *max_element(weights.begin(),weights.end());
+        int high = accumulate(weights.begin(),weights.end(),0);
+        int ans = high;
+        for(int i = low; i <= high; i++)
+        {
+            int daystaken = 0;
+            int currweight = 0;
+            for(int j = 0; j < n; j++)
+            {
+                if((currweight + weights[j]) <= i)
+                {
+                    currweight += weights[j];
+                }
+                else
+                {
+                    daystaken++;
+                    currweight = weights[j];
+                }
+            }
+            daystaken++;
+            if(daystaken <= days)
+            {
+                ans = min(ans,i);
+            }
+        }
+        return ans;
+    }
+};
+
+
+
+//binaryseach
+TC: O(n * log S)
+
+SC: O(1)
+
+Where:
+- n = size of weights
+- S = sum of all weights
+The check() function takes O(n) time, and binary search runs in O(log S) iterations.
+class Solution {
+public:
+    int check(vector<int>& weights, int mid)
+    {
+            int daystaken = 0;
+            int currweight = 0;
+            for(int j = 0; j < weights.size(); j++)
+            {
+                if((currweight + weights[j]) <= mid)
+                {
+                    currweight += weights[j];
+                }
+                else
+                {
+                    daystaken++;
+                    currweight = weights[j];
+                }
+            }
+            daystaken++;
+
+            return daystaken;
+    }
+    int shipWithinDays(vector<int>& weights, int days) {
+        int n = weights.size();
+        int low = *max_element(weights.begin(),weights.end());
+        int high = accumulate(weights.begin(),weights.end(),0);
+        int ans = high;
+
+        while(low <= high)
+        {
+            int mid = low + (high - low)/2;
+
+            if(check(weights,mid) <= days)
+            {
+                ans = min(ans,mid);
+                high = mid - 1;
+            }
+            else
+            {
+                low = mid + 1;
+            }
+        }
+        return ans;
+    }
+};
