@@ -1,0 +1,85 @@
+//bruteforce
+class Solution {
+  public:
+    int minTime(vector<int>& arr, int k) {
+        int n = arr.size();
+        int l = *max_element(arr.begin(),arr.end());
+        int h = accumulate(arr.begin(),arr.end(),0);
+        int ans = INT_MAX;
+   
+        for(int i = l; i <= h; i++)
+        {
+            int sum = 0;
+            int c = 1;
+            for(int j = 0; j < n; j++)
+            {
+                if(arr[j] + sum <= i)
+                {
+                    sum += arr[j];
+                }
+                else
+                {
+                    c++;
+                    sum = arr[j];
+                }
+            }
+           
+            
+            if(c <= k)
+            {
+                ans = min(ans,i);
+            }
+        }
+        return ans;
+        
+    }
+};
+
+
+//optimal
+class Solution {
+  public:
+    int check(vector<int>&arr,int mid)
+    {
+        int cnt = 1;
+        int sum = 0;
+        for(auto it : arr)
+        {
+            if(it + sum <= mid)
+            {
+                sum += it;
+            }
+            else
+            {
+                cnt++;
+                sum = it;
+            }
+        }
+        return cnt;
+    }
+    int minTime(vector<int>& arr, int k) {
+        int n = arr.size();
+        int l = *max_element(arr.begin(),arr.end());
+        int h = accumulate(arr.begin(),arr.end(),0);
+        int ans = INT_MAX;
+   
+   
+        while(l <= h)
+        {
+            int mid = l + (h-l)/2;
+            
+            if(check(arr,mid) <= k)
+            {
+                ans = mid;
+                h = mid -1;
+            }
+            else
+            {
+                l = mid + 1;
+            }
+        }
+        
+        return ans;
+        
+    }
+};
