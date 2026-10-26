@@ -32,10 +32,13 @@ public:
 
 
 //optimal
+TC: O(log n)
+
+SC: O(1)
 
 class Solution {
 public:
-    int check(int mid,vector<int>&nums)
+    int check(vector<int>& nums,int mid)
     {
         if(mid == nums.size() - 1 || nums[mid] > nums[mid + 1])
         {
@@ -46,30 +49,26 @@ public:
             return 0;
         }
     }
-
-
     int findPeakElement(vector<int>& nums) {
-            int n = nums.size();
-        
-            int l = 0;
-            int h = n - 1;
-            int ans = 0;
-
-            while(l <= h)
+        int n = nums.size();
+        int l = 0;
+        int h = n - 1;
+        int ans = -1;
+        while(l <= h)
+        {
+            int mid = l+(h-l)/2;
+            if(check(nums,mid))
             {
-                int mid = (l + h)/2;
-
-                if(check(mid,nums) == 0)
-                {
-                    l = mid + 1;
-                }
-                else
-                {
-                    h = mid - 1;
-                    ans = mid;
-                }
+                
+                 h = mid - 1;
+                 ans = mid;
             }
-            return ans;
-        
+            else
+            {
+               
+                l = mid + 1;
+            }
+        }
+        return ans;
     }
 };
