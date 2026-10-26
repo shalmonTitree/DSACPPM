@@ -1,0 +1,102 @@
+//bruteforce
+TC: O(n × S), where n is the number of books and S is the sum of all pages.
+
+SC: O(1), as only a constant number of extra variables are used.
+
+class Solution {
+  public:
+    int findPages(vector<int> &arr, int k) {
+       int n = arr.size();
+       int ans = INT_MAX;
+       int l = *max_element(arr.begin(),arr.end());
+       int h = accumulate(arr.begin(),arr.end(), 0);
+       if(k > n)
+       {
+           return -1;
+       }
+       for(int i = l; i <= h; i++)
+       {
+           int pages = 0;
+           int cnt = 1;
+           for(int j = 0; j < n; j++)
+           {
+               if(pages + arr[j] <= i)
+               {
+                   pages += arr[j];
+               }
+               else
+               {
+                   cnt++;
+                   pages = arr[j];
+               }
+           }
+           if(cnt <= k)
+           {
+               ans = min(ans,i);
+           }
+       }
+       if(ans == INT_MAX)
+       {
+           return -1;
+       }
+       return ans;
+    }
+};
+
+//optimal
+TC: O(n × log S), where S is the sum of all pages.
+
+SC: O(1) auxiliary space.
+class Solution {
+  public:
+    int check(vector<int> &arr,long long mid)
+    {
+        long long pages = 0;
+           int cnt = 1;
+           for(int j = 0; j < arr.size(); j++)
+           {
+               if(pages + arr[j] <= mid)
+               {
+                   pages += arr[j];
+               }
+               else
+               {
+                   cnt++;
+                   pages = arr[j];
+               }
+           }
+           return cnt;
+    }
+    int findPages(vector<int> &arr, int k) {
+       int n = arr.size();
+       if(k > n)
+       {
+           return -1;
+       }
+       long long ans = -1;
+       long long l = *max_element(arr.begin(), arr.end());
+       long long h = accumulate(arr.begin(), arr.end(), 0LL);
+       
+       
+       while(l <= h)
+       {
+           long long mid = l + (h-l)/2;
+           if(check(arr,mid) <= k)
+           {
+               ans = mid;
+               h = mid - 1;
+               
+           }
+           else
+           {
+               l = mid + 1;
+           }
+       }
+       
+       if(ans == -1)
+       {
+           return -1;
+       }
+       return ans;
+    }
+};
