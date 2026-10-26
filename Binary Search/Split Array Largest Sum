@@ -1,0 +1,87 @@
+//bruteforce
+TC: O(n * S), where n is the size of the array and S is the sum of all elements.
+
+SC: O(1), as only a constant number of extra variables are used.
+
+class Solution {
+public:
+    int splitArray(vector<int>& nums, int k) {
+        int n = nums.size();
+        int l = *max_element(nums.begin(),nums.end());
+        int h = accumulate(nums.begin(),nums.end(),0);
+        int ans = INT_MAX;
+
+        for(int i = l;i <= h; i++)
+        {
+            int cnt = 1;
+            int sum = 0;
+            for(int j = 0; j < n; j++)
+            {
+                if(nums[j] + sum <= i)
+                {
+                    sum += nums[j];
+                }
+                else
+                {
+                    cnt++;
+                    sum = nums[j];
+                }
+            }
+            if(cnt <= k)
+            {
+                ans = min(ans,i);
+            }
+        }
+        return ans;
+    }
+};
+
+
+//optimal
+TC: O(n * log S), where n is the size of the array and S is the sum of all elements.
+
+SC: O(1), as only a constant number of extra variables are used.
+class Solution {
+public:
+    int check(vector<int>& nums,int mid)
+    {
+        int cnt = 1;
+            int sum = 0;
+            for(int j = 0; j < nums.size(); j++)
+            {
+                if(nums[j] + sum <= mid)
+                {
+                    sum += nums[j];
+                }
+                else
+                {
+                    cnt++;
+                    sum = nums[j];
+                }
+            }
+            return cnt;
+    }
+    int splitArray(vector<int>& nums, int k) {
+        int n = nums.size();
+        int l = *max_element(nums.begin(),nums.end());
+        int h = accumulate(nums.begin(),nums.end(),0);
+        int ans = INT_MAX;
+
+        while(l <= h)
+        {
+            int mid = l+(h-l)/2;
+
+            if(check(nums,mid) <= k)
+            {
+                ans = min(ans,mid);
+                h = mid - 1;
+            }
+            else
+            {
+                l = mid + 1;
+            }
+        }
+        
+        return ans;
+    }
+};
