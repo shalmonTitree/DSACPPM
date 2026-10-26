@@ -1,4 +1,8 @@
 //bruteforce
+TC: O(n * S), where n is the size of the array and S is the sum of all elements.
+SC: O(1), as only a constant number of extra variables are used.
+
+
 class Solution {
   public:
     int minTime(vector<int>& arr, int k) {
@@ -37,6 +41,10 @@ class Solution {
 
 
 //optimal
+TC: O(n * log S), where n is the size of the array and S is the sum of all elements. Binary search takes O(log S) iterations, and each call to check() takes O(n).
+
+SC: O(1), as only a constant amount of extra space is used.
+
 class Solution {
   public:
     int check(vector<int>&arr,int mid)
