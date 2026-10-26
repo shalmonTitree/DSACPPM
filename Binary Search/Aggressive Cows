@@ -1,0 +1,84 @@
+//bruteforce
+TC: O(n log n + n * D), where n is the size of the array and D = arr[n-1] - arr[0]. Sorting takes O(n log n), and the nested loops take O(n * D).
+
+SC: O(1) auxiliary space, excluding the sorting algorithm's internal stack space.
+
+
+class Solution {
+  public:
+    int aggressiveCows(vector<int> &arr, int k) {
+        // code here
+        int n = arr.size();
+        sort(arr.begin(),arr.end());
+        int l = 0;
+        int h = arr[n-1] - arr[0];
+        int ans = INT_MIN;
+        for(int i = 1; i <= h; i++)
+        {
+            int stall = 1;
+            int last = arr[0];
+            for(int j = 1; j < n; j++)
+            {
+                if(arr[j] - last >= i)
+                {
+                    stall++;
+                    last = arr[j];
+                }
+            }
+            if(stall >= k)
+            {
+                ans = max(ans,i);
+            }
+        }
+        return ans;
+    }
+};
+
+//bs
+TC: O(n log n + n log D), where D = arr[n-1] - arr[0].
+
+SC: O(1) auxiliary space, excluding sorting's internal stack space.
+
+
+class Solution {
+  public:
+    int check(vector<int> &arr,int mid)
+    {
+        int stall = 1;
+            int last = arr[0];
+            for(int j = 1; j < arr.size(); j++)
+            {
+                if(arr[j] - last >= mid)
+                {
+                    stall++;
+                    last = arr[j];
+                }
+            }
+            
+            return stall;
+    }
+    int aggressiveCows(vector<int> &arr, int k) {
+        // code here
+        int n = arr.size();
+        sort(arr.begin(),arr.end());
+        int l = 0;
+        int h = arr[n-1] - arr[0];
+        int ans = INT_MIN;
+        
+        while(l <= h)
+        {
+            int mid = l + (h - l)/2;
+            if(check(arr,mid) >= k)
+            {
+                ans = max(ans,mid);
+                l = mid + 1;
+            }
+            else
+            {
+               h = mid-1;
+            }
+        }
+        return ans;
+        
+    }
+};
