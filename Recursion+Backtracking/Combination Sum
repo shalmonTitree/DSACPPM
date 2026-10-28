@@ -1,18 +1,24 @@
+Time Complexity (TC): O(N^(T/M))
 
-Final Answer (Interview)
-Time Complexity: O(2^T * K) (Approx.)
-Space Complexity: O(T)
+Auxiliary Space Complexity (SC): O(T/M), excluding the output.
 
-where:
+Output Space: Depends on the number and size of valid combinations.
 
-T = Target value
-K = Average length of each combination
+Where:
+- N = number of candidates.
+- T = target value.
+- M = smallest candidate value.
+Why?
+- Each candidate can be reused multiple times, so the recursion explores an exponential number of possibilities.
+- The maximum recursion depth is T/M because each chosen candidate is at least M.
+- The current combination and recursion stack require O(T/M) auxiliary space.
+Interview answer: TC = O(N^(T/M)), auxiliary SC = O(T/M), excluding the output.
+
+
 
 class Solution {
 public:
-    vector<vector<int>>ans;
-    vector<int>curr;
-    void solve(int idx,vector<int>& candidates, int target)
+    void solve(int idx,vector<int>& candidates, int target,vector<vector<int>>&ans,vector<int>&curr)
     {
         if(target == 0)
         {
@@ -20,28 +26,26 @@ public:
             return;
         }
 
-        if(idx < 0 || target < 0)
+        if(idx == candidates.size())
         {
-            return ;
+            return;
         }
 
-        //take
         if(candidates[idx] <= target)
         {
             curr.push_back(candidates[idx]);
-            solve(idx,candidates,target - candidates[idx]);
+            solve(idx,candidates,target - candidates[idx],ans,curr);
             curr.pop_back();
         }
 
-        //nottake
-        solve(idx-1,candidates,target);
+        solve(idx+1,candidates,target,ans,curr);
     }
-
     vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
         int n = candidates.size();
-        
-        solve(n-1,candidates,target);
-        return ans;
+        vector<vector<int>>ans;
+        vector<int>curr;
 
+        solve(0,candidates,target,ans,curr);
+        return ans;
     }
 };
