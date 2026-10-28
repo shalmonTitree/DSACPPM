@@ -24,3 +24,15 @@ public:
         return ans;
     }
 };
+
+
+
+follow up
+1.Follow-up 1: Return the actual path, not just the maximum sum
+Approach:
+1. Maintain maxSum globally.
+2. Store the node where the maximum path is centered.
+3. At each node, record which left and right child contributions are positive.
+4. Reconstruct the path by collecting the left branch, the center node, and the right branch.
+
+
