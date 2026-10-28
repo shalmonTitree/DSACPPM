@@ -1,0 +1,116 @@
+//bruteforce
+Time Complexity (TC):
+
+- Copying elements from nums1: O(m)
+- Copying elements from nums2: O(n)
+- Sorting the combined array: O((m+n) log(m+n))
+- Finding the median: O(1)
+
+Overall TC: O((m+n) log(m+n))
+
+Space Complexity (SC):
+
+- Storing all elements in the store vector: O(m+n)
+- Additional sorting stack space: implementation-dependent.
+
+Overall SC: O(m+n)
+
+Interview answer:\
+TC: O((m+n) log(m+n))\
+SC: O(m+n)
+
+
+
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        vector<int>store;
+        for(auto it : nums1) store.push_back(it);
+        for(auto it : nums2) store.push_back(it);
+
+        sort(store.begin(),store.end());
+        if(store.size() % 2 != 0)
+        {
+            return store[store.size()/2];
+        }
+
+        return ((double)store[store.size()/2 - 1] + store[store.size()/2])/2.0;
+    }
+};
+
+
+//better
+TC: O(m+n)
+SC: O(m+n)
+
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        vector<int>store;
+        int i = 0;
+        int j = 0;
+        int n = nums1.size();
+        int m = nums2.size();
+
+        while(i < n && j < m)
+        {
+            if(nums1[i] <= nums2[j])
+            {
+                store.push_back(nums1[i]);
+                i++;
+            }
+            else
+            {
+                store.push_back(nums2[j]);
+                j++;
+            }
+        }
+
+        while(i < n)
+        {
+            store.push_back(nums1[i]);
+            i++;
+        }
+
+        while(j < m)
+        {
+            store.push_back(nums2[j]);
+            j++;
+        }
+
+        
+        if(store.size() % 2 != 0)
+        {
+            return store[store.size()/2];
+        }
+
+        return ((double)store[store.size()/2 - 1] + store[store.size()/2])/2.0;
+    }
+};
+
+
+//optimmal 1
+TC: O(m+n)
+Auxiliary SC: O(1)
+
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& a, vector<int>& b) {
+        int m = a.size(), n = b.size();
+        int total = m + n;
+        int i = 0, j = 0;
+        int prev = 0, curr = 0;
+
+        for(int k = 0; k <= total / 2; k++) {
+            prev = curr;
+
+            if(i < m && (j >= n || a[i] <= b[j]))
+                curr = a[i++];
+            else
+                curr = b[j++];
+        }
+
+        if(total % 2 == 1) return curr;
+        return ((long long)prev + curr) / 2.0;
+    }
+};
