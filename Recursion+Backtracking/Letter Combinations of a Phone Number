@@ -1,0 +1,45 @@
+Time Complexity (TC): O(n × 4^n)
+Space Complexity (SC): O(n) auxiliary space, excluding the output.
+Output Space: O(n × 4^n)
+
+Why?
+- There are at most 4^n combinations.
+- Each combination takes O(n) time to construct and store.
+- The recursion depth and current string require O(n) space.
+In an interview, mention:
+- TC: O(n × 4^n)
+- Auxiliary SC: O(n), excluding the output.
+
+
+class Solution {
+public:
+    void solve(int idx,string digits,string curr,vector<string>&ans,vector<string>&map)
+    {
+        if(idx == digits.size())
+        {
+            ans.push_back(curr);
+            return;
+        }
+
+        int digit = digits[idx] - '0'; //convert char to int
+
+        for(char ch : map[digit])
+        {
+            curr.push_back(ch);
+            solve(idx+1,digits,curr, ans,map);
+            curr.pop_back();
+        }
+    }
+    vector<string> letterCombinations(string digits) {
+        if(digits.empty())
+            return {};
+        vector<string>ans;
+        vector<string>map = {"", "","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
+        int n = digits.size();
+
+        solve(0,digits,"",ans,map);
+
+        return ans;
+
+    }
+};
