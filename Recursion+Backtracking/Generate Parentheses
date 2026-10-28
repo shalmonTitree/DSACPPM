@@ -1,0 +1,46 @@
+Time Complexity (TC): O(4^n / √n)
+
+Auxiliary Space Complexity (SC): O(n), excluding the output.
+
+Output Space: O(n × 4^n / √n) = O(√n × 4^n)
+
+Why?
+
+- There are Cn = O(4^n / √n) valid parentheses combinations (Catalan number).
+- Each combination has length 2n, so generating and storing all results takes O(n × Cn) time.
+- The recursion depth and current string require O(n) auxiliary space.
+
+Interview answer: TC = O(4^n / √n), auxiliary SC = O(n), excluding the output.
+
+
+class Solution {
+public:
+    void solve(int n, int open,int close,string &curr,vector<string>&ans)
+    {
+        if(open == n && close == n)
+        {
+            ans.push_back(curr);
+            return;
+        }
+
+        if(open < n)
+        {
+            curr.push_back('(');
+            solve(n,open+1,close,curr,ans);
+            curr.pop_back();
+        }
+
+        if(close < open)
+        {
+            curr.push_back(')');
+            solve(n,open,close+1,curr,ans);
+            curr.pop_back();
+        }
+    }
+    vector<string> generateParenthesis(int n) {
+        vector<string>ans;
+        string curr = "";
+        solve(n,0,0,curr,ans);
+        return ans;
+    }
+};
