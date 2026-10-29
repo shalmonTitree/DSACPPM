@@ -1,4 +1,11 @@
 //rec
+Time Complexity: O(2^(m+n))
+- At each cell, we make up to 2 recursive calls: up and left.
+- The maximum recursion depth is m + n - 1.
+Space Complexity: O(m + n)
+
+- The recursion stack can reach a maximum depth of m + n - 1.
+
 class Solution {
 public:
     int solve(int i,int j,int m,int n)
@@ -24,6 +31,13 @@ public:
 };
 
 //memo
+Time Complexity: O(m × n)
+- Each cell's result is calculated only once.
+- Each calculation takes O(1) work apart from recursive calls.
+Space Complexity: O(m × n)
+- DP array: O(m × n).
+- Recursion stack: O(m + n).
+
 class Solution {
 public:
     int solve(int i,int j,int m,int n,vector<vector<int>>&dp)
@@ -55,6 +69,13 @@ public:
 };
 
 //tabu
+Time Complexity: O(m × n)
+- Two nested loops visit every cell once.
+- Each cell is calculated in O(1) time.
+Space Complexity: O(m × n)
+- The 2D DP array stores m × n values (your code allocates slightly more using m+1 and n+1, which does not change the asymptotic complexity).
+- No recursion stack is used.
+
 class Solution {
 public:
     
