@@ -1,22 +1,17 @@
-//////////////////////////////////////////////////////////////////
-// 1. Brute Force
-// Time: O(n^2)
-// Space: O(1)
-//////////////////////////////////////////////////////////////////
+Brute Force — Running Product
+Time: (O(n^2))
+Extra space: (O(1))
 
-class BruteForceSolution {
+class Solution {
 public:
     int maxProduct(vector<int>& nums) {
-
         int n = nums.size();
         int ans = INT_MIN;
 
-        for(int i = 0; i < n; i++)
-        {
+        for (int i = 0; i < n; i++) {
             int product = 1;
 
-            for(int j = i; j < n; j++)
-            {
+            for (int j = i; j < n; j++) {
                 product *= nums[j];
                 ans = max(ans, product);
             }
@@ -26,41 +21,72 @@ public:
     }
 };
 
+Dynamic Programming Using Arrays
+Time: (O(n))
+Extra space: (O(n))
 
-//////////////////////////////////////////////////////////////////
-// 3. DP (Maximum & Minimum Product)
-// Standard Interview Solution
-// Time: O(n)
-// Space: O(1)
-//////////////////////////////////////////////////////////////////
-
-class DPSolution {
+class Solution {
 public:
     int maxProduct(vector<int>& nums) {
+        int n = nums.size();
 
-        int maxEnding = nums[0];
-        int minEnding = nums[0];
+        vector<int> maxDP(n);
+        vector<int> minDP(n);
+
+        maxDP[0] = nums[0];
+        minDP[0] = nums[0];
+
         int ans = nums[0];
 
-        for(int i = 1; i < nums.size(); i++)
-        {
-            int temp = maxEnding;
+        for (int i = 1; i < n; i++) {
+            int x = nums[i];
 
-            maxEnding = max({
-                nums[i],
-                nums[i] * maxEnding,
-                nums[i] * minEnding
+            maxDP[i] = max({
+                x,
+                x * maxDP[i - 1],
+                x * minDP[i - 1]
             });
 
-            minEnding = min({
-                nums[i],
-                nums[i] * temp,
-                nums[i] * minEnding
+            minDP[i] = min({
+                x,
+                x * maxDP[i - 1],
+                x * minDP[i - 1]
             });
 
-            ans = max(ans, maxEnding);
+            ans = max(ans, maxDP[i]);
         }
 
         return ans;
     }
 };
+
+
+Optimized Dynamic Programming — \(O(1)\) Space
+This is the approach I recommend for interviews. It uses the same logic as Approach 3 but removes the arrays.
+Time: (O(n))
+Extra space: (O(1))
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int maxProd = nums[0];
+        int minProd = nums[0];
+        int ans = nums[0];
+
+        for (int i = 1; i < nums.size(); i++) {
+            int x = nums[i];
+
+            if (x < 0) {
+                swap(maxProd, minProd);
+            }
+
+            maxProd = max(x, maxProd * x);
+            minProd = min(x, minProd * x);
+
+            ans = max(ans, maxProd);
+        }
+
+        return ans;
+    }
+};
+
+
