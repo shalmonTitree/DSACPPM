@@ -4,34 +4,54 @@ Complexity
 - Time: O(N²) worst case, when the tree is skewed.
 - Auxiliary space: O(H) for the recursion stack.
 
+
 class Solution {
 public:
-    int countFrom(TreeNode* root, long long targetSum) {
-        if (root == nullptr)
-            return 0;
 
-        int count = 0;
+    int cnt = 0;
 
-        if (root->val == targetSum)
-            count++;
+    void dfs(TreeNode* node, long long sum, int targetSum)
+    {
+        if(node == NULL)
+        {
+            return;
+        }
 
-        count += countFrom(root->left, targetSum - root->val);
-        count += countFrom(root->right, targetSum - root->val);
+        sum += node->val;
 
-        return count;
+        if(sum == targetSum)
+        {
+            cnt++;
+        }
+
+        dfs(node->left, sum, targetSum);
+        dfs(node->right, sum, targetSum);
     }
 
-    int pathSum(TreeNode* root, int targetSum) {
-        if (root == nullptr)
-            return 0;
+    void traverse(TreeNode* node, int targetSum)
+    {
+        if(node == NULL)
+        {
+            return;
+        }
 
-        return countFrom(root, targetSum)
-             + pathSum(root->left, targetSum)
-             + pathSum(root->right, targetSum);
+        // Start a path from this node
+        dfs(node, 0, targetSum);
+
+        // Try every node as starting point
+        traverse(node->left, targetSum);
+        traverse(node->right, targetSum);
+    }
+
+    int pathSum(TreeNode* root, int targetSum)
+    {
+        cnt = 0;
+
+        traverse(root, targetSum);
+
+        return cnt;
     }
 };
-
-
 Optimal — Prefix Sum + Hash Map
 Idea: Instead of recalculating path sums from every node, maintain a running sum from the root to the current node.
 
