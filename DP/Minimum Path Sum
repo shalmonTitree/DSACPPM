@@ -1,4 +1,11 @@
 //bruteforce : tle
+Time Complexity: O(2^(N+M))
+- At each cell, the function makes up to two recursive calls: up and left.
+- The recursion explores many overlapping paths, resulting in exponential time complexity.
+Space Complexity: O(N + M)
+- The maximum recursion depth is N + M - 1.
+- No additional data structure is used.
+
 class Solution {
 public:
     int solve(int i,int j,vector<vector<int>>& grid)
@@ -31,6 +38,14 @@ public:
 
 
 //memo
+Time Complexity: O(N × M)
+- Each cell's minimum path sum is computed only once.
+- Each computation takes O(1) work, excluding recursive calls.
+Space Complexity: O(N × M)
+- DP array: O(N × M).
+- Recursion stack: O(N + M).
+
+
 class Solution {
 public:
     int solve(int i,int j,vector<vector<int>>& grid,vector<vector<int>>&dp)
@@ -64,6 +79,13 @@ public:
 };
 
 //tabu
+Time Complexity: O(N × M)
+- Two nested loops visit every grid cell once.
+- Each cell is computed in O(1) time.
+Space Complexity: O(N × M)
+- The 2D DP array stores N × M values.
+- No recursion stack is needed.
+
 class Solution {
 public:
     
