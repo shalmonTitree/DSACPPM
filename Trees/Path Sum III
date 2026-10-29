@@ -1,48 +1,75 @@
+Brute Force — DFS from Every Node
+Idea: Start a path from every node and count all downward paths whose sum equals targetSum
+Complexity
+- Time: O(N²) worst case, when the tree is skewed.
+- Auxiliary space: O(H) for the recursion stack.
 
 class Solution {
 public:
+    int countFrom(TreeNode* root, long long targetSum) {
+        if (root == nullptr)
+            return 0;
 
-    int cnt = 0;
+        int count = 0;
 
-    void dfs(TreeNode* node, long long sum, int targetSum)
-    {
-        if(node == NULL)
-        {
-            return;
-        }
+        if (root->val == targetSum)
+            count++;
 
-        sum += node->val;
+        count += countFrom(root->left, targetSum - root->val);
+        count += countFrom(root->right, targetSum - root->val);
 
-        if(sum == targetSum)
-        {
-            cnt++;
-        }
-
-        dfs(node->left, sum, targetSum);
-        dfs(node->right, sum, targetSum);
+        return count;
     }
 
-    void traverse(TreeNode* node, int targetSum)
-    {
-        if(node == NULL)
-        {
-            return;
-        }
+    int pathSum(TreeNode* root, int targetSum) {
+        if (root == nullptr)
+            return 0;
 
-        // Start a path from this node
-        dfs(node, 0, targetSum);
+        return countFrom(root, targetSum)
+             + pathSum(root->left, targetSum)
+             + pathSum(root->right, targetSum);
+    }
+};
 
-        // Try every node as starting point
-        traverse(node->left, targetSum);
-        traverse(node->right, targetSum);
+
+Optimal — Prefix Sum + Hash Map
+Idea: Instead of recalculating path sums from every node, maintain a running sum from the root to the current node.
+
+If the current prefix sum is sum, a path ending at the current node has the target sum when an earlier prefix sum equals:
+
+sum - targetSum
+
+We store prefix sums and their frequencies in an unordered_map.
+Complexity
+- Time: O(N) on average, assuming expected constant-time hash map operations.
+- Auxiliary space: O(H) for recursion and up to O(H) prefix-sum entries along the current path
+
+
+class Solution {
+public:
+    int dfs(TreeNode* root, long long sum, int targetSum,
+            unordered_map<long long, int>& prefix) {
+        if (root == nullptr)
+            return 0;
+
+        sum += root->val;
+
+        int count = prefix[sum - targetSum];
+
+        prefix[sum]++;
+
+        count += dfs(root->left, sum, targetSum, prefix);
+        count += dfs(root->right, sum, targetSum, prefix);
+
+        prefix[sum]--;
+
+        return count;
     }
 
-    int pathSum(TreeNode* root, int targetSum)
-    {
-        cnt = 0;
+    int pathSum(TreeNode* root, int targetSum) {
+        unordered_map<long long, int> prefix;
+        prefix[0] = 1;
 
-        traverse(root, targetSum);
-
-        return cnt;
+        return dfs(root, 0, targetSum, prefix);
     }
 };
