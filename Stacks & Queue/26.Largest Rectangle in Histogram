@@ -1,67 +1,100 @@
+
 class Solution {
 public:
-    vector<int>PSI(vector<int>& heights)
-    {
-        vector<int>ans; //store index
-        stack<pair<int,int>>st; //element,index
-        for(int i = 0; i < heights.size(); i++)
-        {
-            while(!st.empty() && st.top().first >= heights[i])
-            {
-                st.pop();
-            }
-
-            if(st.empty())
-            {
-                ans.push_back(-1);
-            }
-            else
-            {
-                ans.push_back(st.top().second);
-            }
-
-            st.push({heights[i], i});
-        }
-        return ans;
-    }
-
-
-    vector<int>NSI(vector<int>& heights)
-    {
-        vector<int>ans; //store index
-        stack<pair<int,int>>st; //element,index
-        for(int i = heights.size() - 1; i >= 0; i--)
-        {
-            while(!st.empty() && st.top().first >= heights[i])
-            {
-                st.pop();
-            }
-
-            if(st.empty())
-            {
-                ans.push_back(heights.size());
-            }
-            else
-            {
-                ans.push_back(st.top().second);
-            }
-            st.push({heights[i], i});
-        }
-        reverse(ans.begin(), ans.end());
-        return ans;
-    }
-
-
     int largestRectangleArea(vector<int>& heights) {
-        vector<int>previousSmallerIndex = PSI(heights);
-        vector<int>NextSmallerIndex = NSI(heights);
+        int n = heights.size();
         int ans = 0;
-        for(int i = 0; i < heights.size(); i++)
+        for(int i = 0; i < n; i++)
         {
-            int val = (NextSmallerIndex[i] - previousSmallerIndex[i] - 1) * heights[i];
-            ans = max(ans,val);
+            int mini = INT_MAX;
+            for(int j = i; j < n; j++)
+            {
+                mini = min(mini,heights[j]);
+
+                int w = (j-i+1);
+                int area = w * mini;
+                ans = max(ans,area);
+            }
         }
         return ans;
     }
 };
 
+
+
+//optimal
+TC: O(N)
+Auxiliary SC: O(N)
+Total SC: O(N)
+
+class Solution {
+public:
+    void nextsmaller(vector<int>& heights,vector<int>&next)
+    {
+        int n = heights.size();
+        stack<pair<int,int>>st;
+        for(int i = n - 1; i >= 0; i--)
+        {
+            while(!st.empty() && st.top().first >= heights[i])
+            {
+                st.pop();
+            }
+
+            if(st.empty())
+            {
+                next[i] = n;
+            }
+            else
+            {
+                next[i] = st.top().second;
+            }
+
+            st.push({heights[i],i});
+        }
+        
+    }
+
+
+    void prevsmaller(vector<int>& heights,vector<int>&prev)
+    {
+        int n = heights.size();
+        stack<pair<int,int>>st; //value,index
+        for(int i = 0; i < n; i++)
+        {
+            while(!st.empty() && st.top().first >= heights[i])
+            {
+                st.pop();
+            }
+
+            if(st.empty())
+            {
+                prev[i] = -1;
+            }
+            else
+            {
+                prev[i] = st.top().second;
+            }
+
+            st.push({heights[i],i});
+        }
+    }
+
+    int largestRectangleArea(vector<int>& heights) {
+        int n = heights.size();
+        vector<int>next(n),prev(n);
+        nextsmaller(heights,next);
+        prevsmaller(heights,prev);
+
+        int ans = 0;
+
+        for(int i = 0; i < n; i++)
+        {
+            int w = next[i] - prev[i] - 1;
+            int area = heights[i] * w;
+
+            ans = max(ans,area);
+        }
+        return ans;
+
+    }
+};
