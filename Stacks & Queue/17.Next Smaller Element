@@ -30,6 +30,21 @@ class Solution {
 };
 
 //optimal
+Time Complexity: O(N)
+- We traverse the array once from right to left, taking O(N) time.
+- Each element is pushed into the stack exactly once.
+- Each element is popped from the stack at most once.
+Therefore, the amortized time complexity is O(N).
+Space Complexity: O(N)
+- ans vector stores N elements: O(N).
+- Stack can store up to N elements in the worst case: O(N).
+Therefore, auxiliary space complexity is O(N) for the stack.
+
+Final Answer:
+- TC: O(N)
+- SC: O(N) (including output array)
+- Auxiliary SC: O(N) (excluding output array)
+
 class Solution {
   public:
     vector<int> nextSmallerEle(vector<int>& arr) {
