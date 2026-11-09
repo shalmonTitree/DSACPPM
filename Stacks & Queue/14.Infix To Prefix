@@ -7,46 +7,45 @@ public:
         return -1;
     }
 
-    string infixToPostfix(string s) {
-        stack<char> st;
+    string infixToPostfix(string& s) {
+        stack<char>st;
         string ans = "";
-
-        for (char ch : s) {
-
-            if (isalnum(ch)) {
+        for(char ch : s)
+        {
+            if(isalnum(ch))
+            {
                 ans += ch;
             }
-            else if (ch == '(') {
-                st.push(ch);
+            else if(ch == '(')
+            {
+                st.push('(');
             }
-            else if (ch == ')') {
-
-                while (!st.empty() && st.top() != '(') {
+            else if(ch == ')')
+            {
+                while(!st.empty() && st.top() != '(')
+                {
                     ans += st.top();
                     st.pop();
                 }
-
                 st.pop();
             }
-            else {
-
-                while (!st.empty() && st.top() != '(' &&
-                       (prec(st.top()) > prec(ch) ||
-                       (prec(st.top()) == prec(ch) && ch != '^'))) {
-
+            else
+            {
+                while(!st.empty() && st.top() != '(' && 
+                (prec(st.top()) > prec(ch) || (prec(st.top()) == prec(ch)
+                && ch != '^')))
+                {
                     ans += st.top();
                     st.pop();
                 }
-
                 st.push(ch);
             }
         }
-
-        while (!st.empty()) {
+        while(!st.empty())
+        {
             ans += st.top();
             st.pop();
         }
-
         return ans;
     }
 
