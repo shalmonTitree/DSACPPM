@@ -1,0 +1,267 @@
+//bruteforce : give tle 
+Let:
+T = Total number of tweets posted.
+F = Number of follow relationships.
+U = Number of users.
+
+1. postTweet()
+
+Code:
+pq.push();
+
+We insert one tweet into the priority queue.
+- Time Complexity: O(log T)
+- Auxiliary Space Complexity: O(1) per operation.
+2. getNewsFeed()
+
+Code:
+priority_queue> cpy = pq;
+
+First, we copy the entire priority queue.
+
+- Copying priority queue takes O(T).
+
+Then we traverse the copied priority queue:
+
+while(!cpy.empty() && n < 10)
+
+In the worst case, we may traverse all T tweets.
+
+Each priority queue extraction takes O(log T).
+
+Therefore:
+- Copying priority queue: O(T)
+- Extracting tweets: O(T log T)
+- Checking follow relationship: O(1) average using unordered_set.
+Total Time Complexity: O(T log T).
+
+3. follow()
+
+Code:
+st[followerId].insert(followeeId);
+- Average Time Complexity: O(1)
+- Worst-case Time Complexity: O(U) due to hash collisions.
+4. unfollow()
+
+Code:
+st[followerId].erase(followeeId);
+- Average Time Complexity: O(1)
+- Worst-case Time Complexity: O(U).
+OVERALL TIME COMPLEXITY
+
+Constructor: O(1)
+
+postTweet(): O(log T)
+
+getNewsFeed(): O(T log T)
+
+follow(): O(1) average
+
+unfollow(): O(1) average
+
+SPACE COMPLEXITY
+
+The data structures used are:
+1. pq: O(T) – Stores all tweets.
+2. st: O(F) – Stores follow relationships.
+3. cpy: O(T) – Temporary copy of the priority queue inside getNewsFeed().
+4. ans: O(10) = O(1) – Stores at most 10 tweets.
+Overall Auxiliary Space Complexity: O(T + F).
+
+Peak Space Complexity: O(T + F), including the temporary priority queue copy.
+
+
+
+class Twitter {
+
+    unordered_map<int,unordered_set<int>>st;
+    priority_queue<vector<int>>pq;
+    int curr;
+
+public:
+  
+
+    Twitter() {
+        curr = 0;
+
+    }
+    
+    void postTweet(int userId, int tweetId) {
+        pq.push({curr++,tweetId,userId});
+    }
+    
+    vector<int> getNewsFeed(int userId) {
+        vector<int>ans;
+        priority_queue<vector<int>>cpy = pq;
+
+        int n = 0;
+
+        while(!cpy.empty() && n < 10)
+        {
+            auto top = cpy.top();
+            cpy.pop();
+            //either user has posted or someone is follow this person you are getting the feed 
+            if(top[2] == userId || st[userId].count(top[2]))
+            {
+                ans.push_back(top[1]);
+                n++;
+            }
+        }
+        return ans;
+
+    }
+    
+    void follow(int followerId, int followeeId) {
+        st[followerId].insert(followeeId);
+    }
+    
+    void unfollow(int followerId, int followeeId) {
+        st[followerId].erase(followeeId);
+    }
+};
+
+/**
+ * Your Twitter object will be instantiated and called as such:
+ * Twitter* obj = new Twitter();
+ * obj->postTweet(userId,tweetId);
+ * vector<int> param_2 = obj->getNewsFeed(userId);
+ * obj->follow(followerId,followeeId);
+ * obj->unfollow(followerId,followeeId);
+ */
+
+
+//optimal : replace pq with vector
+TWITTER – TIME AND SPACE COMPLEXITY (SECOND APPROACH)
+
+Let:
+T = Total number of tweets posted.
+F = Total number of follow relationships.
+U = Total number of users.
+
+1. postTweet()
+
+Code:
+posts.push_back();
+
+You insert a tweet at the end of the vector.
+- Time Complexity: O(1) amortized.
+- Auxiliary Space Complexity: O(1) per operation.
+2. getNewsFeed()
+
+You iterate backwards through the posts vector:
+
+for(int i = posts.size() - 1; i >= 0 && n < 10; i--)
+
+In the worst case, you may traverse all T tweets if fewer than 10 relevant tweets exist.
+
+For each tweet, you check:
+
+friends[userId].count(posts[i].first)
+
+Since friends uses an unordered_map and unordered_set, lookup takes O(1) average time.
+- Time Complexity: O(T) average.
+- Auxiliary Space Complexity: O(1), excluding the returned answer.
+The answer vector stores at most 10 tweets, so its space is O(1).
+
+3. follow()
+
+Code:
+friends[followerId].insert(followeeId);
+- Average Time Complexity: O(1).
+- Worst-case Time Complexity: O(U) due to hash collisions.
+4. unfollow()
+
+Code:
+friends[followerId].erase(followeeId);
+- Average Time Complexity: O(1).
+- Worst-case Time Complexity: O(U).
+OVERALL TIME COMPLEXITY
+
+Constructor: O(1)
+
+postTweet(): O(1) amortized
+
+getNewsFeed(): O(T) average
+
+follow(): O(1) average
+
+unfollow(): O(1) average
+
+SPACE COMPLEXITY
+1. posts: O(T) – Stores all tweets.
+2. friends: O(F) – Stores follow relationships.
+3. ans: O(10) = O(1) – Stores at most 10 tweets.
+Overall Space Complexity: O(T + F).
+
+COMPARISON WITH PREVIOUS APPROACH
+
+Previous Priority Queue Approach:
+- postTweet(): O(log T)
+- getNewsFeed(): O(T log T)
+- Space Complexity: O(T + F)
+Current Vector Approach:
+- postTweet(): O(1) amortized
+- getNewsFeed(): O(T)
+- Space Complexity: O(T + F)
+CONCLUSION
+
+The second implementation is simpler and more efficient than the previous implementation.
+
+However, getNewsFeed() can still take O(T) time when there are many tweets.
+
+An optimized solution can retrieve the latest 10 tweets using a Max Heap and per-user tweet lists.
+
+
+
+class Twitter {
+
+    unordered_map<int,unordered_set<int>>friends;
+    vector<pair<int,int>>posts;
+    
+
+public:
+  
+
+    Twitter() {
+    }
+    
+    void postTweet(int userId, int tweetId) {
+        posts.push_back({userId,tweetId});
+    }
+    
+    vector<int> getNewsFeed(int userId) {
+        vector<int>ans;
+        int n = 0;
+
+        for(int i = posts.size() - 1; i >= 0 && n < 10; i--)
+        {
+            if(posts[i].first == userId || friends[userId].count(posts[i].first))
+            {
+                ans.push_back(posts[i].second);
+                n++;
+            }
+        }
+        return ans;
+
+    }
+    
+    void follow(int followerId, int followeeId) {
+        friends[followerId].insert(followeeId);
+    }
+    
+    void unfollow(int followerId, int followeeId) {
+        friends[followerId].erase(followeeId);
+    }
+};
+
+/**
+ * Your Twitter object will be instantiated and called as such:
+ * Twitter* obj = new Twitter();
+ * obj->postTweet(userId,tweetId);
+ * vector<int> param_2 = obj->getNewsFeed(userId);
+ * obj->follow(followerId,followeeId);
+ * obj->unfollow(followerId,followeeId);
+ */
+
+
+
