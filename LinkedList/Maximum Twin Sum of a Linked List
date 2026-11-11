@@ -1,0 +1,108 @@
+//bruteforce
+Time Complexity: O(n)
+- We traverse the linked list once to store all node values in the vector: O(n).
+- We traverse the vector using two pointers (l and r) to calculate the maximum pair sum: O(n/2) = O(n).
+Therefore, TC = O(n) + O(n) = O(n).
+Space Complexity: O(n)
+- We use an auxiliary vector store to store all n node values.
+
+Therefore, SC = O(n).
+
+Final Answer:
+- Time Complexity: O(n)
+- Space Complexity: O(n)
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    int pairSum(ListNode* head) {
+        vector<int>store;
+        ListNode* temp = head;
+        while(temp != NULL)
+        {
+            store.push_back(temp->val);
+            temp = temp->next;
+        }
+        int l = 0;
+        int r = store.size() - 1;
+        int ans = 0;
+        while(l < r)
+        {
+            ans = max(ans,store[l]+store[r]);
+            l++;
+            r--;
+        }
+        return ans;
+    }
+};
+
+
+//ptimal
+Time Complexity: O(n)
+1. Finding the middle using slow and fast pointers: O(n).
+2. Reversing the second half: O(n/2).
+3. Calculating the maximum twin sum: O(n/2).
+Overall: O(n).
+
+Space Complexity: O(1)
+- Reverses the second half in-place.
+- Uses only a constant number of pointers.
+- No additional data structures are used.
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    
+    int pairSum(ListNode* head) {
+        ListNode* temp = head;
+        
+        ListNode* slow = head;
+        ListNode* fast = head;
+        
+        while(fast != NULL && fast->next != NULL)
+        {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        ListNode* prev = NULL;
+        ListNode* curr = slow;
+        while(curr != NULL)
+        {
+            ListNode* next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+        }
+
+        int ans = 0;
+        ListNode* l = head;
+        ListNode* r = prev;
+        while(r != NULL)
+        {
+            ans = max(ans,l->val + r->val);
+            l = l->next;
+            r = r->next;
+        }
+        return ans;
+    }
+};
+
+
