@@ -1,0 +1,44 @@
+Time Complexity: O(N)
+- We traverse the array once from right to left: O(N).
+- Each element is pushed onto the stack exactly once.
+- Each element is popped from the stack at most once.
+Therefore, the total number of stack operations is O(N).
+
+TC = O(N) (Amortized)
+Space Complexity: O(N)
+- ans vector stores N elements: O(N).
+- Stack can store at most N elements in the worst case: O(N).
+SC = O(N)
+Final Answer
+- Time Complexity: O(N)
+- Auxiliary Space Complexity: O(N) (stack only)
+- Total Space Complexity: O(N) (stack + answer vector)
+
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& temperatures) {
+        stack<pair<int,int>>st;
+        int n = temperatures.size();
+        vector<int>ans(n,0);
+        for(int i = n - 1; i >= 0; i--)
+        {
+            while(!st.empty() && st.top().first <= temperatures[i])
+            {
+                st.pop();
+            }
+            if(st.empty())
+            {
+                ans[i] = 0;
+            }
+            else
+            {
+                int a = st.top().first;
+                int b = st.top().second;
+
+                ans[i] = b - i;
+            }
+            st.push({temperatures[i],i});
+        }
+        return ans;
+    }
+};
