@@ -1,0 +1,73 @@
+//better
+Time Complexity: O(N)
+- Traversing the string: O(N)
+- Stack push/pop operations: O(N)
+- Constructing the answer: O(N)
+- Reversing the answer: O(N)
+
+
+
+Auxiliary Space Complexity: O(N)
+- Stack: O(N)
+- Answer string: O(N)
+
+class Solution {
+public:
+    string removeStars(string s) {
+        int n = s.size();
+        stack<char>st;
+        string ans = "";
+        for(int i = 0; i < n; i++)
+        {
+            if(s[i] != '*')
+            {
+                st.push(s[i]);
+            }
+            else
+            {
+                if(!st.empty())
+                {
+                    st.pop();
+                }
+            }
+        }
+        while(!st.empty())
+        {
+            ans += st.top();
+            st.pop();
+        }
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }
+};
+
+//optimal
+Time Complexity: O(N)
+- Single traversal: O(N)
+- Resizing the string: O(1) for reducing its size.
+
+
+
+Auxiliary Space Complexity: O(1)
+- No additional stack or answer string is created.
+- We modify the input string directly.
+class Solution {
+public:
+    string removeStars(string s) {
+        int n = s.size();
+        int idx = 0;
+        for(int i = 0; i < n; i++)
+        {
+            if(s[i] == '*')
+            {
+                idx--;
+            }
+            else
+            {
+                s[idx++] = s[i];
+            }
+        }
+        s.resize(idx);
+        return s;
+    }
+};
