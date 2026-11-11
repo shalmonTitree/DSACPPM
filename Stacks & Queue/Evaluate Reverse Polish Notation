@@ -1,0 +1,53 @@
+- Time Complexity: \(O(N)\)
+- We traverse all \(N\) tokens exactly once.
+- Each stack push, pop, and top operation takes \(O(1)\).
+- Space Complexity: \(O(N)\)
+- In the worst case, the stack can store up to \(N/2\) operands (or \(O(N)\)).
+Final Answer:
+- TC: \(O(N)\)
+- SC: \(O(N)\)
+
+class Solution {
+public:
+    int evalRPN(vector<string>& tokens) {
+        int n = tokens.size();
+        stack<int>st;
+        for(auto it : tokens)
+        {
+            if(it != "+" && it != "-" &&  it != "*" && it != "/")
+            {
+                int num = stoi(it);
+                st.push(num);
+            }
+            else
+            {
+                
+                    int op2 = st.top();
+                    st.pop();
+                    int op1 = st.top();
+                    st.pop();
+                    int newval = 0;
+                    if(it == "+")
+                    {
+                        newval = op1 + op2;
+                    }
+                    else if(it == "-")
+                    {
+                        newval = op1 - op2;
+                    }
+                    else if(it == "*")
+                    {
+                        newval = op1 * op2;
+                    }   
+                    else if(it == "/")
+                    {
+                        newval = op1 / op2;
+                    }
+                    
+                    st.push(newval);
+                
+            }
+        }
+        return st.top();
+    }
+};
