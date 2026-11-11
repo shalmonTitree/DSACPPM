@@ -1,0 +1,74 @@
+//bruteforce
+Time: O(N²) – checking every person against everyone.
+Space: O(1).
+
+
+class Solution {
+  public:
+    int celebrity(vector<vector<int>>& mat) {
+        int n = mat.size();
+        
+        for(int i = 0; i < n; i++)
+        {
+            bool f = true;
+            for(int j = 0; j < n; j++)
+            {
+                if(i == j) continue;
+                
+                if(mat[i][j] == 1)
+                {
+                    f = false;
+                    break;
+                }
+                
+                if(mat[j][i] == 0)
+                {
+                    f = false;
+                    break;
+                }
+            }
+            if(f)
+            {
+                return i;
+            }
+        }
+        return -1;
+        
+    }
+};
+
+//better
+class Solution {
+  public:
+    int celebrity(vector<vector<int>>& mat) {
+        int n = mat.size();
+        vector<int>known(n,0);
+        vector<int>unknow(n,0);
+        
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = 0; j < n; j++)
+            {
+                if(i == j) continue;
+                if(mat[i][j] == 1)
+                {
+                    known[i]++;
+                    unknow[j]++;
+                }
+                
+                
+            }
+        }
+        for(int i = 0; i < n; i++)
+        {
+            if(known[i] == 0 && unknow[i] == n - 1)
+            {
+                return i;
+            }
+        }
+        return -1;
+        
+    }
+};
+
+//optimal
