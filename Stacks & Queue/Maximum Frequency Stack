@@ -1,0 +1,133 @@
+//Bruteforce
+Complexity Analysis
+Operation	Time Complexity
+push()	O(1)
+pop()	O(n)
+
+- SC: O(n) for the vector and frequency map.
+- TC: O(n) per pop().
+Drawback: We recalculate frequencies every time we call pop(). This is inefficient.
+
+class FreqStack {
+public:
+    vector<int> st;
+    FreqStack() {
+        
+    }
+    
+    void push(int val) {
+        st.push_back(val);
+    }
+    
+    int pop() {
+         unordered_map<int, int> freq;
+
+        int maxFreq = 0;
+        int ans = -1;
+
+        // Calculate frequencies
+        for (int x : st) {
+            freq[x]++;
+            maxFreq = max(maxFreq, freq[x]);
+        }
+
+        // Traverse from right to left
+        // to handle the most recent element
+        for (int i = st.size() - 1; i >= 0; i--) {
+            if (freq[st[i]] == maxFreq) {
+                ans = st[i];
+                st.erase(st.begin() + i);
+                break;
+            }
+        }
+
+        return ans;
+    }
+};
+
+
+//better
+Complexity Analysis
+Let n be the total number of push operations.
+Operation	Time Complexity
+push()	O(log n)
+pop()	O(log n)
+
+- SC: O(n) for the heap and frequency map.
+- TC: O(log n) per operation.
+
+Hash Map + Max Heap (Priority Queue)
+We need to retrieve the element based on two conditions:
+1. Highest frequency.
+2. If frequencies are equal, highest insertion time (most recently pushed).
+The heap prioritizes:
+- Higher frequency first.
+- If frequency is equal, higher timestamp first.
+
+class FreqStack {
+public:
+    unordered_map<int, int> freq;
+
+    // {frequency, timestamp, value}
+    priority_queue<tuple<int, int, int>> pq;
+
+    int timestamp = 0;
+    FreqStack() {
+        
+    }
+    
+    void push(int val) {
+        freq[val]++;
+
+        pq.push({freq[val], timestamp++, val});
+    }
+    
+    int pop() {
+        auto [f, time, val] = pq.top();
+        pq.pop();
+
+        freq[val]--;
+
+        return val;
+    }
+};
+
+
+//optimal Hash Map + Stack of Stacks
+Complexity Analysis:
+- push() – O(1) average time.
+- pop() – O(1) average time.
+- Space Complexity – O(n).
+
+class FreqStack {
+    unordered_map<int, int> freq;
+    unordered_map<int, stack<int>> group;
+
+    int maxFreq = 0;
+
+public:
+    FreqStack() {}
+
+    void push(int val) {
+        int f = ++freq[val];
+
+        maxFreq = max(maxFreq, f);
+
+        group[f].push(val);
+    }
+
+    int pop() {
+        int val = group[maxFreq].top();
+
+        group[maxFreq].pop();
+
+        freq[val]--;
+
+        if (group[maxFreq].empty()) {
+            maxFreq--;
+        }
+
+        return val;
+    }
+};
+
