@@ -1,0 +1,99 @@
+//bruteforce
+For your original nested-loop approach:
+Time Complexity (TC)
+- Creating the vector: \(O(n)\)
+- Sorting: \(O(n\log n)\)
+- Outer loop: \(O(n)\)
+- Inner loop: \(O(n)\) in the worst case.
+Therefore:
+\[
+O(n\log n)+O(n^2)
+\]
+
+TC = O(n²)
+Space Complexity (SC)
+- cars vector: \(O(n)\)
+- visited vector: \(O(n)\)
+SC = O(n)
+Final answer:
+- TC: \(O(n^2)\)
+- SC: \(O(n)\)
+
+class Solution {
+public:
+    int carFleet(int target, vector<int>& position, vector<int>& speed) {
+        int n = position.size();
+        int cnt = 0;
+
+        vector<pair<int,double>>cars;
+
+        //current postion, time takeing to reach targeet
+        for(int i = 0; i < n; i++)
+        {
+            double time = (double)(target - position[i])/speed[i];
+            cars.push_back({position[i],time});
+        }
+
+        sort(cars.rbegin(),cars.rend());
+
+        vector<bool>vis(n,false);
+        for(int i = 0; i < n; i++)
+        {
+            if(vis[i])
+            {
+                continue;
+            }
+
+            cnt++;
+            for(int j = i + 1; j < n; j++)
+            {
+                if(cars[j].second <= cars[i].second)
+                {
+                    vis[j] = true;
+                }
+            }
+        }
+        return cnt;
+
+
+    }
+};
+
+//optimal
+Complexity
+- Time Complexity: \(O(n\log n)\)
+- Space Complexity: \(O(n)\)
+class Solution {
+public:
+    int carFleet(int target, vector<int>& position, vector<int>& speed) {
+
+        int n = position.size();
+
+        vector<pair<int, double>> cars;
+
+        for(int i = 0; i < n; i++) {
+            cars.push_back({
+                position[i],
+                (double)(target - position[i]) / speed[i]
+            });
+        }
+
+        sort(cars.rbegin(), cars.rend());
+
+        int fleets = 0;
+        double prevTime = 0;
+
+        for(int i = 0; i < n; i++) {
+
+            double currTime = cars[i].second;
+
+            if(currTime > prevTime) {
+                fleets++;
+                prevTime = currTime;
+            }
+        }
+
+        return fleets;
+    }
+};
+
