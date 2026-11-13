@@ -1,0 +1,180 @@
+//bruteforce
+TC: Can be \(O(nL^2)\) in a straightforward implementation, where \(L\) is the maximum intermediate string length; repeated searching and replacement add overhead.
+SC: \(O(L)\) for intermediate strings.
+
+class Solution {
+public:
+    string decodeString(string s) {
+        int n = s.size();
+        string ans = "";
+
+
+        //contioue till you find first opeing bracket
+        while(s.find('[') != string ::npos)
+        {
+            //find first closing bracket
+            int close = s.find(']');
+
+            //find opening bracket to the left from the inedx where you get first closing brakcket
+            int open = s.rfind('[',close);
+
+            //find the first digit
+            int start = open - 1;
+            while(start >= 0 && isdigit(s[start])) {
+                start--;
+            }
+
+            //starting pos,len
+            int k = stoi(s.substr(start + 1, open - start - 1));
+
+            //taking out string
+            string temp = s.substr(open + 1, close - open - 1);
+
+            string repeated = "";
+            for(int i = 0; i < k; i++) {
+                repeated += temp;
+            }
+            s.replace(start + 1, close - start, repeated);
+
+            
+        }
+        return s;
+    }
+};
+
+
+//better with 1 stack
+Complexity:
+- TC: \(O(N+M)\)
+- SC: \(O(M)\)
+Here, \(M\) is the decoded output length.
+
+class Solution {
+public:
+    string decodeString(string s) {
+
+        stack<char> st;
+
+        for(char ch : s) {
+
+            if(ch != ']') {
+                st.push(ch);
+            }
+            else {
+
+                // Extract inner string
+                string temp = "";
+
+                while(!st.empty() && st.top() != '[') {
+                    temp += st.top();
+                    st.pop();
+                }
+
+                st.pop(); // Remove '['
+
+                reverse(temp.begin(), temp.end());
+
+                // Extract number
+                string num = "";
+
+                while(!st.empty() && isdigit(st.top())) {
+                    num += st.top();
+                    st.pop();
+                }
+
+                reverse(num.begin(), num.end());
+
+                int k = stoi(num);
+
+                // Repeat inner string
+                string repeated = "";
+
+                for(int i = 0; i < k; i++) {
+                    repeated += temp;
+                }
+
+                // Push decoded string
+                for(char c : repeated) {
+                    st.push(c);
+                }
+            }
+        }
+
+        // Construct final answer
+        string ans = "";
+
+        while(!st.empty()) {
+            ans += st.top();
+            st.pop();
+        }
+
+        reverse(ans.begin(), ans.end());
+
+        return ans;
+    }
+};
+
+//optimal with 2 stack 
+Let:
+- \(N\) = length of encoded input.
+- \(M\) = length of decoded output.
+Complexity	Value
+Time	\(O(N+M)\) with efficient string building
+Space	\(O(N+M)\) including decoded strings and stacks
+
+The output itself requires \(O(M)\) space.
+
+
+class Solution {
+public:
+    string decodeString(string s) {
+
+        stack<int> numStack;
+        stack<string> strStack;
+
+        string currStr = "";
+        int currNum = 0;
+
+        for(char ch : s) {
+
+            if(isdigit(ch)) {
+
+                currNum = currNum * 10 + (ch - '0');
+
+            }
+            else if(ch == '[') {
+
+                numStack.push(currNum);
+                strStack.push(currStr);
+
+                currNum = 0;
+                currStr = "";
+
+            }
+            else if(ch == ']') {
+
+                int k = numStack.top();
+                numStack.pop();
+
+                string prevStr = strStack.top();
+                strStack.pop();
+
+                string temp = "";
+
+                for(int i = 0; i < k; i++) {
+                    temp += currStr;
+                }
+
+                currStr = prevStr + temp;
+
+            }
+            else {
+
+                currStr += ch;
+
+            }
+        }
+
+        return currStr;
+    }
+};
