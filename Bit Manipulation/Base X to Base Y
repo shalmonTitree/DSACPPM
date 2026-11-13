@@ -1,0 +1,86 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef long long ll;
+#define endl "\n"
+
+// Decimal to Base
+string decimalToBase(long long n, int base)
+{
+    if (n == 0)
+        return "0";
+
+    string digits = "0123456789ABCDEF";
+    string res = "";
+
+    while (n > 0)
+    {
+        int rem = n % base;
+        res.push_back(digits[rem]);
+        n /= base;
+    }
+
+    reverse(res.begin(), res.end());
+    return res;
+}
+
+// Base to Decimal
+long long baseToDecimal(string s, int base)
+{
+    long long res = 0;
+
+    for (char c : s)
+    {
+        int val;
+
+        if (isdigit(c))
+            val = c - '0';
+        else
+            val = toupper(c) - 'A' + 10;
+
+        res = res * base + val;
+    }
+
+    return res;
+}
+
+// Base X to Base Y
+string convertBase(string n, int x, int y)
+{
+    long long decimal = baseToDecimal(n, x);
+
+    return decimalToBase(decimal, y);
+}
+
+void solve()
+{
+    string n;
+    int x, y;
+
+    cin >> n >> x >> y;
+
+    if (x < 2 || x > 16 || y < 2 || y > 16)
+    {
+        cout << "Invalid Base" << endl;
+        return;
+    }
+
+    cout << convertBase(n, x, y) << endl;
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    cin >> t;
+
+    while (t--)
+    {
+        solve();
+    }
+
+    return 0;
+}
