@@ -1,0 +1,102 @@
+//bruteforce
+**Complexity:**
+
+- Constructor: O(n)
+- Each `add()`: O(N log N), where N is the current number of elements.
+- Space Complexity: O(N)
+
+**Limitation:**
+
+This approach works correctly, but repeatedly sorting all elements after each `add()` operation is inefficient and increases the overall execution time.
+
+class KthLargest {
+public: 
+    int k;
+    vector<int>nums;
+    KthLargest(int k, vector<int>& nums) {
+        this->k = k;
+        this->nums = nums;
+    }
+    
+    int add(int val) {
+        nums.push_back(val);
+        sort(nums.begin(),nums.end(),greater<int>());
+        return nums[k-1];
+    }
+};
+
+/**
+ * Your KthLargest object will be instantiated and called as such:
+ * KthLargest* obj = new KthLargest(k, nums);
+ * int param_1 = obj->add(val);
+ */
+
+//better
+**Complexity:**
+
+- Constructor: O(n log n)
+- Each `add()`: O(N + k log N), including copying the heap.
+- Space Complexity: O(N) for the original heap, plus O(N) temporary space per query.
+
+**Limitation:**
+
+This approach avoids sorting, but we still need to copy the entire heap and remove k - 1 elements for every query. This makes each `add()` operation inefficient.
+
+class KthLargest {
+    int k;
+    priority_queue<int> pq;
+
+public:
+    KthLargest(int k, vector<int>& nums) {
+        this->k = k;
+
+        for (int num : nums) {
+            pq.push(num);
+        }
+    }
+
+    int add(int val) {
+        pq.push(val);
+
+        priority_queue<int> temp = pq;
+
+        for (int i = 0; i < k - 1; i++) {
+            temp.pop();
+        }
+
+        return temp.top();
+    }
+};
+
+//optimal
+| Data Structure     | Time Complexity                | Space Complexity |
+| ------------------ | ------------------------------ | ---------------- |
+| Min Heap of size k | O(log k) per insertion/removal | O(k)             |
+
+class KthLargest {
+    int k;
+    priority_queue<int, vector<int>, greater<int>> pq;
+
+public:
+    KthLargest(int k, vector<int>& nums) {
+        this->k = k;
+
+        for (int num : nums) {
+            pq.push(num);
+
+            if (pq.size() > k) {
+                pq.pop();
+            }
+        }
+    }
+
+    int add(int val) {
+        pq.push(val);
+
+        if (pq.size() > k) {
+            pq.pop();
+        }
+
+        return pq.top();
+    }
+};
