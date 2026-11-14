@@ -1,0 +1,136 @@
+Brute Force – Sorting Every Time
+**Complexity:**
+
+Let n be the number of ropes.
+
+- Sorting: O(n log n)
+- Removing two elements: O(n)
+- Inserting the new rope: O(1)
+- Repeat at most n - 1 times.
+
+**Overall Time Complexity:**
+
+O(n² log n)
+
+**Space Complexity:**
+
+O(1) auxiliary space, ignoring sorting stack space.
+
+class Solution {
+public:
+    long long minCost(vector<int>& arr) {
+
+        long long cost = 0;
+
+        while(arr.size() > 1) {
+
+            sort(arr.begin(), arr.end());
+
+            int a = arr[0];
+            int b = arr[1];
+
+            int sum = a + b;
+
+            cost += sum;
+
+            arr.erase(arr.begin());
+            arr.erase(arr.begin());
+
+            arr.push_back(sum);
+        }
+
+        return cost;
+    }
+};
+
+
+//Better Approach – Find Two Minimum Elements
+**Complexity:**
+
+- Time Complexity: O(n²)
+- Auxiliary Space Complexity: O(1).
+
+**Why?**
+
+- Finding the minimum element takes O(n).
+- Erasing an element from a vector takes O(n) because remaining elements may need to be shifted.
+- We repeat these operations up to n - 1 times.
+
+Therefore, the overall time complexity is O(n²).
+
+class Solution {
+public:
+    long long minCost(vector<int>& arr) {
+
+        long long cost = 0;
+
+        while(arr.size() > 1) {
+
+            auto it1 = min_element(arr.begin(), arr.end());
+            int a = *it1;
+            arr.erase(it1);
+
+            auto it2 = min_element(arr.begin(), arr.end());
+            int b = *it2;
+            arr.erase(it2);
+
+            int sum = a + b;
+
+            cost += sum;
+            arr.push_back(sum);
+        }
+
+        return cost;
+    }
+};
+
+
+//optimal
+Optimal Approach – Min Heap (Priority Queue) 
+Operation	Complexity
+Insert n elements individually	O(n log n)
+Extract two smallest elements	O(log n) per extraction
+Insert combined rope	O(log n)
+Repeat n - 1 times	O(n log n)
+
+Overall Time Complexity:
+
+O(n log n)
+
+Space Complexity:
+
+O(n)
+
+The priority queue stores at most n elements.
+
+class Solution {
+public:
+    long long minCost(vector<int>& arr) {
+
+        priority_queue<int, vector<int>, greater<int>> pq;
+
+        for(auto it : arr) {
+            pq.push(it);
+        }
+
+        long long cost = 0;
+
+        while(pq.size() > 1) {
+
+            int a = pq.top();
+            pq.pop();
+
+            int b = pq.top();
+            pq.pop();
+
+            int sum = a + b;
+
+            cost += sum;
+
+            pq.push(sum);
+        }
+
+        return cost;
+    }
+};
+
