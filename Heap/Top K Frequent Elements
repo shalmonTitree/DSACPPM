@@ -1,0 +1,163 @@
+//Brute Force – Frequency Map + Sorting
+1. Use an unordered map to count the frequency of each element.
+2. Store the elements and their frequencies in a vector.
+3. Sort the vector based on frequency in descending order.
+4. Return the first k elements.
+
+Let n be the total number of elements and m be the number of unique elements.
+- Time Complexity: O(n + m log m)
+- Space Complexity: O(m)
+Since m is always less than or equal to n, the worst-case time complexity is O(n log n).
+
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int, int> mp;
+
+        for (int num : nums) {
+            mp[num]++;
+        }
+
+        vector<pair<int, int>> arr;
+
+        for (auto it : mp) {
+            arr.push_back({it.second, it.first});
+        }
+
+        sort(arr.rbegin(), arr.rend());
+
+        vector<int> ans;
+
+        for (int i = 0; i < k; i++) {
+            ans.push_back(arr[i].second);
+        }
+
+        return ans;
+    }
+};
+
+//better Max Heap (Priority Queue)
+We use a Max Heap based on frequency.
+1. Count the frequency using an unordered map.
+2. Insert {frequency, element} pairs into a Max Heap.
+3. Extract the top element k times.
+4. Store the extracted elements in the answer.
+
+Complexity:
+- Time Complexity: O(n + m log m + k log m)
+- Space Complexity: O(m)
+This is a valid solution, but it does not achieve better than O(n log n) time complexity in the worst case.
+
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int, int> mp;
+
+        for (int num : nums) {
+            mp[num]++;
+        }
+
+        priority_queue<pair<int, int>> pq;
+
+        for (auto it : mp) {
+            pq.push({it.second, it.first});
+        }
+
+        vector<int> ans;
+
+        for (int i = 0; i < k; i++) {
+            ans.push_back(pq.top().second);
+            pq.pop();
+        }
+
+        return ans;
+    }
+};
+
+//optimal
+Instead of storing all unique elements in the heap, maintain only the k most frequent elements.
+1. Count frequencies using an unordered map.
+2. Insert {frequency, element} into a Min Heap.
+3. If heap size exceeds k, remove the element with the smallest frequency.
+4. At the end, the heap contains the k most frequent elements.
+
+Complexity:
+- Time Complexity: O(n + m log k)
+- Space Complexity: O(m + k)
+Where m is the number of unique elements.
+
+This approach is particularly useful when k is small compared to the number of unique elements.
+
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int, int> mp;
+
+        for (int num : nums) {
+            mp[num]++;
+        }
+
+        priority_queue<
+            pair<int, int>,
+            vector<pair<int, int>>,
+            greater<pair<int, int>>
+        > pq;
+
+        for (auto it : mp) {
+            pq.push({it.second, it.first});
+
+            if (pq.size() > k) {
+                pq.pop();
+            }
+        }
+
+        vector<int> ans;
+
+        while (!pq.empty()) {
+            ans.push_back(pq.top().second);
+            pq.pop();
+        }
+
+        return ans;
+    }
+};
+
+
+//more optimal
+Complexity:
+- Time Complexity: O(n)
+  - Frequency counting: O(n) average.
+  - Bucket creation: O(m).
+  - Traversing buckets: O(n + m).
+- Space Complexity: O(n)
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int, int> mp;
+
+        for (int num : nums) {
+            mp[num]++;
+        }
+
+        vector<vector<int>> bucket(nums.size() + 1);
+
+        for (auto it : mp) {
+            bucket[it.second].push_back(it.first);
+        }
+
+        vector<int> ans;
+
+        for (int i = nums.size(); i >= 1; i--) {
+            for (int num : bucket[i]) {
+                ans.push_back(num);
+
+                if (ans.size() == k) {
+                    return ans;
+                }
+            }
+        }
+
+        return ans;
+    }
+};
+
