@@ -1,0 +1,64 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+vector<vector<int>>graph;
+vector<int>sz;
+int n;
+
+void dfs(int node,int parent)
+{
+
+    sz[node] = 1;
+
+    //iterate over neighbout
+    for(auto it : graph[node])
+    {
+        //if ngh not same as parent means another element which is not visited
+        if(it != parent)
+        {
+            dfs(it,node);
+            sz[node] += sz[it];
+        }
+    }
+}
+
+void solve() {
+    int n;
+    cin>>n;
+
+    //because nodes are from 1 to n
+    graph.resize(n+1);
+    sz.resize(n+1);
+
+    //input n - 1 edges
+    for(int i = 0; i < n - 1; i++)
+    {
+        int x,y;
+        cin>>x>>y;
+
+        graph[x].push_back(y);
+        graph[y].push_back(x);
+    }
+
+    //find distance from node x (1 here) to all node and find farthest point y
+    dfs(1,0);
+    for(int i = 1; i <= n; i++)
+    {
+        cout<<i<<" "<<sz[i]<<endl;
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    // cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
