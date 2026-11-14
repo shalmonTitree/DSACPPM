@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> graph;
+vector<int> sz, value;
+
+void dfs(int node, int parent)
+{
+    sz[node] = value[node];
+
+    for(auto it : graph[node])
+    {
+        if(it != parent)
+        {
+            dfs(it, node);
+            sz[node] += sz[it];
+        }
+    }
+}
+
+void solve()
+{
+    int n;
+    cin >> n;
+
+    graph.resize(n + 1);
+    sz.resize(n + 1);
+    value.resize(n + 1);
+
+    for(int i = 1; i <= n; i++)
+        cin >> value[i];
+
+    for(int i = 0; i < n - 1; i++)
+    {
+        int x, y;
+        cin >> x >> y;
+
+        graph[x].push_back(y);
+        graph[y].push_back(x);
+    }
+
+    dfs(1, 0);
+
+    for(int i = 1; i <= n; i++)
+        cout << i << " " << sz[i] << endl;
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    solve();
+
+    return 0;
+}
