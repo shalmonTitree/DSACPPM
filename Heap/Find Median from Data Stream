@@ -1,0 +1,126 @@
+Brute Force – Store elements and sort whenever needed
+### **Complexity Analysis**
+
+- **addNum():** O(1)
+- **findMedian():** O(n log n)
+- **Space Complexity:** O(n)
+
+**Note:** This approach is simple but inefficient because it sorts the entire array every time the median is requested.
+
+class MedianFinder {
+    vector<int> nums;
+
+public:
+    MedianFinder() {
+    }
+
+    void addNum(int num) {
+        nums.push_back(num);
+    }
+
+    double findMedian() {
+        sort(nums.begin(), nums.end());
+
+        int n = nums.size();
+
+        if (n % 2 == 1) {
+            return nums[n / 2];
+        }
+
+        return ((double)nums[n / 2 - 1] + nums[n / 2]) / 2.0;
+    }
+};
+
+
+Better – Maintain a sorted vector
+Instead of sorting the entire vector every time, we can keep it sorted while inserting new elements.
+
+Idea:
+
+Use lower_bound() to find the correct insertion position and insert the new number there.
+### **Complexity Analysis**
+
+- **addNum():** O(n), because vector elements may need to be shifted when inserting an element.
+- **findMedian():** O(1), because the median can be accessed directly.
+- **Space Complexity:** O(n).
+
+**Note:** This approach is more efficient than sorting the entire array repeatedly because the median can be retrieved in constant time.
+class MedianFinder {
+    vector<int> nums;
+
+public:
+    MedianFinder() {
+    }
+
+    void addNum(int num) {
+        auto it = lower_bound(nums.begin(), nums.end(), num);
+        nums.insert(it, num);
+    }
+
+    double findMedian() {
+        int n = nums.size();
+
+        if (n % 2 == 1) {
+            return nums[n / 2];
+        }
+
+        return ((double)nums[n / 2 - 1] + nums[n / 2]) / 2.0;
+    }
+};
+
+
+
+Optimal – Two Heaps (Max Heap + Min Heap)
+Best approach for interviews
+Key intuition
+Instead of sorting all elements, divide the incoming numbers into two halves.
+- Max Heap (left): Stores the smaller half of the numbers. Its top gives the largest element in the smaller half.
+- Min Heap (right): Stores the larger half of the numbers. Its top gives the smallest element in the larger half.
+
+class MedianFinder {
+    // Max heap: smaller half
+    priority_queue<int> left;
+
+    // Min heap: larger half
+    priority_queue<int, vector<int>, greater<int>> right;
+
+public:
+    MedianFinder() {
+    }
+
+    void addNum(int num) {
+
+        // Insert into the appropriate half
+        if (left.empty() || num <= left.top()) {
+            left.push(num);
+        }
+        else {
+            right.push(num);
+        }
+
+        // Balance the heaps
+        if (left.size() > right.size() + 1) {
+            right.push(left.top());
+            left.pop();
+        }
+        else if (right.size() > left.size()) {
+            left.push(right.top());
+            right.pop();
+        }
+    }
+
+    double findMedian() {
+
+        if (left.size() > right.size()) {
+            return left.top();
+        }
+
+        return ((double)left.top() + right.top()) / 2.0;
+    }
+};
+### **Why?**
+
+- **Insertion into a heap:** O(log n), because inserting an element may require moving it up the heap to maintain the heap property.
+- **Rebalancing:** O(log n) in the worst case, because at most one element is transferred between the two heaps. The transfer involves a pop and a push.
+- **Accessing the top element:** O(1), because the root element is directly accessible.
+- **Space Complexity:** O(n), because both heaps together store all n elements.
