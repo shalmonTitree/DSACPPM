@@ -1,3 +1,21 @@
+//Bruteforce
+- Time Complexity: \(O(n\log n)\)
+- Space Complexity: \(O(\log n)\) auxiliary space for typical std::sort implementations.
+
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        sort(nums.begin(), nums.end());
+
+        int n = nums.size();
+        return nums[n - k];
+    }
+};
+
+//better
+
+Time Complexity: \(O(n\log k)\)
+Space Complexity: \(O(k)\)
 class Solution {
 public:
     int findKthLargest(vector<int>& nums, int k) {
@@ -14,3 +32,40 @@ public:
         return pq.top();
     }
 };
+
+
+
+
+//optimal
+Time Complexity:
+- Building heap using individual insertions: \(O(n\log n)\)
+- Removing k-1 elements: \(O(k\log n)\)
+- Accessing top: \(O(1)\)
+Overall:
+\[
+\boxed{O(n\log n+k\log n)}
+\]
+
+Space Complexity:
+\[
+\boxed{O(n)}
+\]
+
+
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        priority_queue<int, vector<int>, greater<int>> pq;
+
+        for (int num : nums) {
+            pq.push(num);
+
+            if (pq.size() > k) {
+                pq.pop();
+            }
+        }
+
+        return pq.top();
+    }
+};
+
