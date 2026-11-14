@@ -1,4 +1,24 @@
 //bruteforce
+There are n × m possible pairs.
+Operation	Complexity
+Generate all pairs	O(nm)
+Insert all pairs into heap	O(nm log(nm))
+Extract k pairs	O(k log(nm))
+
+Overall Time Complexity:
+
+O(nm log(nm) + k log(nm))
+
+Or more compactly:
+
+O((nm + k) log(nm))
+
+Space Complexity:
+
+O(nm)
+
+All nm pairs are stored in the priority queue.
+
 class Solution {
 public:
     vector<vector<int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
@@ -36,6 +56,46 @@ public:
 
 
 //optimal
+**Idea:**
+
+Since both arrays are already sorted, we don't need to generate all possible pairs.
+
+For every element in `nums1`, initially insert a pair with `nums2[0]`.
+
+When we extract a pair `(i, j)`, the next possible candidate from the same row is `(i, j+1)`.
+
+This way, we explore only the necessary pairs.
+
+**Time Complexity:**
+
+Initially, we insert at most min(n, k) pairs.
+
+Then we perform at most k extractions and at most k insertions.
+
+| Operation              | Complexity                  |
+| ---------------------- | --------------------------- |
+| Initial heap insertion | O(min(n, k) log(min(n, k))) |
+| Extract k elements     | O(k log(min(n, k)))         |
+| Insert next candidates | O(k log(min(n, k)))         |
+
+**Overall Time Complexity:**
+
+O((min(n, k) + k) log(min(n, k)))
+
+More simply:
+
+O(k log(min(n, k)))
+
+**Space Complexity:**
+
+The heap stores at most min(n, k) elements, and the answer stores k pairs.
+
+- Auxiliary heap space: O(min(n, k))
+- Output space: O(k)
+
+**Total Space Complexity:**
+
+O(k + min(n, k))
 class Solution {
 public:
     vector<vector<int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
