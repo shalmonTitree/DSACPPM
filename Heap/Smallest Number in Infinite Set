@@ -1,0 +1,114 @@
+//bruteforce
+**Complexity:**
+
+- Constructor: O(1000)
+- `popSmallest()`: O(1000)
+- `addBack()`: O(1)
+- Space Complexity: O(1000)
+
+class SmallestInfiniteSet {
+    vector<bool> present;
+
+public:
+    SmallestInfiniteSet() {
+        present.resize(1001, true);
+    }
+
+    int popSmallest() {
+        for (int i = 1; i <= 1000; i++) {
+            if (present[i]) {
+                present[i] = false;
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    void addBack(int num) {
+        present[num] = true;
+    }
+};
+
+
+//Better – Ordered Set
+**Complexity:**
+
+- Constructor: O(1000 log 1000)
+- `popSmallest()`: O(log 1000)
+- `addBack()`: O(log 1000)
+- Space Complexity: O(1000)
+
+class SmallestInfiniteSet {
+    set<int> st;
+
+public:
+    SmallestInfiniteSet() {
+        for (int i = 1; i <= 1000; i++) {
+            st.insert(i);
+        }
+    }
+
+    int popSmallest() {
+        int smallest = *st.begin();
+
+        st.erase(st.begin());
+
+        return smallest;
+    }
+
+    void addBack(int num) {
+        st.insert(num);
+    }
+};
+
+//Optimal – Min Heap + Hash Set + Counter
+### **Complexity Analysis**
+
+Let m be the number of elements currently stored in the heap.
+
+| Operation                              | Time Complexity  |
+| -------------------------------------- | ---------------- |
+| Constructor                            | O(1)             |
+| `popSmallest()` when heap is empty     | O(1)             |
+| `popSmallest()` when heap has elements | O(log m)         |
+| `addBack()`                            | O(log m) average |
+| Auxiliary Space                        | O(m)             |
+
+class SmallestInfiniteSet {
+public:
+    unordered_set<int>st;
+    int curr = 1;
+    priority_queue<int,vector<int>,greater<int>>pq;
+
+    SmallestInfiniteSet() {
+        
+    }
+    
+    int popSmallest() {
+       if(!pq.empty())
+       {
+        int ans = pq.top();
+        pq.pop();
+        st.erase(ans);
+        return ans;
+       }
+       return curr++;
+    }
+    
+    void addBack(int num) {
+        if(num < curr && st.find(num) == st.end())
+        {
+            pq.push(num);
+            st.insert(num);
+        }
+    
+    }
+};
+
+/**
+ * Your SmallestInfiniteSet object will be instantiated and called as such:
+ * SmallestInfiniteSet* obj = new SmallestInfiniteSet();
+ * int param_1 = obj->popSmallest();
+ * obj->addBack(num);
+ */
