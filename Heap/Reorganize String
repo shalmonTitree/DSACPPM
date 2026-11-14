@@ -1,0 +1,170 @@
+//Brute Force – Generate permutations
+Idea: Generate different arrangements of the string and check whether any arrangement has no equal adjacent characters.
+
+For each permutation:
+1. Check every adjacent pair.
+2. If all adjacent characters are different, return that permutation.
+3. Otherwise, try another permutation.
+
+### **Complexity Analysis**
+
+- **Time Complexity:** O(n × n!) in the worst case.
+- **Auxiliary Space:** O(1), excluding the overhead used by the sorting implementation.
+
+**Note:** This complexity analysis is useful only for understanding the problem and is not relevant to the actual input constraints.
+
+class Solution {
+public:
+    string reorganizeString(string s) {
+        sort(s.begin(), s.end());
+
+        do {
+            bool valid = true;
+
+            for (int i = 1; i < s.size(); i++) {
+                if (s[i] == s[i - 1]) {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (valid) return s;
+
+        } while (next_permutation(s.begin(), s.end()));
+
+        return "";
+    }
+};
+
+
+
+Better – Frequency Counting + Sorting + Greedy Placement
+
+### **Complexity Analysis**
+
+- **Frequency Counting:** O(n)
+- **Sorting:** O(26 × log 26), since at most 26 characters are sorted.
+- **Filling the Answer:** O(n)
+- **Space Complexity:** O(n + 26), including the output string.
+
+**Overall Time Complexity:** O(n), since the alphabet size is fixed (26), making the sorting operation constant time.
+
+
+
+class Solution {
+public:
+    string reorganizeString(string s) {
+        int n = s.size();
+
+        vector<int> freq(26, 0);
+
+        for (char c : s) {
+            freq[c - 'a']++;
+        }
+
+        int maxFreq = *max_element(freq.begin(), freq.end());
+
+        if (maxFreq > (n + 1) / 2) {
+            return "";
+        }
+
+        // Sort characters by frequency
+        vector<pair<int, char>> arr;
+
+        for (int i = 0; i < 26; i++) {
+            if (freq[i] > 0) {
+                arr.push_back({freq[i], char('a' + i)});
+            }
+        }
+
+        sort(arr.rbegin(), arr.rend());
+
+        string ans(n, ' ');
+        int idx = 0;
+
+        for (auto [count, ch] : arr) {
+            while (count--) {
+                ans[idx] = ch;
+
+                idx += 2;
+
+                if (idx >= n) {
+                    idx = 1;
+                }
+            }
+        }
+
+        return ans;
+    }
+};
+
+
+Optimal – Greedy + Max Heap
+### **Complexity Analysis**
+
+| Operation                 | Complexity |
+| ------------------------- | ---------- |
+| Frequency counting        | O(n)       |
+| Building max heap         | O(m log m) |
+| Processing all characters | O(n log m) |
+| Auxiliary space           | O(m)       |
+| Output string             | O(n)       |
+
+**Overall:**
+
+- **Time Complexity:** O(n log m)
+- **Auxiliary Space:** O(m), excluding the output string.
+
+**Note:** Since lowercase English letters are limited to 26, m ≤ 26. Therefore, heap operations take effectively constant time per character, making the overall time complexity O(n).
+class Solution {
+public:
+    string reorganizeString(string s) {
+
+        vector<int> freq(26, 0);
+
+        for (char c : s) {
+            freq[c - 'a']++;
+        }
+
+        // Max heap: {frequency, character}
+        priority_queue<pair<int, char>> pq;
+
+        for (int i = 0; i < 26; i++) {
+            if (freq[i] > 0) {
+                pq.push({freq[i], char('a' + i)});
+            }
+        }
+
+        string ans = "";
+
+        // Previously used character
+        pair<int, char> prev = {0, '#'};
+
+        while (!pq.empty()) {
+
+            auto curr = pq.top();
+            pq.pop();
+
+            // Use current character
+            ans += curr.second;
+
+            // Decrease its frequency
+            curr.first--;
+
+            // Reinsert previous character
+            if (prev.first > 0) {
+                pq.push(prev);
+            }
+
+            // Hold current character for next iteration
+            prev = curr;
+        }
+
+        // If characters are still remaining, impossible
+        if (prev.first > 0) {
+            return "";
+        }
+
+        return ans;
+    }
+};
