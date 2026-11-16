@@ -1,0 +1,92 @@
+/*
+// Definition for Employee.
+class Employee {
+public:
+    int id;
+    int importance;
+    vector<int> subordinates;
+};
+*/
+
+class Solution {
+public:
+    int dfs(int node, vector<pair<pair<int,int>,vector<int>>>&adj)
+    {
+        int sum = 0;
+
+        for(auto it : adj)
+        {
+            if(it.first.first == node)
+            {
+                sum += it.first.second;
+
+                for(int itr : it.second)
+                {
+                    sum += dfs(itr,adj);
+                }
+            }
+        }
+        return sum;
+    }
+    int getImportance(vector<Employee*> employees, int id) {
+        vector<pair<pair<int,int>,vector<int>>>adj;
+
+        for(auto it : employees)
+        {
+            adj.push_back({{it->id,it->importance},it->subordinates});
+        }
+        return dfs(id,adj);
+    }
+};
+
+
+//optimal
+Time Complexity (TC)
+O(N) average
+- Building adjacency list: O(N)
+- Building unordered_map: O(N)
+- DFS traversal: O(N), since every employee is visited once.
+- Hash map lookup: O(1) average per employee.
+Space Complexity (SC)
+O(N)
+- Adjacency list: O(N)
+- Unordered_map: O(N)
+- DFS recursion stack: O(H), where H is the maximum hierarchy depth.
+
+class Solution {
+public:
+    int dfs(int node,
+            vector<pair<pair<int,int>, vector<int>>>& adj,
+            unordered_map<int,int>& mp)
+    {
+        int sum = 0;
+
+        int idx = mp[node];
+
+        sum += adj[idx].first.second;
+
+        for(int sub : adj[idx].second)
+        {
+            sum += dfs(sub, adj, mp);
+        }
+
+        return sum;
+    }
+
+    int getImportance(vector<Employee*> employees, int id) {
+
+        vector<pair<pair<int,int>, vector<int>>> adj;
+        unordered_map<int,int> mp;
+
+        for(int i = 0; i < employees.size(); i++)
+        {
+            auto it = employees[i];
+
+            adj.push_back({{it->id, it->importance}, it->subordinates});
+
+            mp[it->id] = i;
+        }
+
+        return dfs(id, adj, mp);
+    }
+};
