@@ -1,0 +1,65 @@
+Time Complexity:
+
+Let n be the number of houses and M be the difference between the maximum and minimum house values.
+
+Operations and their complexities:
+
+1. Find minimum and maximum: O(n)
+2. Binary Search: O(log M)
+3. Greedy validation: O(n)
+
+Overall Time Complexity: O(n log M)
+
+Space Complexity:
+
+- Only a few variables are used.
+- No additional array, recursion, or DP table is created.
+
+Overall Space Complexity: O(1)
+
+class Solution {
+public:
+
+    // Check if we can rob at least k houses
+    bool solve(vector<int>& nums, int k, int capability) {
+
+        int count = 0;
+        int i = 0;
+
+        while(i < nums.size()) {
+
+            if(nums[i] <= capability) {
+                count++;
+                i += 2;  // Skip adjacent house
+            }
+            else {
+                i++;
+            }
+
+            if(count >= k)
+                return true;
+        }
+
+        return false;
+    }
+
+    int minCapability(vector<int>& nums, int k) {
+
+        int left = *min_element(nums.begin(), nums.end());
+        int right = *max_element(nums.begin(), nums.end());
+
+        while(left < right) {
+
+            int mid = left + (right - left) / 2;
+
+            if(solve(nums, k, mid)) {
+                right = mid;
+            }
+            else {
+                left = mid + 1;
+            }
+        }
+
+        return left;
+    }
+};
