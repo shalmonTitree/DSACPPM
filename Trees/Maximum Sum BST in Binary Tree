@@ -1,0 +1,166 @@
+ //bruteforce | TLE
+- Time Complexity: \(O(n^2)\) in the worst case.
+- Auxiliary Space: \(O(h)\), where \(h\) is the height of the tree.
+Why O(n²)?
+
+In a skewed tree, checking each subtree and calculating its sum can take O(n), and we repeat this for O(n) nodes.
+
+This approach is correct but inefficient.
+
+We can optimize it using postorder traversal.
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    bool isBST(TreeNode* root,long long l, long long r)
+    {
+        if(root == NULL)
+        {
+            return true;
+        }
+
+        if(root->val <= l || root->val >= r)
+        {
+            return false;
+        }
+
+        return isBST(root->left,l,root->val) && isBST(root->right,root->val,r);
+    }
+
+    int getsum(TreeNode* root)
+    {
+        if(root == NULL)
+        {
+            return 0;
+        }
+
+        return root->val + getsum(root->left) + getsum(root->right);
+    }
+    void solve(TreeNode* root,int &ans)
+    {
+        if(root == NULL)
+        {
+            return;
+        }
+
+        if(isBST(root,LLONG_MIN,LLONG_MAX))
+        {
+            ans = max(ans,getsum(root));
+        }
+
+        solve(root->left,ans);
+        solve(root->right,ans);
+        
+    }
+    int maxSumBST(TreeNode* root) {
+        int ans = 0;
+        solve(root,ans);
+        return ans;
+    }
+};
+
+
+//Approach 2: Optimized DFS – Postorder Traversal
+To determine whether the current node forms a valid BST, we need information from its left and right subtrees.
+
+Specifically, we need four things:
+1. isBST – Is the left/right subtree a valid BST?
+2. minValue – What is the minimum value in the subtree?
+3. maxValue – What is the maximum value in the subtree?
+4. sum – What is the sum of all nodes in the subtree?
+We can get all this information by using postorder traversal (Left → Right → Root).
+
+Why postorder?
+
+Because before processing the current node, we need to know whether its left and right subtrees are valid BSTs.
+
+Maximum Sum BST – Optimal Algorithm (DFS + Postorder)
+1. Traverse the binary tree using postorder DFS (Left → Right → Root).
+2. For every node, get information from its left and right subtrees:
+   - Whether it is a valid BST.
+   - Minimum value.
+   - Maximum value.
+   - Sum of nodes.
+3. Check whether both left and right subtrees are valid BSTs.
+4. Check the BST condition:
+   - left.max < root->val
+   - root->val < right.min
+5. If valid:
+   - Calculate the current subtree sum.
+   - Update the global maximum answer.
+   - Return {1, min, max, sum}.
+6. If invalid, return {0, 0, 0, 0}.
+7. For a NULL node, return {1, INT_MAX, INT_MIN, 0}.
+8. Return the global maximum sum.
+
+
+
+ime Complexity: O(n)
+- Each node is visited exactly once by the DFS.
+- At every node, we perform constant-time operations (comparisons, min, max, and sum calculation).
+- Therefore, the total time complexity is O(n), where n is the number of nodes.
+Space Complexity: O(h)
+- The recursive DFS uses a call stack of maximum depth h, where h is the height of the tree.
+- Each recursive call creates two result vectors of size 4, which take constant space, O(1).
+Therefore:
+- Best case (balanced tree): O(log n)
+- Worst case (skewed tree): O(n)
+
+
+
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public: 
+     int ans = 0;
+    vector<int>dfs(TreeNode* root)
+    {
+        if(root == NULL)
+        {
+            return {1,INT_MAX,INT_MIN,0};
+        }
+
+        vector<int>left = dfs(root->left);
+        vector<int>right = dfs(root->right);
+
+        // left[0] == 1 → Left subtree is BST.
+        // right[0] == 1 → Right subtree is BST.
+        // left[2] < root->val → Left maximum is smaller than root.
+        // right[1] > root->val → Right minimum is greater than root.
+
+        if(left[0] == 1 && right[0] == 1 && left[2] < root->val && root->val < right[1])
+        {
+            int sum = left[3] + right[3] + root->val;
+            ans = max(ans,sum);
+
+            return {1,min(root->val,left[1]), max(root->val,right[2]), sum};
+        }
+
+        return {0,0,0,0};
+    }
+    int maxSumBST(TreeNode* root) {
+       
+        dfs(root);
+        return ans;
+    }
+};
