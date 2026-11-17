@@ -15,6 +15,11 @@ public:
 
 
 //rec
+Approach	Time Complexity	Space Complexity
+Recursion (your code)	O(2ⁿ)	O(n)
+Memoization	            O(n)	O(n)
+Tabulation	            O(n)	O(n)
+Space Optimization	    O(n)	O(1)
 class Solution {
 public:
     int solve(int idx,int buy,vector<int>& prices)
