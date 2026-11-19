@@ -1,4 +1,19 @@
 //bruteforce
+**Time Complexity (TC): O(N²)**
+
+- The outer loop runs N times.
+- For each iteration of the outer loop, the inner loop can run up to N times.
+- Counting zeros and updating the answer take O(1) time per iteration.
+
+Therefore, TC = O(N × N) = **O(N²)**.
+
+**Space Complexity (SC): O(1)**
+
+- Only a few extra variables are used: `n`, `ans`, `zerocnt`, `i` and `j`.
+- No additional data structure is used.
+
+Therefore, SC = **O(1)**.
+
 class Solution {
 public:
     int longestOnes(vector<int>& nums, int k) {
@@ -27,49 +42,23 @@ public:
 };
 
 //optimal
-class Solution {
-public:
-    int longestOnes(vector<int>& nums, int k) {
-        int n = nums.size();
-        int ans = INT_MIN;
+**Time Complexity (TC): O(N)**
 
-        int head = -1;
-        int tail = 0;
-   
-        int zerocnt = 0;
-        while(tail < n)
-        {
-            while(head + 1 < n && (zerocnt < k || zerocnt == k && nums[head + 1] == 1))
-            {
-                head++;
-                if(nums[head] == 0)
-                {
-                    zerocnt++;
-                }
-            }
-             ans = max(ans,head - tail + 1);
-            
+- The `tail` pointer traverses the array at most N times.
+- The `head` pointer also traverses the array at most N times.
+- Although there is a nested `while` loop, `head` never moves backward.
+- Each element is added to and removed from the window at most once.
 
-            if(tail <= head)
-            {
-                if(nums[tail] == 0)
-                {
-                    zerocnt--;
-                   
-                }
-                 tail++;
-                
-            }
-            else
-            {
-                tail++;
-                head = tail - 1;
-            }
-        }
-        return ans;
-    }
-};
+Therefore, TC = O(N + N) = **O(N)**.
 
+**Space Complexity (SC): O(1)**
+
+- Only a constant number of variables are used: `n`, `ans`, `head`, `tail` and `zerocnt`.
+- No additional data structure is used.
+
+Therefore, SC = **O(1)**.
+
+**Approach:** Sliding Window / Two Pointers.
 
 class Solution {
 public:
@@ -113,3 +102,4 @@ public:
         return ans;
     }
 };
+
