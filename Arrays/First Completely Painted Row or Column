@@ -1,0 +1,187 @@
+//bruteforce
+### **Complexity Analysis**
+
+Let m be the number of rows and n be the number of columns.
+
+For every element in arr:
+
+- Finding its position takes O(m \* n).
+- Checking its row takes O(n).
+- Checking its column takes O(m).
+
+There are m \* n elements in arr.
+
+**Time Complexity:**
+
+O(m \* n \* (m \* n + m + n))
+
+\= O((m \* n)²)
+
+**Space Complexity:**
+
+O(m \* n)
+
+The visited matrix requires O(m \* n) space.
+
+**Problem:** We repeatedly search the entire matrix to find the position of each number. This is unnecessary work.
+
+
+class Solution {
+public:
+    int firstCompleteIndex(vector<int>& arr, vector<vector<int>>& mat) {
+        int m = mat.size();
+        int n = mat[0].size();
+
+        vector<vector<int>> vis(m, vector<int>(n, 0));
+         for (int k = 0; k < arr.size(); k++)
+         {
+            int x = arr[k];
+            int r = -1, c = -1;
+
+            for (int i = 0; i < m; i++) {
+
+                for (int j = 0; j < n; j++) {
+                    
+                    if (mat[i][j] == x) {
+                        r = i;
+                        c = j;
+                        break;
+                    }
+                }
+                if (r != -1) break;
+            }
+
+            vis[r][c] = 1;
+
+            // Check complete row
+            bool rowComplete = true;
+
+            for (int j = 0; j < n; j++) {
+                if (vis[r][j] == 0) {
+                    rowComplete = false;
+                    break;
+                }
+            }
+
+            // Check complete column
+            bool colComplete = true;
+
+            for (int i = 0; i < m; i++) {
+                if (vis[i][c] == 0) {
+                    colComplete = false;
+                    break;
+                }
+            }
+
+            if (rowComplete || colComplete)
+                return k;
+         }
+         return -1;
+
+    }
+};
+
+//Better — Hash Map + Simulation 
+### **Complexity Analysis**
+
+| Operation                | Complexity        |
+| ------------------------ | ----------------- |
+| Build position map       | O(m \* n) average |
+| Traverse arr             | O(m \* n) average |
+| Update row/column counts | O(1) per element  |
+
+**Time Complexity:**
+
+O(m \* n)
+
+**Space Complexity:**
+
+O(m \* n)
+
+The position map takes O(m \* n) space, and row/column counters take O(m + n).
+
+This is already an optimal asymptotic time complexity.
+
+class Solution {
+public:
+    int firstCompleteIndex(vector<int>& arr, vector<vector<int>>& mat) {
+
+        int m = mat.size();
+        int n = mat[0].size();
+
+        unordered_map<int, pair<int, int>> pos;
+
+        // Store positions of all matrix elements
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                pos[mat[i][j]] = {i, j};
+            }
+        }
+
+        vector<int> rowCount(m, 0);
+        vector<int> colCount(n, 0);
+
+        for (int k = 0; k < arr.size(); k++) {
+
+            int x = arr[k];
+
+            int r = pos[x].first;
+            int c = pos[x].second;
+
+            rowCount[r]++;
+            colCount[c]++;
+
+            if (rowCount[r] == n || colCount[c] == m) {
+                return k;
+            }
+        }
+
+        return -1;
+    }
+};
+
+
+Optimal — Array Mapping + Counting
+| Complexity      | Value    |
+| --------------- | -------- |
+| Time            | O(m × n) |
+| Auxiliary Space | O(m × n) |
+
+This is optimal because we need to process the matrix and the painting sequence, both containing m × n elements.
+
+class Solution {
+public:
+    int firstCompleteIndex(vector<int>& arr, vector<vector<int>>& mat) {
+
+        int m = mat.size();
+        int n = mat[0].size();
+
+        vector<pair<int, int>> pos(m * n + 1);
+
+        // Store row and column of every number
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                pos[mat[i][j]] = {i, j};
+            }
+        }
+
+        vector<int> rowCount(m, 0);
+        vector<int> colCount(n, 0);
+
+        // Paint elements according to arr
+        for (int k = 0; k < arr.size(); k++) {
+
+            int r = pos[arr[k]].first;
+            int c = pos[arr[k]].second;
+
+            rowCount[r]++;
+            colCount[c]++;
+
+            if (rowCount[r] == n || colCount[c] == m) {
+                return k;
+            }
+        }
+
+        return -1;
+    }
+};
