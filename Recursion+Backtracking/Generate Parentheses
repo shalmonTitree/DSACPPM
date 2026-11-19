@@ -1,7 +1,93 @@
+//Bruteforce | first generate all string then check
+TC: O(n*4^n)
+SC: O(n) auxiliary space, excluding output.
+class Solution {
+public:
+    vector<string> ans;
+
+    bool isValid(string s) {
+        int cnt = 0;
+
+        for(char c : s) {
+            if(c == '(') cnt++;
+            else cnt--;
+
+            if(cnt < 0) return false;
+        }
+
+        return cnt == 0;
+    }
+
+    void solve(string s, int n) {
+        if(s.size() == 2*n) {
+            if(isValid(s)) ans.push_back(s);
+            return;
+        }
+
+        solve(s + '(', n);
+        solve(s + ')', n);
+    }
+
+    vector<string> generateParenthesis(int n) {
+        solve("", n);
+        return ans;
+    }
+};
+
+
+//better | Instead of generating all combinations and validating them at the end, we avoid invalid combinations during recursion.
+TC: O(n* Cn)
+SC: O(n) auxiliary space, excluding output.
+The code generates only valid parentheses combinations.
+The total number of valid combinations for n pairs of parentheses is given by the nth Catalan number.
+Cn = (1 / (n + 1)) * (2n)! / (n! * n!)
+Therefore, we generate Cn strings, each having a length of 2*n.
+
+TC = O(2*n*C_n)
+
+Ignoring constants:
+
+TC = O(n*C_n)
+
+Using the Catalan approximation:
+
+TC = O(4^n / sqrt(n))
+
+This includes the cost of constructing the output strings.
+
+
+
+class Solution {
+public:
+    vector<string> ans;
+
+    void solve(string s, int n, int open, int close) {
+        if(s.size() == 2*n) {
+            ans.push_back(s);
+            return;
+        }
+
+        if(open < n) {
+            solve(s + '(', n, open + 1, close);
+        }
+
+        if(close < open) {
+            solve(s + ')', n, open, close + 1);
+        }
+    }
+
+    vector<string> generateParenthesis(int n) {
+        solve("", n, 0, 0);
+        return ans;
+    }
+};
+
+
+
+
+Optimal – Backtracking with push_back and pop_back
 Time Complexity (TC): O(4^n / √n)
-
 Auxiliary Space Complexity (SC): O(n), excluding the output.
-
 Output Space: O(n × 4^n / √n) = O(√n × 4^n)
 
 Why?
@@ -15,32 +101,30 @@ Interview answer: TC = O(4^n / √n), auxiliary SC = O(n), excluding the output.
 
 class Solution {
 public:
-    void solve(int n, int open,int close,string &curr,vector<string>&ans)
-    {
-        if(open == n && close == n)
-        {
-            ans.push_back(curr);
+    vector<string> ans;
+
+    void solve(string &s, int n, int open, int close) {
+        if(s.size() == 2*n) {
+            ans.push_back(s);
             return;
         }
 
-        if(open < n)
-        {
-            curr.push_back('(');
-            solve(n,open+1,close,curr,ans);
-            curr.pop_back();
+        if(open < n) {
+            s.push_back('(');
+            solve(s, n, open + 1, close);
+            s.pop_back();
         }
 
-        if(close < open)
-        {
-            curr.push_back(')');
-            solve(n,open,close+1,curr,ans);
-            curr.pop_back();
+        if(close < open) {
+            s.push_back(')');
+            solve(s, n, open, close + 1);
+            s.pop_back();
         }
     }
+
     vector<string> generateParenthesis(int n) {
-        vector<string>ans;
-        string curr = "";
-        solve(n,0,0,curr,ans);
+        string s;
+        solve(s, n, 0, 0);
         return ans;
     }
 };
