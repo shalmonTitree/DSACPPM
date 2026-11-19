@@ -1,3 +1,43 @@
+## **Time Complexity (TC) and Space Complexity (SC) – Queue Using Two Stacks**
+
+**1. Enqueue (Insertion)**
+
+- **TC:** O(1) – Element is directly inserted into stack `s1`.
+- **SC:** O(1) auxiliary space – No extra data structure is used.
+
+**2. Dequeue (Deletion)**
+
+- **Best Case TC:** O(1) – If `s2` is not empty, simply remove its top element.
+- **Worst Case TC:** O(N) – If `s2` is empty, all elements from `s1` must be transferred to `s2`.
+- **Amortized TC:** O(1) – Each element is transferred from `s1` to `s2` at most once.
+- **SC:** O(1) auxiliary space – Uses the existing stacks for transferring elements.
+
+**3. Peek (Front Element)**
+
+- **Best Case TC:** O(1) – If `s2` is not empty, directly access its top element.
+- **Worst Case TC:** O(N) – If `s2` is empty, all elements from `s1` must be transferred to `s2`.
+- **Amortized TC:** O(1) – Each element is transferred at most once.
+- **SC:** O(1) auxiliary space – No additional data structure is created.
+
+**4. isEmpty (Check Queue Empty)**
+
+- **TC:** O(1) – Checks whether both stacks are empty.
+- **SC:** O(1) – Uses constant extra space.
+
+**5. Display**
+
+- **TC:** O(N) – Traverses all elements to display them.
+- **SC:** O(N) – Creates temporary copies of stacks and an additional temporary stack.
+
+### **Overall Complexity**
+
+- **Time Complexity:** O(1) amortized for enqueue, dequeue and peek.
+- **Space Complexity:** O(N) for storing N elements in the queue.
+- **Auxiliary Space:** O(N) for the display operation; O(1) for other operations.
+
+*Note: Dequeue and peek have O(N) worst-case time complexity but O(1) amortized time complexity.*
+
+
 #include <iostream>
 #include <stack>
 using namespace std;
