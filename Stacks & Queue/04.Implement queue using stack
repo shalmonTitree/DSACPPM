@@ -38,6 +38,11 @@
 *Note: Dequeue and peek have O(N) worst-case time complexity but O(1) amortized time complexity.*
 
 
+
+Amortized analysis does not mean every operation takes O(1). It means that expensive operations happen infrequently enough that the average cost over a sequence of operations is O(1).
+
+
+
 #include <iostream>
 #include <stack>
 using namespace std;
