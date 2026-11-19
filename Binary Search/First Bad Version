@@ -1,0 +1,49 @@
+//Brute Force – Linear Search
+TC: (O(n))
+SC: (O(1))
+
+// The isBadVersion API is already defined.
+
+class Solution {
+public:
+    int firstBadVersion(int n) {
+
+        for(int i = 1; i <= n; i++) {
+
+            if(isBadVersion(i)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+};
+
+Optimal – Binary Search
+// The API isBadVersion is defined for you.
+// bool isBadVersion(int version);
+TC: (O(log n))
+SC: (O(1))
+
+class Solution {
+public:
+    int firstBadVersion(int n) {
+        int l = 1;
+        int h = INT_MAX;
+        int ans = 0;
+        while(l <= h)
+        {
+            int mid = l + (h-l)/2;
+            if(isBadVersion(mid))
+            {
+                ans = mid;
+                h = mid - 1;
+            }
+            else
+            {
+                l = mid + 1;
+            }
+        }
+        return ans;
+    }
+};
