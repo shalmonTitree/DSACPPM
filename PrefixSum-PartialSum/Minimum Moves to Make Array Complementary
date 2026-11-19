@@ -1,0 +1,143 @@
+What are all the possible target sums?
+
+Since every element must be between 1 and limit:
+- Minimum possible pair sum = 1 + 1 = 2
+- Maximum possible pair sum = limit + limit = 2 * limit
+Therefore, we can try every target sum from 2 to 2 * limit.
+
+| Complexity      | Value        |
+| --------------- | ------------ |
+| Time            | O(n × limit) |
+| Auxiliary Space | O(1)         |
+
+class Solution {
+public:
+    int minMoves(vector<int>& nums, int limit) {
+        int n = nums.size();
+        int ans = INT_MAX;
+
+        for(int tar = 2; tar <= 2*limit; tar++)
+        {
+            int mv = 0;
+
+            for(int j = 0; j < n/2; j++)
+            {
+                int a = nums[j];
+                int b = nums[n - 1 - j];
+
+                if(a + b == tar)
+                {
+                    continue;
+                }
+                else if(tar - a >= 1 && tar - a <= limit)
+                {
+                    mv++;
+                }
+                else if(tar - b >= 1 && tar - b <= limit)
+                {
+                    mv++;
+                }
+                else{
+                    mv+=2;
+                }
+            }
+            ans = min(ans,mv);
+        }
+        return ans;
+    }
+};
+
+
+//Optimal — Difference Array
+Instead of checking every pair separately for every possible target sum, let's calculate the number of moves required for all possible target sums using a difference array.
+
+Region 1: One Move Required
+
+The minimum possible sum after changing at most one element is:
+
+min(a, b) + 1
+
+The maximum possible sum after changing at most one element is:
+
+max(a, b) + limit
+
+Therefore, the one-move range is:
+
+[min(a, b) + 1, max(a, b) + limit]
+
+Every target sum in this range requires at most one change.
+
+Region 2: Zero Moves Required
+
+The original sum is:
+
+S = a + b
+
+If the target sum equals the original sum:
+
+moves = 0
+
+Region 3: Two Moves Required
+
+For target sums outside the one-move range, both elements need to be changed.
+
+Therefore, for every pair:
+
+- Initially, all target sums require 2 moves.
+- In the one-move range, reduce the cost by 1.
+- At the original sum, reduce the cost by another 1.
+
+This is where the Difference Array comes in.
+
+| Complexity      | Value        |
+| --------------- | ------------ |
+| Time            | O(n + limit) |
+| Auxiliary Space | O(limit)     |
+
+This is efficient enough for the given constraints.
+
+class Solution {
+public:
+    int minMoves(vector<int>& nums, int limit) {
+
+        int n = nums.size();
+
+        vector<int> diff(2 * limit + 2, 0);
+
+        for (int i = 0; i < n / 2; i++) {
+
+            int a = nums[i];
+            int b = nums[n - 1 - i];
+
+            // Initially, 2 moves for every target sum
+            diff[2] += 2;
+            diff[2 * limit + 1] -= 2;
+
+            // Range where 1 move is sufficient
+            int l = min(a, b) + 1;
+            int r = max(a, b) + limit;
+
+            diff[l]--;
+            diff[r + 1]++;
+
+            // Original sum requires 0 moves
+            int sum = a + b;
+
+            diff[sum]--;
+            diff[sum + 1]++;
+        }
+
+        int moves = 0;
+        int ans = INT_MAX;
+
+        // Prefix sum
+        for (int target = 2; target <= 2 * limit; target++) {
+
+            moves += diff[target];
+
+            ans = min(ans, moves);
+        }
+
+        return ans;
+    }
+};
