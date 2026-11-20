@@ -1,0 +1,130 @@
+//bruteforce
+**Complexity Analysis**
+
+Let:
+
+- N = Number of products
+- M = Length of searchWord
+- L = Maximum product length
+
+**TC:** O(M \* N \* L \* log N)
+
+**SC:** O(N \* L)
+
+Sorting matching products for every prefix makes this approach inefficient.
+
+class Solution {
+public:
+    vector<vector<string>> suggestedProducts(
+        vector<string>& products, string searchWord) {
+
+        vector<vector<string>> ans;
+        string prefix = "";
+
+        for (char ch : searchWord) {
+            prefix += ch;
+
+            vector<string> temp;
+
+            for (string &product : products) {
+                if (product.find(prefix) == 0) {
+                    temp.push_back(product);
+                }
+            }
+
+            sort(temp.begin(), temp.end());
+
+            if (temp.size() > 3)
+                temp.resize(3);
+
+            ans.push_back(temp);
+        }
+
+        return ans;
+    }
+};
+
+
+
+Approach 2: Sorting + Linear Search
+**Complexity Analysis**
+
+TC: O(NL log N + MNL)
+
+SC: O(ML)
+
+Here, O(ML) is the maximum temporary output storage, excluding sorting implementation overhead.
+
+**Improvement over Approach 1:**
+
+- Sorting happens only once.
+- No need to sort matching products repeatedly.
+- We stop searching after finding three matches.
+
+However, we still traverse products from the beginning for every prefix.
+
+class Solution {
+public:
+    vector<vector<string>> suggestedProducts(
+        vector<string>& products, string searchWord) {
+
+        sort(products.begin(), products.end());
+
+        vector<vector<string>> ans;
+        string prefix = "";
+
+        for (char ch : searchWord) {
+            prefix += ch;
+
+            vector<string> temp;
+
+            for (string &product : products) {
+                if (product.find(prefix) == 0) {
+                    temp.push_back(product);
+
+                    if (temp.size() == 3)
+                        break;
+                }
+            }
+
+            ans.push_back(temp);
+        }
+
+        return ans;
+    }
+};
+
+Approach 3: Sorting + Binary Search (Optimal Practical Approach)
+Since products are sorted, we can use binary search to find the first product that is lexicographically greater than or equal to the current prefix.
+
+This is where lower_bound() helps.
+
+class Solution {
+public:
+    vector<vector<string>> suggestedProducts(vector<string>& products, string searchWord) {
+        sort(products.begin(), products.end());
+
+        vector<vector<string>> ans;
+        string prefix = "";
+
+        for (int i = 0; i < searchWord.size(); i++) {
+            prefix += searchWord[i];
+
+            vector<string> temp;
+            int idx = lower_bound(products.begin(), products.end(), prefix) - products.begin();
+
+            for (int j = idx; j < products.size() && j < idx + 3; j++) {
+                if (products[j].substr(0, prefix.size()) == prefix) {
+                    temp.push_back(products[j]);
+                } else {
+                    break;
+                }
+            }
+
+            ans.push_back(temp);
+        }
+
+        return ans;
+    }
+};
+
