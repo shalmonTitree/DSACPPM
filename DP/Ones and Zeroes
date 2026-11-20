@@ -1,0 +1,188 @@
+//rec
+Time Complexity: O(L * K + 2^L)
+- O(L * K): To traverse all strings and count the number of 0s and 1s in each string while building the store vector.
+- O(2^L): Each string has two choices: take or not take. Therefore, the recursion explores all possible subsets of L strings.
+Space Complexity: O(L)
+- O(L): To store the count of 0s and 1s for every string in the store vector.
+- O(L): Recursion stack space, since the maximum recursion depth is L.
+Optimized DP (2D Knapsack):
+
+TC: O(L * m * n)
+
+SC: O(m * n)
+- Each string is processed once.
+- For every string, we update the DP states based on the available number of 0s and 1s.
+- We maintain a 2D DP array of size (m + 1) * (n + 1).
+
+class Solution {
+public:
+    int solve(int idx,vector<pair<int,pair<int,int>>>&store,int m,int n)
+    {
+        if(idx == store.size())
+        {
+            return 0;
+        }
+
+        int nottake = solve(idx + 1,store,m,n);
+        int take = 0;
+
+        if(store[idx].second.first <= m && store[idx].second.second <= n)
+        {
+            take = 1 + solve(idx+1,store,m-store[idx].second.first,n-store[idx].second.second);
+        }
+        return max(take,nottake);
+    }
+
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        vector<pair<int,pair<int,int>>>store;
+        for(auto it : strs)
+        {
+            int c0 = 0,c1 = 0;
+            string s = it;
+            for(int i = 0; i <  s.size(); i++)
+            {
+                if(s[i] == '0')
+                {
+                    c0++;
+                }
+                else{
+                    c1++;
+                }
+            }
+            store.push_back({c0+c1,{c0,c1}});
+        }
+
+        return solve(0,store,m,n);
+        
+    }
+};
+
+
+//memo
+For Memoization (Top-Down DP), use a 3D DP array: dp[idx][m][n].
+
+Time Complexity: O(L * m * n)
+- There are L possible values of idx.
+- For each index, there are (m + 1) * (n + 1) possible states.
+- Each state is calculated only once and reused from the memoization table.
+Space Complexity: O(L * m * n)
+- O(L * m * n): Memoization DP array.
+- O(L): Recursion stack space.
+Final answer:
+
+TC: O(L * K + L * m * n)
+
+SC: O(L * m * n) + O(L)
+
+Where:
+- L = Number of strings
+- K = Maximum string length
+- m = Maximum number of zeros allowed
+- n = Maximum number of ones allowed
+
+class Solution {
+public:
+    int solve(int idx,vector<pair<int,pair<int,int>>>&store,int m,int n,vector<vector<vector<int>>>&dp)
+    {
+        if(idx == store.size())
+        {
+            return 0;
+        }
+        int r = store[idx].second.first;
+        int c = store[idx].second.second;
+
+        if(dp[idx][m][n] != -1)
+        {
+            return dp[idx][m][n];
+        }
+
+        int nottake = solve(idx + 1,store,m,n,dp);
+        int take = 0;
+
+        if( r<= m && c<= n)
+        {
+            take = 1 + solve(idx+1,store,m-r,n-c,dp);
+        }
+        return dp[idx][m][n] = max(take,nottake);
+    }
+ 
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        vector<pair<int,pair<int,int>>>store;
+        for(auto it : strs)
+        {
+            int c0 = 0,c1 = 0;
+            string s = it;
+            for(int i = 0; i <  s.size(); i++)
+            {
+                if(s[i] == '0')
+                {
+                    c0++;
+                }
+                else{
+                    c1++;
+                }
+            }
+            store.push_back({c0+c1,{c0,c1}});
+        }
+
+        vector<vector<vector<int>>>dp(store.size(),vector<vector<int>>(m+1,vector<int>(n+1,-1)));
+        return solve(0,store,m,n,dp);
+        
+    }
+};
+
+
+//tabu
+Complexity Analysis
+TC: O(L * K + L * m * n)
+- O(L * K): Counting zeros and ones in all strings.
+- O(L * m * n): Filling the 3D DP table.
+SC: O(L * m * n)
+- O(L * m * n): 3D DP array.
+- No recursion stack is required.
+
+class Solution {
+public:
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        vector<pair<int,pair<int,int>>> store;
+
+        for(auto it : strs) {
+            int c0 = 0, c1 = 0;
+
+            for(int i = 0; i < it.size(); i++) {
+                if(it[i] == '0') c0++;
+                else c1++;
+            }
+
+            store.push_back({c0+c1, {c0,c1}});
+        }
+
+        int L = store.size();
+
+        vector<vector<vector<int>>> dp(
+            L + 1,
+            vector<vector<int>>(m + 1, vector<int>(n + 1, 0))
+        );
+
+        for(int idx = L - 1; idx >= 0; idx--) {
+            int r = store[idx].second.first;
+            int c = store[idx].second.second;
+
+            for(int i = 0; i <= m; i++) {
+                for(int j = 0; j <= n; j++) {
+
+                    int nottake = dp[idx + 1][i][j];
+                    int take = 0;
+
+                    if(r <= i && c <= j) {
+                        take = 1 + dp[idx + 1][i-r][j-c];
+                    }
+
+                    dp[idx][i][j] = max(take, nottake);
+                }
+            }
+        }
+
+        return dp[0][m][n];
+    }
+};
