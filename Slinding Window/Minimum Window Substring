@@ -1,0 +1,230 @@
+//bruteforce
+**Time Complexity:**
+
+| Operation                 | Complexity    |
+| ------------------------- | ------------- |
+| Generate all substrings   | O(n²)         |
+| Build substring frequency | O(n)          |
+| Build target frequency    | O(m)          |
+| Compare frequencies       | O(256) = O(1) |
+
+**Total Time Complexity:** O(n³ + n²m)
+
+**Space Complexity:** O(256) = O(1), excluding the returned substring.
+
+**Note:** This approach is extremely slow for large inputs because it generates every possible substring and recalculates its frequency from scratch.
+
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        int n = s.size();
+        int m = t.size();
+
+        int ansLen = INT_MAX;
+        string ans = "";
+
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j < n; j++) {
+
+                unordered_map<char, int> freq;
+
+                for (int k = i; k <= j; k++) {
+                    freq[s[k]]++;
+                }
+
+                unordered_map<char, int> need;
+
+                for (char c : t) {
+                    need[c]++;
+                }
+
+                bool valid = true;
+
+                for (auto it : need) {
+                    if (freq[it.first] < it.second) {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if (valid && j - i + 1 < ansLen) {
+                    ansLen = j - i + 1;
+                    ans = s.substr(i, ansLen);
+                }
+            }
+        }
+
+        return ans;
+    }
+};
+
+Better Approach – Prefix Frequency + Substring Checking
+We can improve the brute-force approach by avoiding frequency calculation from scratch for every substring.
+Approach
+Instead of recalculating character frequencies for every substring:
+1. Build a prefix frequency array for s.
+2. Generate all possible substrings.
+3. Calculate the frequency of each character in substring [i, j] using:
+
+
+### **Complexity Analysis**
+
+| Operation                                     | Complexity |
+| --------------------------------------------- | ---------- |
+| Build prefix frequency arrays                 | O(128n)    |
+| Generate all substrings                       | O(n²)      |
+| Check each substring using prefix frequencies | O(128)     |
+
+**Time Complexity:**
+
+O(128n + 128n²)
+
+Since 128 is a constant:
+
+**O(n²)**
+
+**Space Complexity:**
+
+O(128n) = **O(n)**
+
+We store prefix frequency arrays for all positions in the string.
+
+**Note:** This approach is significantly better than the previous brute-force approach because we avoid recalculating substring frequencies. However, O(n²) is still too slow for n = 10⁵. We need an O(n) Sliding Window approach to solve this efficiently.
+
+
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        int n = s.size();
+
+        vector<vector<int>> pref(n + 1, vector<int>(128, 0));
+
+        for (int i = 0; i < n; i++) {
+            pref[i + 1] = pref[i];
+            pref[i + 1][(unsigned char)s[i]]++;
+        }
+
+        vector<int> need(128, 0);
+
+        for (char c : t) {
+            need[(unsigned char)c]++;
+        }
+
+        int minLen = INT_MAX;
+        int start = -1;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j < n; j++) {
+
+                bool valid = true;
+
+                for (int c = 0; c < 128; c++) {
+                    int freq = pref[j + 1][c] - pref[i][c];
+
+                    if (freq < need[c]) {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if (valid && j - i + 1 < minLen) {
+                    minLen = j - i + 1;
+                    start = i;
+                }
+            }
+        }
+
+        if (start == -1) return "";
+
+        return s.substr(start, minLen);
+    }
+};
+
+Optimal Approach – Sliding Window + Two Pointers
+Core intuition
+Instead of generating every substring, maintain a window using two pointers:
+- left – starting index of the current window.
+- right – ending index of the current window.
+We expand the window until it contains all required characters. Once it becomes valid, we shrink it from the left to find the smallest possible window.
+
+### **Complexity Analysis**
+
+**Time Complexity:**
+
+| Operation                      | Complexity |
+| ------------------------------ | ---------- |
+| Build target frequency array   | O(m)       |
+| Move right pointer through `s` | O(n)       |
+| Move left pointer through `s`  | O(n)       |
+
+Since both pointers traverse the string at most once:
+
+\\[ O(m+n+n) = O(n+m) \\]
+
+**Time Complexity: O(n + m)**
+
+**Space Complexity:**
+
+We use a fixed-size frequency array of 128 characters.
+
+\\[ O(128) = O(1) \\]
+
+**Space Complexity: O(1)**
+
+**Conclusion:** This solution uses the Sliding Window + Two Pointers technique and achieves linear time complexity, satisfying LeetCode 76's follow-up requirement.
+
+
+class Solution {
+public:
+    string minWindow(string s, string t) {
+
+        int n = s.size();
+
+        vector<int> need(128, 0);
+
+        for (char c : t) {
+            need[(unsigned char)c]++;
+        }
+
+        int left = 0;
+        int missing = t.size();
+
+        int minLen = INT_MAX;
+        int start = 0;
+
+        for (int right = 0; right < n; right++) {
+
+            char c = s[right];
+
+            if (need[(unsigned char)c] > 0) {
+                missing--;
+            }
+
+            need[(unsigned char)c]--;
+
+            while (missing == 0) {
+
+                if (right - left + 1 < minLen) {
+                    minLen = right - left + 1;
+                    start = left;
+                }
+
+                char d = s[left];
+
+                need[(unsigned char)d]++;
+
+                if (need[(unsigned char)d] > 0) {
+                    missing++;
+                }
+
+                left++;
+            }
+        }
+
+        if (minLen == INT_MAX) {
+            return "";
+        }
+
+        return s.substr(start, minLen);
+    }
+};
