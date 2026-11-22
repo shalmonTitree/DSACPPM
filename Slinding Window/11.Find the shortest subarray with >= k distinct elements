@@ -1,0 +1,144 @@
+//bruteforce
+TC: O(N² \* log N)
+SC: O(N)
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n;
+    cin>>n;
+    vector<int>v(n);
+    for(int i = 0; i < n; i++)
+    {
+        cin>>v[i];
+    }
+
+    int k;
+    cin>>k;
+   
+    int ans = INT_MAX;
+    for(int i = 0; i < n; i++)
+    {
+         set<int>st;
+        
+        for(int j = i; j < n; j++)
+        {
+            st.insert(v[j]);
+            if(st.size() >= k)
+            {
+                ans = min(ans,j - i + 1);
+                break;
+            }
+        }
+    }
+
+    if(ans == INT_MAX)
+    {
+        cout<<"-1"<<endl;
+        return;
+    }
+    cout<<ans<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    // cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+
+//optimal
+TC: O(N log N)
+SC: O(N)
+
+Data structure	Time complexity
+map	O(N log N)
+unordered_map	O(N) expected
+Frequency array	O(N + MAX)
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define endl "\n"   // optional, better to avoid redefining endl
+
+void solve() {
+    int n;
+    cin>>n;
+    vector<int>v(n);
+    for(int i = 0; i < n; i++)
+    {
+        cin>>v[i];
+    }
+
+    int k;
+    cin>>k;
+   
+    int ans = INT_MAX;
+    int head = -1;
+    int tail = 0;
+    unordered_map<int,int>mp;
+    int dc = 0;
+    while(tail < n)
+    {
+        while(head + 1 < n && (dc < k || mp[v[head+1]] > 0))
+        {
+            head++;
+            if(mp[v[head]] == 0)
+            {
+                dc++;
+            }
+            mp[v[head]]++;
+        }
+
+        if(dc >= k)
+        {
+            ans = min(ans,head - tail + 1);
+        }
+        
+
+        if(tail <= head)
+        {
+            mp[v[tail]]--;
+            if(mp[v[tail]] == 0)
+            {
+                dc--;
+            }
+            tail++;
+        }
+        else{
+            tail++;
+            head = tail - 1;
+        }
+    }
+    if(ans == INT_MAX)
+    {
+        cout<<"-1"<<endl;
+        return;
+    }
+    cout<<ans<<endl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1;
+    // cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
