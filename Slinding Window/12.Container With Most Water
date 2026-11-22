@@ -1,22 +1,58 @@
+//bruteforce
+Time Complexity: O(n²) — Two nested loops check every possible pair.
+Space Complexity: O(1) — Only a few variables are used.
+
 class Solution {
 public:
     int maxArea(vector<int>& height) {
         int n = height.size();
-        int l = 0;
-        int r = n - 1;
-        int ans = 0;
-        while(l < r)
-        {
-            ans = max(ans,min(height[l],height[r]) * (r-l));
-            if(height[l] < height[r])
-            {
-                l++;
-            }
-            else
-            {
-                r--;
+        int maxi = 0;
+
+        for(int i = 0; i < n; i++) {
+            for(int j = i + 1; j < n; j++) {
+                int width = j - i;
+                int h = min(height[i], height[j]);
+
+                int area = width * h;
+                maxi = max(maxi, area);
             }
         }
-        return ans;
+
+        return maxi;
+    }
+};
+
+
+
+//optimal
+Time Complexity: O(n) — Each pointer moves at most n times.
+Space Complexity: O(1) — No additional data structures are used.
+
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int n = height.size();
+
+        int left = 0;
+        int right = n - 1;
+
+        int maxi = 0;
+
+        while(left < right) {
+            int width = right - left;
+            int h = min(height[left], height[right]);
+
+            int area = width * h;
+            maxi = max(maxi, area);
+
+            if(height[left] < height[right]) {
+                left++;
+            }
+            else {
+                right--;
+            }
+        }
+
+        return maxi;
     }
 };
