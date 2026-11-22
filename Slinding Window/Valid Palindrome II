@@ -1,27 +1,90 @@
+Approach 1: Brute Force – Delete Each Character
+Idea:
+1. Check whether the original string is a palindrome.
+2. If not, try deleting each character one by one.
+3. Check whether the resulting string is a palindrome.
+4. If any resulting string is a palindrome, return true.
+
+Complexity analysis:
+- Checking the original string: (O(n)).
+- Creating a string after deletion: (O(n)).
+- Checking whether it is a palindrome: (O(n)).
+- Repeating for all characters: (O(n^2)).
+
+
 class Solution {
 public:
-    bool check(string &s,int l,int r)
-    {
-         while (l < r) {
+    bool isPalindrome(string s) {
+        int l = 0, r = s.size() - 1;
+
+        while (l < r) {
             if (s[l] != s[r]) return false;
             l++;
             r--;
         }
+
         return true;
     }
+
     bool validPalindrome(string s) {
-        int l = 0;
-        int r = s.size() - 1;
-        while(l < r)
-        {
-            if(s[l] != s[r])
-            {
-                return check(s,l+1,r) || check(s,l,r-1);
-            }
+        int n = s.size();
+
+        if (isPalindrome(s)) return true;
+
+        for (int i = 0; i < n; i++) {
+            string t = s.substr(0, i) + s.substr(i + 1);
+
+            if (isPalindrome(t)) return true;
+        }
+
+        return false;
+    }
+};
+
+
+Two Pointers + Index Ranges (Optimal)
+Recommended approach
+Idea:
+
+We can eliminate the extra substring creation.
+
+Instead of creating two new strings, simply pass the starting and ending indices to the palindrome-checking function.
+
+At the first mismatch:
+- Check l + 1, r (skip left).
+- Check l, r - 1 (skip right).
+If either is a palindrome, return true.
+Complexity	Value
+Time	(O(n))
+Auxiliary space	(O(1))
+The string is passed by reference, and we only use a constant number of variables.
+
+
+class Solution {
+public:
+    bool check(string &s, int l, int r) {
+        while (l < r) {
+            if (s[l] != s[r]) return false;
+
             l++;
             r--;
-        
         }
+
+        return true;
+    }
+
+    bool validPalindrome(string s) {
+        int l = 0, r = s.size() - 1;
+
+        while (l < r) {
+            if (s[l] != s[r]) {
+                return check(s, l + 1, r) ||check(s, l, r - 1);
+            }
+
+            l++;
+            r--;
+        }
+
         return true;
     }
 };
