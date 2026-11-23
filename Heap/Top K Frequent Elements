@@ -4,10 +4,23 @@
 3. Sort the vector based on frequency in descending order.
 4. Return the first k elements.
 
-Let n be the total number of elements and m be the number of unique elements.
-- Time Complexity: O(n + m log m)
-- Space Complexity: O(m)
-Since m is always less than or equal to n, the worst-case time complexity is O(n log n).
+Time Complexity (TC):
+1. Building the frequency map: O(n)
+2. Creating the vector of pairs: O(m)
+3. Sorting the vector: O(m log m)
+4. Extracting the top k elements: O(k)
+Overall TC: O(n + m log m) = O(n log n)
+
+Space Complexity (SC):
+1. Unordered map: O(m)
+2. Vector of pairs: O(m)
+3. Answer vector: O(k)
+Overall SC: O(m + k) = O(n)
+
+Where:
+- n = total number of elements in nums.
+- m = number of distinct elements in nums.
+- k = number of top frequent elements required.
 
 class Solution {
 public:
@@ -43,10 +56,18 @@ We use a Max Heap based on frequency.
 3. Extract the top element k times.
 4. Store the extracted elements in the answer.
 
-Complexity:
-- Time Complexity: O(n + m log m + k log m)
-- Space Complexity: O(m)
-This is a valid solution, but it does not achieve better than O(n log n) time complexity in the worst case.
+TC: O(N + M log M)
+- O(N): Traversing the array and building the frequency map.
+- O(M log M): Inserting M distinct elements into the max heap. Each insertion takes O(log M).
+- O(K log M): Extracting K elements from the heap.
+- Overall: O(N + M log M), since K ≤ M.
+SC: O(M)
+- O(M): Frequency map stores M distinct elements.
+- O(M): Max heap stores M elements.
+- O(K): Result vector stores K elements.
+- Overall: O(M).
+
+
 
 class Solution {
 public:
@@ -81,12 +102,16 @@ Instead of storing all unique elements in the heap, maintain only the k most fre
 3. If heap size exceeds k, remove the element with the smallest frequency.
 4. At the end, the heap contains the k most frequent elements.
 
-Complexity:
-- Time Complexity: O(n + m log k)
-- Space Complexity: O(m + k)
-Where m is the number of unique elements.
-
-This approach is particularly useful when k is small compared to the number of unique elements.
+TC: O(N + M log K)
+- O(N): Traversing the array and building the frequency map.
+- O(M log K): Processing M distinct elements. Each heap insertion/removal takes O(log K), as heap size is maintained at K.
+- O(K): Extracting K elements from the heap.
+- Overall: O(N + M log K).
+SC: O(M + K)
+- O(M): Frequency map stores M distinct elements.
+- O(K): Min heap stores at most K elements.
+- O(K): Result vector stores K elements.
+- Overall: O(M + K), which simplifies to O(M) since K ≤ M.
 
 class Solution {
 public:
