@@ -1,0 +1,181 @@
+//bruteforce
+### **Complexity Analysis Explained**
+
+Let:
+
+- m = Number of meetings
+- n = Number of rooms
+
+**1. Sorting meetings: O(m log m)**
+
+- We sort all `m` meetings based on their start time.
+- Sorting `m` elements takes O(m log m).
+
+**2. Finding an available room: O(n)**
+
+- For each meeting, we may iterate through all `n` rooms to find an available room.
+- In the worst case, we check every room.
+
+**3. Finding the earliest available room: O(n)**
+
+\- If no room is available, we iterate through all `n` rooms to find the one that becomes available earliest.
+
+**4. Processing all meetings: O(mn)**
+
+- We process `m` meetings.
+- For each meeting, we may perform up to O(n) room checks.
+- Therefore, O(m × n).
+
+### **Final Complexity**
+
+**Time Complexity:**
+
+O(m log m + mn)
+
+**Space Complexity:**
+
+O(n) auxiliary space, excluding sorting overhead.
+
+- O(n) for storing room availability information.
+- Sorting may require additional implementation-dependent space.
+
+**Interview explanation:** Since every meeting can potentially require checking all rooms, processing all meetings takes O(mn). Sorting the meetings adds O(m log m).
+
+class Solution {
+public:
+    int mostBooked(int n, vector<vector<int>>& meetings) {
+        sort(meetings.begin(), meetings.end());
+
+        vector<long long> roomEnd(n, 0);
+        vector<int> cnt(n, 0);
+
+        for (auto &meeting : meetings) {
+            long long start = meeting[0];
+            long long end = meeting[1];
+            long long duration = end - start;
+
+            int room = -1;
+
+            // Find smallest available room
+            for (int i = 0; i < n; i++) {
+                if (roomEnd[i] <= start) {
+                    room = i;
+                    break;
+                }
+            }
+
+            if (room != -1) {
+                roomEnd[room] = end;
+            }
+            else {
+                // Find room that becomes free earliest
+                room = 0;
+
+                for (int i = 1; i < n; i++) {
+                    if (roomEnd[i] < roomEnd[room]) {
+                        room = i;
+                    }
+                }
+
+                roomEnd[room] += duration;
+            }
+
+            cnt[room]++;
+        }
+
+        int ans = 0;
+
+        for (int i = 1; i < n; i++) {
+            if (cnt[i] > cnt[ans]) {
+                ans = i;
+            }
+        }
+
+        return ans;
+    }
+};
+
+//Sorting + Two Min Heaps (Optimal)
+**Time Complexity:**
+
+- Sorting meetings: O(m log m)
+- Initializing available rooms: O(n log n)
+- Processing m meetings using min heaps: O(m log n)
+- Finding the most booked room: O(n)
+
+**Overall TC:** O(m log m + n log n + m log n)
+
+**Space Complexity:**
+
+- Available min heap: O(n)
+- Busy min heap: O(n)
+- Booking count array: O(n)
+- Sorting overhead: O(log m) (typical implementation)
+
+**Overall SC:** O(n) auxiliary space, excluding sorting overhead.
+
+class Solution {
+public:
+    int mostBooked(int n, vector<vector<int>>& meetings) {
+        sort(meetings.begin(), meetings.end());
+
+        priority_queue<int, vector<int>, greater<int>> available;
+
+        priority_queue<
+            pair<long long, int>,
+            vector<pair<long long, int>>,
+            greater<pair<long long, int>>
+        > busy;
+
+        vector<int> cnt(n, 0);
+
+        for (int i = 0; i < n; i++) {
+            available.push(i);
+        }
+
+        for (auto &meeting : meetings) {
+            long long start = meeting[0];
+            long long end = meeting[1];
+            long long duration = end - start;
+
+            // Release rooms that are free
+            while (!busy.empty() && busy.top().first <= start) {
+                available.push(busy.top().second);
+                busy.pop();
+            }
+
+            int room;
+            long long newEnd;
+
+            if (!available.empty()) {
+                room = available.top();
+                available.pop();
+
+                newEnd = end;
+            }
+            else {
+                auto [freeTime, roomNo] = busy.top();
+                busy.pop();
+
+                room = roomNo;
+                newEnd = freeTime + duration;
+            }
+
+            cnt[room]++;
+
+            busy.push({newEnd, room});
+        }
+
+        int ans = 0;
+
+        for (int i = 1; i < n; i++) {
+            if (cnt[i] > cnt[ans]) {
+                ans = i;
+            }
+        }
+
+        return ans;
+    }
+};
+
+
