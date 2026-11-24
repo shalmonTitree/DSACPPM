@@ -14,8 +14,16 @@ public:
 
 //better
 
-Time Complexity: \(O(n\log k)\)
-Space Complexity: \(O(k)\)
+Time Complexity (TC): O(n + k log n)
+- We iterate through all n elements and insert them into the max heap.
+- Each insertion takes O(log n).
+- Building the heap through n individual insertions takes O(n log n).
+- We perform k-1 pop operations, each taking O(log n).
+- Therefore, overall time complexity is O((n + k) log n), which simplifies to O(n log n).
+Space Complexity (SC): O(n)
+- The max heap stores all n elements.
+- Therefore, auxiliary space complexity is O(n).
+
 class Solution {
 public:
     int findKthLargest(vector<int>& nums, int k) {
@@ -37,19 +45,17 @@ public:
 
 
 //optimal
-Time Complexity:
-- Building heap using individual insertions: \(O(n\log n)\)
-- Removing k-1 elements: \(O(k\log n)\)
-- Accessing top: \(O(1)\)
-Overall:
-\[
-\boxed{O(n\log n+k\log n)}
-\]
+**Time Complexity (TC): O(n log k)**
 
-Space Complexity:
-\[
-\boxed{O(n)}
-\]
+- We iterate through all n elements.
+- Each pq.push() takes O(log k).
+- Each pq.pop() takes O(log k).
+- Therefore, overall time complexity is O(n log k).
+
+**Space Complexity (SC): O(k)**
+
+- The priority queue stores at most k elements.
+- Therefore, auxiliary space complexity is O(k).
 
 
 class Solution {
