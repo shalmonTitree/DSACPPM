@@ -1,0 +1,139 @@
+//bruteforce
+Time Complexity: O(n log n + k log k) = O(n log n)
+
+- Creating pairs: O(n)
+- Sorting pairs: O(n log n)
+- Building answer: O(k)
+- Sorting answer: O(k log k)
+
+Space Complexity: O(n + k) = O(n)
+
+- Pair vector: O(n)
+- Answer vector: O(k)
+
+class Solution {
+public:
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+        vector<pair<int, int>> v;
+
+        for (int a : arr)
+            v.push_back({abs(a - x), a});
+
+        sort(v.begin(), v.end());
+
+        vector<int> ans;
+
+        for (int i = 0; i < k; i++)
+            ans.push_back(v[i].second);
+
+        sort(ans.begin(), ans.end());
+
+        return ans;
+    }
+};
+
+
+Better Approach – Max Heap
+Time Complexity: O(n log k + k log k)
+- Building priority queue: O(n log k)
+- Extracting k elements: O(k log k)
+- Sorting answer: O(k log k)
+Space Complexity: O(k)
+- Priority queue: O(k)
+- Answer vector: O(k)
+
+
+class Solution {
+public:
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+
+        priority_queue<pair<int,int>> pq;
+
+        for(int num : arr)
+        {
+            pq.push({abs(num-x), num});
+
+            if(pq.size() > k)
+                pq.pop();
+        }
+
+        vector<int> ans;
+
+        while(!pq.empty())
+        {
+            ans.push_back(pq.top().second);
+            pq.pop();
+        }
+
+        sort(ans.begin(), ans.end());
+
+        return ans;
+    }
+};
+
+//Two Pointers – Shrinking Window
+Time Complexity: O(n - k) = O(n)
+
+\- Each iteration removes one element until only k elements remain.
+
+Space Complexity: O(k)
+
+\- Answer vector: O(k)
+
+class Solution {
+public:
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+
+        int l = 0;
+        int r = arr.size() - 1;
+
+        while(r - l + 1 > k)
+        {
+            if(abs(arr[l] - x) <= abs(arr[r] - x))
+            {
+                r--;
+            }
+            else
+            {
+                l++;
+            }
+        }
+
+        return vector<int>(arr.begin() + l, arr.begin() + r + 1);
+    }
+};
+
+
+Optimal – Binary Search on Window
+TC: O(log(n-k+1) + k)
+- Binary search: O(log(n-k+1)).
+- Creating the answer: O(k).
+SC: O(1) auxiliary space, excluding output.
+
+class Solution {
+public:
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+
+        int n = arr.size();
+
+        int l = 0;
+        int r = n - k;
+
+        while(l < r)
+        {
+            int mid = l + (r-l)/2;
+
+            if(x - arr[mid] > arr[mid+k] - x)
+            {
+                l = mid + 1;
+            }
+            else
+            {
+                r = mid;
+            }
+        }
+
+        return vector<int>(arr.begin() + l,
+                           arr.begin() + l + k);
+    }
+};
