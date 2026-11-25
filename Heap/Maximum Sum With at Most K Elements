@@ -1,0 +1,128 @@
+
+//better
+TC:
+- Sorting all rows: O(N * M log M)
+- Sorting selected elements: O(S log S)
+- Calculating sum: O(K)
+Overall TC: O(N * M log M + S log S)
+
+SC: O(S) for the vector.
+
+class Solution {
+public:
+    long long maxSum(vector<vector<int>>& grid, vector<int>& limits, int k) {
+
+        vector<int> v;
+
+        int n = grid.size();
+
+        for(int i = 0; i < n; i++)
+        {
+            sort(grid[i].rbegin(), grid[i].rend());
+
+            for(int j = 0; j < limits[i]; j++)
+            {
+                v.push_back(grid[i][j]);
+            }
+        }
+
+        sort(v.rbegin(), v.rend());
+
+        long long sum = 0;
+
+        for(int i = 0; i < min(k, (int)v.size()); i++)
+        {
+            sum += v[i];
+        }
+
+        return sum;
+    }
+};
+
+
+//ok optimal 
+
+TC:
+- Sorting rows: O(N * M log M)
+- Inserting S elements into heap: O(S log S)
+- Extracting K elements: O(K log S)
+Overall TC: O(N * M log M + S log S)
+
+SC: O(S) for the priority queue.
+
+class Solution {
+public:
+    long long maxSum(vector<vector<int>>& grid, vector<int>& limits, int k) {
+
+        priority_queue<int> pq;
+
+        int n = grid.size();
+
+        for(int i = 0; i < n; i++)
+        {
+            sort(grid[i].rbegin(), grid[i].rend());
+
+            for(int j = 0; j < limits[i]; j++)
+            {
+                pq.push(grid[i][j]);
+            }
+        }
+
+        long long sum = 0;
+
+        while(k > 0 && !pq.empty())
+        {
+            sum += pq.top();
+            pq.pop();
+            k--;
+        }
+
+        return sum;
+    }
+};
+
+
+Optimal Approach – Min Heap of Size K
+TC:
+- Sorting rows: O(N * M log M)
+- Heap insertion and removal: O(S log K)
+- Calculating sum: O(K)
+Overall TC: O(N * M log M + S log K)
+
+SC: O(K) for the priority queue.
+
+
+class Solution {
+public:
+    long long maxSum(vector<vector<int>>& grid, vector<int>& limits, int k) {
+
+        priority_queue<int, vector<int>, greater<int>> pq;
+
+        int n = grid.size();
+
+        for(int i = 0; i < n; i++)
+        {
+            sort(grid[i].rbegin(), grid[i].rend());
+
+            for(int j = 0; j < limits[i]; j++)
+            {
+                pq.push(grid[i][j]);
+
+                if(pq.size() > k)
+                {
+                    pq.pop();
+                }
+            }
+        }
+
+        long long sum = 0;
+
+        while(!pq.empty())
+        {
+            sum += pq.top();
+            pq.pop();
+        }
+
+        return sum;
+    }
+};
